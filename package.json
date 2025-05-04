@@ -4,5 +4,24 @@
     "express": "^5.1.0",
     "mongodb": "^6.16.0",
     "mongoose": "^8.14.1"
-  }
+  },
+  "name": "chai-code-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server.js",
+  "devDependencies": {},
+   "type": "module",
+  "scripts": {
+      "start": "node src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HyperAfnan/chai-code-backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HyperAfnan/chai-code-backend/issues"
+  },
+  "homepage": "https://github.com/HyperAfnan/chai-code-backend#readme"
 }
