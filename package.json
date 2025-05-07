@@ -1,18 +1,11 @@
 {
-  "dependencies": {
-    "dotenv": "^16.5.0",
-    "express": "^5.1.0",
-    "mongodb": "^6.16.0",
-    "mongoose": "^8.14.1"
-  },
   "name": "chai-code-backend",
   "version": "1.0.0",
   "description": "",
   "main": "src/server.js",
-  "devDependencies": {},
-   "type": "module",
+  "type": "module",
   "scripts": {
-      "start": "node src/server.js"
+    "dev": "nodemon src/index.js"
   },
   "repository": {
     "type": "git",
@@ -23,5 +16,14 @@
   "bugs": {
     "url": "https://github.com/HyperAfnan/chai-code-backend/issues"
   },
-  "homepage": "https://github.com/HyperAfnan/chai-code-backend#readme"
+  "homepage": "https://github.com/HyperAfnan/chai-code-backend#readme",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mongodb": "^6.16.0",
+    "mongoose": "^8.14.1"
+  },
+  "devDependencies": {}
 }
+
+
