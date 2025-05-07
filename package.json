@@ -23,7 +23,7 @@
     "mongodb": "^6.16.0",
     "mongoose": "^8.14.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "prettier": "^3.5.3"
+  }
 }
-
-
