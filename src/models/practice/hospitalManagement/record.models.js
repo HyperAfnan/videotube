@@ -1,5 +1,5 @@
-import { mongoose, Schema } from mongoose
+import {mongoose, Schema} from "mongoose";
 
-const RecordSchema = new Schema()
+const RecordSchema = new Schema();
 
-export const Record = mongoose.model("record", RecordSchema)
+export const Record = mongoose.model("record", RecordSchema);
