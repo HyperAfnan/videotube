@@ -5,7 +5,8 @@
   "main": "src/server.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
     "multer": "^1.4.5-lts.2"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
     "prettier": "^3.5.3"
   }
 }
