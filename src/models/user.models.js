@@ -22,9 +22,9 @@ const userSchema = new Schema(
       index: true,
     },
     avatar: {type: String, required: true}, // cloudinary url
-    coverImage: {type: String, required: false}, // cloudinary url
+    coverImage: {type: String}, // cloudinary url
     password: {type: String, required: true},
-    refreshToken: {type: String, required: true, unique: true},
+    refreshToken: {type: String},
   },
   {timestamps: true}
 );
