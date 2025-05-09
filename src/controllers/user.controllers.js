@@ -15,9 +15,9 @@ const registerUser = asyncHandler(async (req, res) => {
   // check for user creation
   // return res
 
-  const {fullname, email, username, password} = req.body;
+  const {fullname: fullName, email, username, password} = req.body;
 
-  if (fullname === "") {
+  if (fullName === "") {
     throw new ApiError(400, "full name is required");
   }
   if (email === "") {
@@ -46,11 +46,11 @@ const registerUser = asyncHandler(async (req, res) => {
   const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
   if (!avatar) {
-    throw new ApiError(400, "Avatar file is required");
+    throw new ApiError(400, "Avatar is required");
   }
 
   const user = await User.create({
-    fullname,
+    fullName,
     email,
     avatar: avatar.url,
     coverImage: coverImage?.url || "",
@@ -61,7 +61,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const createUser = await User.findById(user._id).select(
     "-password -refreshToken"
   );
-  if (createUser) {
+  if (!createUser) {
     throw new ApiError(500, "Something went wrong while creating user");
   }
 
