@@ -19,7 +19,7 @@ const deleteOnCloudinary = async (imageUrl) => {
 		const regex = /\/([a-zA-Z0-9]+)\.jpg$/;
 		const publicId = imageUrl.match(regex);
 
-		const response = await cloudinary.uploader.destroy(publicId, {
+		const response = await cloudinary.uploader.destroy(publicId[1], {
 			resource_type: "image",
 		});
 		return response;
