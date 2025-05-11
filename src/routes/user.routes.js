@@ -32,9 +32,21 @@ router.route("/refreshToken").post(refreshAccessToken);
 
 router.route("/updateDetails").post(verifyJWT, updateAccountDetails);
 
-router.route("/updateAvatar").post(verifyJWT, updateUserAvatar);
+router
+	.route("/updateAvatar")
+	.post(
+		verifyJWT,
+		upload.fields([{ name: "avatar", maxCount: 1 }]),
+		updateUserAvatar
+	);
 
-router.route("/updateCoverImage").post(verifyJWT, updateUserCoverImg);
+router
+	.route("/updateCoverImage")
+	.post(
+		verifyJWT,
+		upload.fields([{ name: "coverImage", maxCount: 1 }]),
+		updateUserCoverImg
+	);
 
 router.route("/").get(verifyJWT, getCurrentUser);
 

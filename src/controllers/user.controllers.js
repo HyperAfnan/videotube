@@ -279,11 +279,15 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
 	const avatarLocalPath = req.files?.avatar[0]?.path;
 
+   if (!avatarLocalPath) {
+      throw new ApiError(400, "Avatar file is required");
+   }
+
 	// uploades new avatar on cloudinary
 	const avatar = await uploadOnCloudinary(avatarLocalPath);
 
 	// updates avatar on db
-	const returnedUser = await user
+	const returnedUser = await User
 		.findByIdAndUpdate(
 			req.user?._id,
 			{
@@ -314,7 +318,7 @@ const updateUserCoverImg = asyncHandler(async (req, res) => {
 	const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
 	// updates avatar on db
-	const returnedUser = await user
+	const returnedUser = await User
 		.findByIdAndUpdate(
 			req.user?._id,
 			{
@@ -326,7 +330,9 @@ const updateUserCoverImg = asyncHandler(async (req, res) => {
 
 	res
 		.status(200)
-		.json(new ApiResponse(200, returnedUser, "successfully updated cover image"));
+		.json(
+			new ApiResponse(200, returnedUser, "successfully updated cover image")
+		);
 });
 export {
 	registerUser,
