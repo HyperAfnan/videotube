@@ -5,6 +5,7 @@ import { uploadOnCloudinary } from "../utils/fileUpload.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import jwt from "jsonwebtoken";
+import { deleteOnCloudinary } from "../utils/fileDelete.js";
 
 const generateTokens = async (userId) => {
 	try {
@@ -222,4 +223,119 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 	}
 });
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken };
+const changePassword = asyncHandler(async (req, res) => {
+	const { oldPassword, newPassword } = req.body;
+
+	const user = await User.findById(req.user?._id);
+	const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+
+	if (!isPasswordCorrect) {
+		throw new ApiError(401, "Invalid password");
+	}
+
+	user.password = newPassword;
+	await user.save({ validateBeforeSave: false });
+
+	await res.status(200).json(new ApiResponse(200, {}, "Password changed"));
+});
+
+const getCurrentUser = asyncHandler(async (req, res) => {
+	return res
+		.status(200)
+		.json(new ApiResponse(200, req.user, "Current User Fetched successfully"));
+});
+
+const updateAccountDetails = asyncHandler(async (req, res) => {
+	const { fullName, username } = req.body;
+
+	if (!fullName || !username) {
+		throw new ApiError(400, "All fields required");
+	}
+
+	const user = await User.findByIdAndUpdate(
+		req.user?._id,
+		{ $set: { fullName, email } },
+		{ new: true }
+	).select("-password");
+
+	return res
+		.status(200)
+		.json(new ApiResponse(200, user, "Account details updated "));
+});
+
+const updateUserAvatar = asyncHandler(async (req, res) => {
+	// get user object from userid
+	// delete old avatar on cloudinary
+	// upload new avatar on cloudinary
+	// update db with new avatar url
+	const user = await User.findById(req.user?._id);
+
+	if (!user) {
+		throw new ApiError(401, "Unauthorized Request");
+	}
+
+	// deletes avatar on cloudinary
+	await deleteOnCloudinary(user.avatar);
+
+	const avatarLocalPath = req.files?.avatar[0]?.path;
+
+	// uploades new avatar on cloudinary
+	const avatar = await uploadOnCloudinary(avatarLocalPath);
+
+	// updates avatar on db
+	const User = await user
+		.findByIdAndUpdate(
+			req.user?._id,
+			{
+				$set: { avatar: avatar.secure_url },
+			},
+			{ new: true }
+		)
+		.select("-password -refreshToken");
+
+	res
+		.status(200)
+		.json(new ApiResponse(200, User, "successfully updated avatar"));
+});
+
+const updateUserCoverImg = asyncHandler(async (req, res) => {
+	const user = await User.findById(req.user?._id);
+
+	if (!user) {
+		throw new ApiError(401, "Unauthorized Request");
+	}
+
+	// deletes avatar on cloudinary
+	await deleteOnCloudinary(user.coverImage);
+
+	const coverImageLocalPath = req.files?.coverImage[0]?.path;
+
+	// uploades new avatar on cloudinary
+	const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+
+	// updates avatar on db
+	const User = await user
+		.findByIdAndUpdate(
+			req.user?._id,
+			{
+				$set: { coverImage: coverImage.secure_url },
+			},
+			{ new: true }
+		)
+		.select("-password -refreshToken");
+
+	res
+		.status(200)
+		.json(new ApiResponse(200, User, "successfully updated cover image"));
+});
+export {
+	registerUser,
+	loginUser,
+	logoutUser,
+	refreshAccessToken,
+	changePassword,
+	getCurrentUser,
+	updateAccountDetails,
+	updateUserAvatar,
+	updateUserCoverImg,
+};
