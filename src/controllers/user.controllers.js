@@ -279,23 +279,21 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
 	const avatarLocalPath = req.files?.avatar[0]?.path;
 
-   if (!avatarLocalPath) {
-      throw new ApiError(400, "Avatar file is required");
-   }
+	if (!avatarLocalPath) {
+		throw new ApiError(400, "Avatar file is required");
+	}
 
 	// uploades new avatar on cloudinary
 	const avatar = await uploadOnCloudinary(avatarLocalPath);
 
 	// updates avatar on db
-	const returnedUser = await User
-		.findByIdAndUpdate(
-			req.user?._id,
-			{
-				$set: { avatar: avatar.secure_url },
-			},
-			{ new: true }
-		)
-		.select("-password -refreshToken");
+	const returnedUser = await User.findByIdAndUpdate(
+		req.user?._id,
+		{
+			$set: { avatar: avatar.secure_url },
+		},
+		{ new: true }
+	).select("-password -refreshToken");
 
 	res
 		.status(200)
@@ -318,15 +316,13 @@ const updateUserCoverImg = asyncHandler(async (req, res) => {
 	const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
 	// updates avatar on db
-	const returnedUser = await User
-		.findByIdAndUpdate(
-			req.user?._id,
-			{
-				$set: { coverImage: coverImage.secure_url },
-			},
-			{ new: true }
-		)
-		.select("-password -refreshToken");
+	const returnedUser = await User.findByIdAndUpdate(
+		req.user?._id,
+		{
+			$set: { coverImage: coverImage.secure_url },
+		},
+		{ new: true }
+	).select("-password -refreshToken");
 
 	res
 		.status(200)
