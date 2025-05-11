@@ -283,7 +283,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 	const avatar = await uploadOnCloudinary(avatarLocalPath);
 
 	// updates avatar on db
-	const User = await user
+	const returnedUser = await user
 		.findByIdAndUpdate(
 			req.user?._id,
 			{
@@ -295,7 +295,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
 	res
 		.status(200)
-		.json(new ApiResponse(200, User, "successfully updated avatar"));
+		.json(new ApiResponse(200, returnedUser, "successfully updated avatar"));
 });
 
 const updateUserCoverImg = asyncHandler(async (req, res) => {
@@ -314,7 +314,7 @@ const updateUserCoverImg = asyncHandler(async (req, res) => {
 	const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
 	// updates avatar on db
-	const User = await user
+	const returnedUser = await user
 		.findByIdAndUpdate(
 			req.user?._id,
 			{
@@ -326,7 +326,7 @@ const updateUserCoverImg = asyncHandler(async (req, res) => {
 
 	res
 		.status(200)
-		.json(new ApiResponse(200, User, "successfully updated cover image"));
+		.json(new ApiResponse(200, returnedUser, "successfully updated cover image"));
 });
 export {
 	registerUser,
