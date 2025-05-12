@@ -35,10 +35,38 @@ const getUserTweets = asyncHandler(async (req, res) => {
 
 const updateTweet = asyncHandler(async (req, res) => {
 	//TODO: update tweet
+
+	const { tweetId } = req.params;
+	const { content } = req.body;
+
+	const tweet = await Tweet.findByIdAndUpdate(
+		new mongoose.Types.ObjectId(tweetId),
+		{ $set: { content: content } },
+		{ new: true }
+	);
+
+	if (!tweet) {
+		throw new ApiError(404, "Tweet not found");
+	}
+
+	res
+		.status(200)
+		.json(new ApiResponse(200, tweet, "Successfully updated tweet"));
 });
 
 const deleteTweet = asyncHandler(async (req, res) => {
 	//TODO: delete tweet
+
+	const { tweetId } = req.params;
+	const tweet = await Tweet.findByIdAndDelete(
+		new mongoose.Types.ObjectId(tweetId)
+	);
+
+	if (!tweet) {
+		throw new ApiError(404, "Tweet not found");
+	}
+
+	res.status(200).json(new ApiResponse(200, {}, "Successfully updated tweet"));
 });
 
 export { createTweet, getUserTweets, updateTweet, deleteTweet };
