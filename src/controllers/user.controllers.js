@@ -169,12 +169,16 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 const deleteUser = asyncHandler(async (req, res) => {
-	const user = await User.findByIdAndDelete(req.user._id);
-	const options = { httpOnly: true, secure: true };
+	const user = await User.findById(req.user._id);
 
-	if (!user) {
-		throw new ApiError(404, "User not found");
+	await deleteOnCloudinary(user.avatar);
+	if (user.coverImage) {
+		await deleteOnCloudinary(user.coverImage);
 	}
+
+	await User.findByIdAndDelete(req.user._id);
+
+	const options = { httpOnly: true, secure: true };
 
 	return res
 		.status(200)
