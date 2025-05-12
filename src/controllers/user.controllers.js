@@ -6,6 +6,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import jwt from "jsonwebtoken";
 import { deleteOnCloudinary } from "../utils/fileDelete.js";
+import { Subscription } from "../models/subscription.models.js";
 
 const generateTokens = async (userId) => {
 	try {
@@ -330,6 +331,71 @@ const updateUserCoverImg = asyncHandler(async (req, res) => {
 			new ApiResponse(200, returnedUser, "successfully updated cover image")
 		);
 });
+
+const getUserChannelProfile = asyncHandler(async (req, res) => {
+	const { username } = req.params;
+
+	if (!username) {
+		throw new ApiError(400, "Username is missing");
+	}
+
+	const channel = await User.aggregate([
+		{
+			$match: { username: username.toLowerCase() },
+		},
+		{
+			$lookup: {
+				from: "subscriptions",
+				localField: "_id",
+				foreignField: "channel",
+				as: "subscribers",
+			},
+		},
+		{
+			$lookup: {
+				from: "subscriptions",
+				localField: "_id",
+				foreignField: "subscriber",
+				as: "subscribedTo",
+			},
+		},
+		{
+			$addFields: {
+				subscribersCount: { $size: "$subscribers" },
+				subscribedToCount: { $size: "$subscribedTo" },
+				isSubscribed: {
+					$condition: {
+						if: { $in: [req.user?._id, "$subscribers.subscriber"] },
+						then: true,
+						else: false,
+					},
+				},
+			},
+		},
+		{
+			$project: {
+				fullName: 1,
+				username: 1,
+				subscribersCount: 1,
+				subscribedToCount: 1,
+				avatar: 1,
+				coverImage: 1,
+				isSubscribed: 1,
+				email: 1,
+				subscribers: 1,
+				subscribedTo: 1,
+			},
+		},
+	]);
+	if (!channel?.length) {
+		throw new ApiError(404, "Channel not found");
+	}
+
+	return res
+		.status(200)
+		.json(new ApiResponse(200, channel[0], "Channel fetched successfully"));
+});
+
 export {
 	registerUser,
 	loginUser,
@@ -340,4 +406,5 @@ export {
 	updateAccountDetails,
 	updateUserAvatar,
 	updateUserCoverImg,
+	getUserChannelProfile,
 };
