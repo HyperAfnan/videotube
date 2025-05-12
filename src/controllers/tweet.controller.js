@@ -29,10 +29,6 @@ const createTweet = asyncHandler(async (req, res) => {
 		.json(new ApiResponse(200, tweet, "Successfully create tweet"));
 });
 
-const getUserTweets = asyncHandler(async (req, res) => {
-	// TODO: get user tweets
-});
-
 const updateTweet = asyncHandler(async (req, res) => {
 	//TODO: update tweet
 
@@ -69,4 +65,4 @@ const deleteTweet = asyncHandler(async (req, res) => {
 	res.status(200).json(new ApiResponse(200, {}, "Successfully updated tweet"));
 });
 
-export { createTweet, getUserTweets, updateTweet, deleteTweet };
+export { createTweet, updateTweet, deleteTweet };

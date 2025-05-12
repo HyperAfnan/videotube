@@ -12,6 +12,7 @@ import {
 	updateAccountDetails,
 	updateUserAvatar,
 	updateUserCoverImg,
+	getUserTweets,
 } from "../controllers/user.controllers.js";
 import { upload } from "../middlewares/multer.middlewares.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
@@ -49,7 +50,9 @@ router.route("/changePassword").patch(verifyJWT, changePassword);
 
 router.route("/history").get(verifyJWT, getUserWatchHistory);
 
-router.route("/channel/:username").get(verifyJWT, getUserChannelProfile);
+router.route("/ch/:username").get(verifyJWT, getUserChannelProfile);
+
+router.route("/t/:username").get(verifyJWT, getUserTweets);
 
 router.route("/delete").get(verifyJWT, deleteUser);
 

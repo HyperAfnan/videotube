@@ -419,7 +419,7 @@ const getUserWatchHistory = asyncHandler(async (req, res) => {
 	const user = await User.aggregate([
 		{ $match: { _id: new mongoose.Types.ObjectId(req.user._id) } },
 		{
-			$loopup: {
+			$lookup: {
 				from: "videos",
 				localField: "watchHistory",
 				foreignField: "_id",
@@ -456,6 +456,39 @@ const getUserWatchHistory = asyncHandler(async (req, res) => {
 		);
 });
 
+const getUserTweets = asyncHandler(async (req, res) => {
+	// TODO: get user tweets
+	// get user from req.user
+	// aggregate with User.aggregate
+	// return user tweets
+
+	const tweets = await User.aggregate([
+		{
+			$match: {
+				_id: new mongoose.Types.ObjectId(req.user._id),
+			},
+		},
+		{
+			$lookup: {
+				from: "tweets",
+				localField: "tweets",
+				foreignField: "tweets",
+				as: "tweets",
+			},
+		},
+		{
+			$project: {
+				username: 1,
+				tweets: 1,
+				email: 1,
+				avatar: 1,
+				createdAt: 1,
+				updatedAt: 1,
+			},
+		},
+	]);
+});
+
 export {
 	registerUser,
 	loginUser,
@@ -469,4 +502,5 @@ export {
 	updateUserCoverImg,
 	getUserChannelProfile,
 	getUserWatchHistory,
+	getUserTweets,
 };
