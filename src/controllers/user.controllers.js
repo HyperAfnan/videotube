@@ -3,10 +3,9 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { User } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/fileUpload.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
 import jwt from "jsonwebtoken";
 import { deleteOnCloudinary } from "../utils/fileDelete.js";
-import { Subscription } from "../models/subscription.models.js";
+import mongoose from "mongoose";
 
 const generateTokens = async (userId) => {
 	try {
@@ -168,6 +167,22 @@ const logoutUser = asyncHandler(async (req, res) => {
 		.clearCookie("refreshToken", options)
 		.json(new ApiResponse(200, {}, "User logged out successfully"));
 });
+
+const deleteUser = asyncHandler(async (req, res) => {
+	const user = await User.findByIdAndDelete(req.user._id);
+	const options = { httpOnly: true, secure: true };
+
+	if (!user) {
+		throw new ApiError(404, "User not found");
+	}
+
+	return res
+		.status(200)
+		.clearCookie("accessToken", options)
+		.clearCookie("refreshToken", options)
+		.json(new ApiResponse(200, {}, "successfully delete user"));
+});
+
 const refreshAccessToken = asyncHandler(async (req, res) => {
 	// this is how accessToken and refreshToken works
 	//      first both are generated in server
@@ -396,10 +411,52 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 		.json(new ApiResponse(200, channel[0], "Channel fetched successfully"));
 });
 
+const getUserWatchHistory = asyncHandler(async (req, res) => {
+	const user = await User.aggregate([
+		{ $match: { _id: new mongoose.Types.ObjectId(req.user._id) } },
+		{
+			$loopup: {
+				from: "videos",
+				localField: "watchHistory",
+				foreignField: "_id",
+				as: "watchHistory",
+				pipeline: [
+					{
+						$lookup: {
+							from: "users",
+							localField: "owner",
+							foreignField: "_id",
+							as: "owner",
+							pipeline: [
+								{
+									fullName: 1,
+									username: 1,
+									avatar: 1,
+								},
+							],
+						},
+					},
+				],
+			},
+		},
+	]);
+
+	return res
+		.status(200)
+		.json(
+			new ApiResponse(
+				200,
+				user[0].watchHistory,
+				"watch history fetched successfully"
+			)
+		);
+});
+
 export {
 	registerUser,
 	loginUser,
 	logoutUser,
+	deleteUser,
 	refreshAccessToken,
 	changePassword,
 	getCurrentUser,
@@ -407,4 +464,5 @@ export {
 	updateUserAvatar,
 	updateUserCoverImg,
 	getUserChannelProfile,
+	getUserWatchHistory,
 };
