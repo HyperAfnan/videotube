@@ -6,6 +6,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import { deleteOnCloudinary } from "../utils/fileDelete.js";
 import mongoose from "mongoose";
+import fs from "fs";
 
 const generateTokens = async (userId) => {
 	try {
@@ -488,11 +489,13 @@ const getUserTweets = asyncHandler(async (req, res) => {
 		},
 	]);
 
-   if (!tweets?.length) {
-      throw new ApiError(404, "No tweets found");
-   }
+	if (!tweets?.length) {
+		throw new ApiError(404, "No tweets found");
+	}
 
-   res.status(200).json(new ApiResponse(200, tweets, "User tweets fetched successfully"));
+	res
+		.status(200)
+		.json(new ApiResponse(200, tweets, "User tweets fetched successfully"));
 });
 
 export {
