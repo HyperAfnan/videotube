@@ -5,8 +5,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({ credentials: true }));
-app.use(express.json({ limit: "1mb" }));
-app.use(express.urlencoded({ extended: true, limit: "1mb" }));
+app.use(express.json({ limit: "5mb" }));
+app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
