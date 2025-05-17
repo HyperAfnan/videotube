@@ -104,6 +104,11 @@ const getVideoById = asyncHandler(async (req, res) => {
 		views: videoData.views + 1,
 	});
 
+	await User.updateOne(
+		{ _id: req.user._id },
+		{ $push: { watchHistory: new mongoose.Types.ObjectId(videoData._id) } }
+	);
+
 	return res
 		.status(201)
 		.json(new ApiResponse(200, video, "successfully got video"));
