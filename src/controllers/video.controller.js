@@ -8,12 +8,50 @@ import { uploadOnCloudinary } from "../utils/fileUpload.js";
 import { deleteOnCloudinary } from "../utils/fileDelete.js";
 
 const getAllVideos = asyncHandler(async (req, res) => {
-	const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
 	//TODO: get all videos based on query, sort, pagination
+	// if userId is passed it returns videos for the user
+	// if it is not passed it returns all videos of current user
+
+	var { page = 1, limit = 10, q, sortBy, sortType, userId } = req.query;
+
+	if (sortType === "asc") sortType = 1;
+	else if (sortType === "desc") sortType = -1;
+	else sortType = -1;
+
+	if (!sortBy) sortBy = "createdAt";
+	if (!q) throw new ApiError(402, "q query is required");
+	if (userId) {
+		if (!isValidObjectId(userId)) throw new ApiError(400, "Invalid userId");
+	}
+
+	const user = userId || req.user._id;
+
+	const aggregate = Video.aggregate([
+		{ $match: { owner: new mongoose.Types.ObjectId(user) } },
+		{ $match: { title: { $regex: q } } },
+		{ $sort: { [sortBy]: sortType } },
+	]);
+
+	const myCustomLabels = {
+		totalDocs: "videoCount",
+		docs: "videos",
+		page: "currentPage",
+	};
+	const options = { page, limit, customLabels: myCustomLabels };
+
+	await Video.aggregatePaginate(aggregate, options)
+		.then(function (data) {
+			res
+				.status(200)
+				.json(new ApiResponse(200, data, "successfully got all videos"));
+		})
+		.catch(function (err) {
+			console.log(err);
+		});
 });
 
 const publishAVideo = asyncHandler(async (req, res) => {
-	// TODO: get video, upload to cloudinary, create video
+	// TODO: get video, upload to clmarkermarkeroudinary, create video
 	const { title, description } = req.body;
 	const videoFileLocalPath = req.files.videoFile[0].path;
 	const thumbnailLocalPath = req.files.thumbnail[0].path;
@@ -39,7 +77,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
 		title,
 		description,
 		duration,
-		owner: req.user,
+		owner: req.user._id,
 		isPublished: true,
 	});
 
