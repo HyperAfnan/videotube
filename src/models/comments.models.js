@@ -5,6 +5,7 @@ const commentSchema = new Schema(
 	{
 		content: { type: String, requuired: true },
 		video: { type: Schema.Types.ObjectId, ref: "user" },
+		tweet: { type: Schema.Types.ObjectId, ref: "tweet" },
 		user: { type: Schema.Types.ObjectId, ref: "video" },
 	},
 	{ timestamps: true }

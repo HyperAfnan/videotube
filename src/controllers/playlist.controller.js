@@ -151,7 +151,8 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 	if (playlist.owner.toString() !== req.user._id.toString())
 		throw new ApiError(404, "playlist not found");
 
-	if (!playlist.videos.includes(video._id.toString())) throw new ApiError(404, "Video not found in playlist")
+	if (!playlist.videos.includes(video._id.toString()))
+		throw new ApiError(404, "Video not found in playlist");
 
 	const aggregationPipeline = [
 		{ $match: { _id: new mongoose.Types.ObjectId(playlistId) } },
@@ -165,12 +166,12 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 		},
 	];
 
-   const newPlaylist = await Playlist.aggregate(aggregationPipeline)
+	const newPlaylist = await Playlist.aggregate(aggregationPipeline);
 
-   if (newPlaylist[0].videos[0]._id.toString() === video._id.toString()) {
+	if (newPlaylist[0].videos[0]._id.toString() === video._id.toString()) {
 		const thumbnail = newPlaylist[0].videos[1].thumbnail;
 		await Playlist.findByIdAndUpdate(playlistId, { thumbnail });
-   }
+	}
 
 	await Playlist.updateOne(
 		{ _id: playlistId },
