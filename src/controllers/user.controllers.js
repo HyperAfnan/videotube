@@ -6,7 +6,6 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import { deleteOnCloudinary } from "../utils/fileDelete.js";
 import mongoose from "mongoose";
-import fs from "fs";
 
 const generateTokens = async (userId) => {
 	try {
