@@ -12,7 +12,7 @@ const createTweet = asyncHandler(async (req, res) => {
 	// create a tweet with Tweet.create()
 	// return tweet details
 
-	const { content , title } = req.body;
+	const { content, title } = req.body;
 
 	if (!content) throw new ApiError(404, "Tweet content not found");
 	if (!title) throw new ApiError(404, "Tweet title not found");
@@ -28,17 +28,22 @@ const updateTweet = asyncHandler(async (req, res) => {
 	//TODO: update tweet
 
 	const { tweetId } = req.params;
-	const { content , title } = req.body;
-   
-   if (!tweetId) throw new ApiError(402, "Tweetid is required")
-   if (!isValidObjectId(tweetId)) throw new ApiError(401, "Invalid tweetid")
-   if (!content && !title) throw new ApiError(402, "Content or title field required")
+	const { content, title } = req.body;
 
-   const tweet = await Tweet.findById(tweetId)
-   if (!tweet) throw new ApiError(404, "Tweet not found");
-   if (tweet.owner.toString() !== req.user._id.toString() ) throw new ApiError(404, "Tweet not found")
+	if (!tweetId) throw new ApiError(402, "Tweetid is required");
+	if (!isValidObjectId(tweetId)) throw new ApiError(401, "Invalid tweetid");
+	if (!content && !title)
+		throw new ApiError(402, "Content or title field required");
 
-	const updatedTweet = await Tweet.findByIdAndUpdate( tweetId, { content, title });
+	const tweet = await Tweet.findById(tweetId);
+	if (!tweet) throw new ApiError(404, "Tweet not found");
+	if (tweet.owner.toString() !== req.user._id.toString())
+		throw new ApiError(404, "Tweet not found");
+
+	const updatedTweet = await Tweet.findByIdAndUpdate(tweetId, {
+		content,
+		title,
+	});
 
 	res
 		.status(200)
@@ -50,8 +55,8 @@ const deleteTweet = asyncHandler(async (req, res) => {
 
 	const { tweetId } = req.params;
 
-   if (!tweetId) throw new ApiError(402, "Tweetid is required")
-   if (!isValidObjectId(tweetId)) throw new ApiError(401, "Invalid tweetid")
+	if (!tweetId) throw new ApiError(402, "Tweetid is required");
+	if (!isValidObjectId(tweetId)) throw new ApiError(401, "Invalid tweetid");
 
 	const tweet = await Tweet.findByIdAndDelete(tweetId);
 	if (!tweet) throw new ApiError(404, "Tweet not found");

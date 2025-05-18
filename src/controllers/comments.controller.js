@@ -91,7 +91,7 @@ const getComments = asyncHandler(async (req, res) => {
 const addComment = asyncHandler(async (req, res) => {
 	// TODO: add a comment to a video
 	const { id } = req.params;
-	const {content } = req.body;
+	const { content } = req.body;
 
 	if (!id) throw new ApiError(402, "Video is required");
 	if (!content) throw new ApiError(402, "Comment is required");
@@ -125,7 +125,8 @@ const updateComment = asyncHandler(async (req, res) => {
 
 	const comment = await Comment.findById(commentId);
 	if (!comment) throw new ApiError(404, "Comment not found");
-   if (comment.user.toString() !== req.user._id.toString()) throw new ApiError(404, "Comment not found");
+	if (comment.user.toString() !== req.user._id.toString())
+		throw new ApiError(404, "Comment not found");
 
 	const updatedComment = await Comment.findByIdAndUpdate(comment._id, {
 		content,
@@ -144,7 +145,8 @@ const deleteComment = asyncHandler(async (req, res) => {
 
 	const comment = await Comment.findById(commentId);
 	if (!comment) throw new ApiError(404, "Comment not found");
-   if (comment.user.toString() !== req.user._id.toString()) throw new ApiError(404, "Comment not found");
+	if (comment.user.toString() !== req.user._id.toString())
+		throw new ApiError(404, "Comment not found");
 
 	await Comment.findByIdAndDelete(comment._id);
 

@@ -32,9 +32,8 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 		subscriber: req.user._id,
 	});
 
-	var subscription;
 	if (isSubscribed.length > 0) {
-		subscription = await Subscription.deleteOne({
+		const subscription = await Subscription.deleteOne({
 			channel: channelId,
 			subscriber: req.user._id,
 		});
@@ -42,7 +41,7 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 			.status(200)
 			.json(new ApiResponse(200, subscription, "Successfully unsubscribed"));
 	} else {
-		subscription = await Subscription.create({
+		const subscription = await Subscription.create({
 			channel: channelId,
 			subscriber: req.user._id,
 		});
