@@ -24,7 +24,7 @@ const deleteOnCloudinary = async (imageUrl) => {
 		});
 		return response;
 	} catch (err) {
-		console.error("Error deleting file to Cloudinary:", err);
+		console.log("error deleting file to Cloudinary ", err);
 	}
 };
 

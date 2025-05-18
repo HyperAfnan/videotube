@@ -201,46 +201,42 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 	//      and returns in the form of cookies
 	//
 	//      or if the refresh token does not matches, the user is said to login again
-	try {
-		const incomingRefreshToken =
-			req.cookies.refreshToken || req.body.refreshToken;
+	const incomingRefreshToken =
+		req.cookies.refreshToken || req.body.refreshToken;
 
-		if (!incomingRefreshToken) {
-			throw new ApiError(401, "Unauthorized request");
-		}
-		const decodedToken = jwt.verify(
-			incomingRefreshToken,
-			process.env.ACCESS_TOKEN_SECRET
-		);
-
-		const user = await User.findById(decodedToken?._id);
-
-		if (!user) {
-			throw new ApiError(401, "Invalid Token");
-		}
-
-		if (incomingRefreshToken !== user?.refreshToken) {
-			throw new ApiError(401, "Refresh token is expired or used");
-		}
-
-		const { refreshToken, accessToken } = await generateTokens(user._id);
-
-		const options = { httpOnly: true, secure: true };
-
-		return res
-			.status(200)
-			.cookie("accessToken", accessToken, options)
-			.cookie("refreshToken", refreshToken, options)
-			.json(
-				new ApiResponse(
-					200,
-					{ accessToken, refreshToken },
-					"Access Token refreshed "
-				)
-			);
-	} catch (err) {
-		throw new ApiError("Invalid refresh token");
+	if (!incomingRefreshToken) {
+		throw new ApiError(401, "Unauthorized request");
 	}
+	const decodedToken = jwt.verify(
+		incomingRefreshToken,
+		process.env.ACCESS_TOKEN_SECRET
+	);
+
+	const user = await User.findById(decodedToken?._id);
+
+	if (!user) {
+		throw new ApiError(401, "Invalid Token");
+	}
+
+	if (incomingRefreshToken !== user?.refreshToken) {
+		throw new ApiError(401, "Refresh token is expired or used");
+	}
+
+	const { refreshToken, accessToken } = await generateTokens(user._id);
+
+	const options = { httpOnly: true, secure: true };
+
+	return res
+		.status(200)
+		.cookie("accessToken", accessToken, options)
+		.cookie("refreshToken", refreshToken, options)
+		.json(
+			new ApiResponse(
+				200,
+				{ accessToken, refreshToken },
+				"Access Token refreshed "
+			)
+		);
 });
 
 const changePassword = asyncHandler(async (req, res) => {

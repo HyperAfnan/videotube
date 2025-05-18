@@ -29,7 +29,7 @@ export default defineConfig([
     rules: {
       "prettier/prettier": "error",
       "no-console": "off",
-      "no-unused-vars": "off",
+      "no-unused-vars": "warn",
     },
   },
 ]);

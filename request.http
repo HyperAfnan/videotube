@@ -1,5 +1,0 @@
-POST http://localhost:5000/api/v1/users/logout
-Content-Type: application/json
-
-{
-}
