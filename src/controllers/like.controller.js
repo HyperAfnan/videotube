@@ -115,9 +115,7 @@ const getLikedVideos = asyncHandler(async (req, res) => {
 		{ $project: { username: 1, likedVideos: 1 } },
 	]);
 
-	if (!likedVideos) {
-		throw new ApiError(403, "No video liked");
-	}
+	if (!likedVideos) throw new ApiError(403, "No video liked");
 
 	res
 		.status(200)

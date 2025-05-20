@@ -82,6 +82,8 @@ const getChannelStats = asyncHandler(async (req, res) => {
 		},
 	]);
 
+   if (!stats?.length) throw new ApiError(404, "Channel not found")
+
 	res
 		.status(200)
 		.json(new ApiResponse(200, stats, "Successfully got channel stats"));
@@ -104,7 +106,7 @@ const getChannelVideos = asyncHandler(async (req, res) => {
 		{ $project: { videos: 1, username: 1, totalVideos: 1 } },
 	]);
 
-	if (!channelVideos) throw new ApiError(404, "No video found");
+	if (!channelVideos?.length) throw new ApiError(404, "No video found");
 
 	res
 		.status(200)
