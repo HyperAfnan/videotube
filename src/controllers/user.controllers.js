@@ -410,45 +410,6 @@ const getUserWatchHistory = asyncHandler(async (req, res) => {
 		);
 });
 
-const getUserTweets = asyncHandler(async (req, res) => {
-	// TODO: get user tweets
-	// get user from req.user
-	// aggregate with User.aggregate
-	// return user tweets
-
-	const tweets = await User.aggregate([
-		{
-			$match: {
-				_id: new mongoose.Types.ObjectId(req.user._id),
-			},
-		},
-		{
-			$lookup: {
-				from: "tweets",
-				localField: "tweets",
-				foreignField: "tweets",
-				as: "tweets",
-			},
-		},
-		{
-			$project: {
-				username: 1,
-				tweets: 1,
-				email: 1,
-				avatar: 1,
-				createdAt: 1,
-				updatedAt: 1,
-			},
-		},
-	]);
-
-	if (!tweets?.length) throw new ApiError(404, "No tweets found");
-
-	res
-		.status(200)
-		.json(new ApiResponse(200, tweets, "User tweets fetched successfully"));
-});
-
 export {
 	registerUser,
 	loginUser,
@@ -462,5 +423,4 @@ export {
 	updateUserCoverImg,
 	getUserChannelProfile,
 	getUserWatchHistory,
-	getUserTweets,
 };

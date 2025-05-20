@@ -1,5 +1,6 @@
 import { isValidObjectId } from "mongoose";
 import { Tweet } from "../models/tweet.models.js";
+import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/apiErrors.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
@@ -64,4 +65,32 @@ const deleteTweet = asyncHandler(async (req, res) => {
 	res.status(200).json(new ApiResponse(200, {}, "Successfully updated tweet"));
 });
 
-export { createTweet, updateTweet, deleteTweet };
+const getUserTweets = asyncHandler(async (req, res) => {
+	// TODO: get user tweets
+	// get user from req.user
+	// aggregate with User.aggregate
+	// return user tweets
+
+   const { userId } = req.params
+   if (!userId) throw new ApiError(400, "userId is required")
+   if (!isValidObjectId(userId)) throw new ApiError(402, "Invalid userId ")
+
+   const user = await User.findById(userId)
+   if (!user) throw new ApiError(404, "user not found")
+
+	const tweets = await User.aggregate([
+		{ $match: { _id: new mongoose.Types.ObjectId(req.user._id), }, },
+		{ $lookup: { from: "tweets", localField: "tweets", foreignField: "tweets", as: "tweets", }, },
+		{ $project: { username: 1, tweets: 1, email: 1, avatar: 1, createdAt: 1, updatedAt: 1, },
+		},
+	]);
+
+	if (!tweets?.length) throw new ApiError(404, "No tweets found");
+
+	res
+		.status(200)
+		.json(new ApiResponse(200, tweets, "User tweets fetched successfully"));
+});
+
+
+export { createTweet, updateTweet, deleteTweet , getUserTweets};
