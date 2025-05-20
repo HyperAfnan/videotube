@@ -40,23 +40,27 @@ const registerUser = asyncHandler(async (req, res) => {
 	if (email === "") throw new ApiError(400, "email is required");
 	if (username === "") throw new ApiError(400, "user name is required");
 	if (password === "") throw new ApiError(400, "password is required");
-   for (let i = 0; i < username.length; i++) {
-      if (username[i] == " ") throw new ApiError(400, "no whitespace allowed in username");
-   }
+	for (let i = 0; i < username.length; i++) {
+		if (username[i] == " ")
+			throw new ApiError(400, "no whitespace allowed in username");
+	}
 
 	const existedUser = await User.findOne({ $or: [{ username }, { email }] });
-	if (existedUser) throw new ApiError(409, "User with email or username already exists");
+	if (existedUser)
+		throw new ApiError(409, "User with email or username already exists");
 
 	const avatarLocalPath = req.files?.avatar[0]?.path;
 	let coverImageLocalPath;
 
-	if (req.files?.coverImage) coverImageLocalPath = req.files?.coverImage[0]?.path;
+	if (req.files?.coverImage)
+		coverImageLocalPath = req.files?.coverImage[0]?.path;
 
 	if (!avatarLocalPath) throw new ApiError(400, "Avatar file is required");
 
 	const avatar = await uploadOnCloudinary(avatarLocalPath);
 	var coverImage;
-	if (coverImageLocalPath) coverImage = await uploadOnCloudinary(coverImageLocalPath);
+	if (coverImageLocalPath)
+		coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
 	if (!avatar) throw new ApiError(400, "Avatar is required");
 
@@ -72,7 +76,8 @@ const registerUser = asyncHandler(async (req, res) => {
 	const createUser = await User.findById(user._id).select(
 		"-password -refreshToken"
 	);
-	if (!createUser) throw new ApiError(500, "Something went wrong while creating user");
+	if (!createUser)
+		throw new ApiError(500, "Something went wrong while creating user");
 
 	return res
 		.status(201)
@@ -103,7 +108,7 @@ const loginUser = asyncHandler(async (req, res) => {
 	const loggedInUser = await User.findById(user._id).select(
 		"-password -refreshToken"
 	);
-	const options = { httpOnly: true, secure: true, };
+	const options = { httpOnly: true, secure: true };
 
 	return res
 		.status(200)
@@ -177,14 +182,17 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 		req.cookies.refreshToken || req.body.refreshToken;
 
 	if (!incomingRefreshToken) throw new ApiError(401, "Unauthorized request");
-	const decodedToken = jwt.verify( incomingRefreshToken, process.env.ACCESS_TOKEN_SECRET);
+	const decodedToken = jwt.verify(
+		incomingRefreshToken,
+		process.env.ACCESS_TOKEN_SECRET
+	);
 
 	const user = await User.findById(decodedToken?._id);
 
 	if (!user) throw new ApiError(401, "Invalid Token");
 
-	if (incomingRefreshToken !== user?.refreshToken) 
-         throw new ApiError(401, "Refresh token is expired or used");
+	if (incomingRefreshToken !== user?.refreshToken)
+		throw new ApiError(401, "Refresh token is expired or used");
 
 	const { refreshToken, accessToken } = await generateTokens(user._id);
 

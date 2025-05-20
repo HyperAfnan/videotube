@@ -20,7 +20,8 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
 	if (!sortBy) sortBy = "createdAt";
 	if (!q) throw new ApiError(402, "q query is required");
-	if (userId) if (!isValidObjectId(userId)) throw new ApiError(400, "Invalid userId");
+	if (userId)
+		if (!isValidObjectId(userId)) throw new ApiError(400, "Invalid userId");
 
 	const user = userId || req.user._id;
 
@@ -120,8 +121,8 @@ const updateVideo = asyncHandler(async (req, res) => {
 	if (!isValidObjectId(videoId)) throw new ApiError(400, "Invalid Video Id");
 
 	const videoData = await Video.findById(videoId);
-	if (videoData.owner.toString() !== req.user._id.toString()) 
-         throw new ApiError(404, "Video not found");
+	if (videoData.owner.toString() !== req.user._id.toString())
+		throw new ApiError(404, "Video not found");
 
 	var thumbnail;
 	const thumbnailLocalPath = req.files?.thumbnail[0]?.path;
@@ -151,8 +152,8 @@ const deleteVideo = asyncHandler(async (req, res) => {
 
 	if (!isValidObjectId(videoId)) throw new ApiError(400, "Invalid Video Id");
 	const video = await Video.findById(videoId);
-	if (video.owner.toString() !== req.user._id.toString()) 
-      throw new ApiError(404, "Video not found");
+	if (video.owner.toString() !== req.user._id.toString())
+		throw new ApiError(404, "Video not found");
 	if (!video) throw new ApiError("Video not found");
 
 	await deleteOnCloudinary(video.videoFile).catch((e) =>
@@ -178,12 +179,16 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
 	const videoData = await Video.findById(videoId);
 	if (!videoData) throw new ApiError(404, "Video not found");
 
-	if (videoData.owner.toString() !== req.user._id.toString()) 
-         throw new ApiError(404, "Video not found");
+	if (videoData.owner.toString() !== req.user._id.toString())
+		throw new ApiError(404, "Video not found");
 
 	var video;
-	if (!videoData.isPublished) video = await Video.findByIdAndUpdate(videoData._id, { isPublished: true }); 
-   else video = await Video.findByIdAndUpdate(videoData._id, { isPublished: false, });
+	if (!videoData.isPublished)
+		video = await Video.findByIdAndUpdate(videoData._id, { isPublished: true });
+	else
+		video = await Video.findByIdAndUpdate(videoData._id, {
+			isPublished: false,
+		});
 
 	res
 		.status(200)

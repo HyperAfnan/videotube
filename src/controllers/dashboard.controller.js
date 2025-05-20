@@ -82,7 +82,7 @@ const getChannelStats = asyncHandler(async (req, res) => {
 		},
 	]);
 
-   if (!stats?.length) throw new ApiError(404, "Channel not found")
+	if (!stats?.length) throw new ApiError(404, "Channel not found");
 
 	res
 		.status(200)
