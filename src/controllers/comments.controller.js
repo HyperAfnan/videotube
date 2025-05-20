@@ -6,7 +6,7 @@ import { Tweet } from "../models/tweet.models.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
-const getComments = asyncHandler(async (req, res) => {
+const getVideoComments = asyncHandler(async (req, res) => {
 	//TODO: get all comments for a video
 	const { id } = req.params;
 	const { page = 1, limit = 10 } = req.query;
@@ -14,12 +14,8 @@ const getComments = asyncHandler(async (req, res) => {
 	if (!id) throw new ApiError(402, "commentid is required");
 	if (!isValidObjectId(id)) throw new ApiError(402, "invalid comment id");
 
-	var idOf;
 	const video = await Video.findById(id);
-	const tweet = await Tweet.findById(id);
-	if (video) idOf = "video";
-	else if (tweet) idOf = "tweet";
-	else throw new ApiError(404, "Video or Tweet not found");
+   if (!video) throw new ApiError(404, "Video not found");
 
 	const customLabels = {
 		totalDocs: "totalComments",
@@ -30,27 +26,10 @@ const getComments = asyncHandler(async (req, res) => {
 
 	const pipeline = [
 		{ $match: { _id: new mongoose.Types.ObjectId(id) } },
-		{
-			$lookup: {
-				from: "comments",
-				localField: "_id",
-				foreignField: idOf,
-				as: "comments",
+		{ $lookup: { from: "comments", localField: "_id", foreignField: "video", as: "comments",
 				pipeline: [
-					{
-						$lookup: {
-							from: "users",
-							localField: "user",
-							foreignField: "_id",
-							as: "user",
-							pipeline: [
-								{
-									$project: {
-										username: 1,
-										avatar: 1,
-									},
-								},
-							],
+					{ $lookup: { from: "users", localField: "user", foreignField: "_id", as: "user",
+							pipeline: [ { $project: { username: 1, avatar: 1, }, }, ],
 						},
 					},
 				],
@@ -59,7 +38,6 @@ const getComments = asyncHandler(async (req, res) => {
 		{ $project: { comments: 1, title: 1, owner: 1 } },
 	];
 
-	if (idOf == "video") {
 		const aggregation = Video.aggregate(pipeline);
 
 		await Video.aggregatePaginate(aggregation, options)
@@ -72,48 +50,94 @@ const getComments = asyncHandler(async (req, res) => {
 				console.log(err);
 				throw new ApiError(500, "Internal server error");
 			});
-	} else if (idOf == "tweet") {
-		const aggregation = Tweet.aggregate(pipeline);
+	});
 
-		await Tweet.aggregatePaginate(aggregation, options)
-			.then(function (data) {
-				res
-					.status(200)
-					.json(new ApiResponse(200, data, "successfully got all comments"));
-			})
-			.catch(function (err) {
-				console.log(err);
-				throw new ApiError(500, "Internal server error");
-			});
-	}
+const getTweetComments = asyncHandler(async (req, res) => {
+	//TODO: get all comments for a tweet
+	const { id } = req.params;
+	const { page = 1, limit = 10 } = req.query;
+
+	if (!id) throw new ApiError(402, "commentid is required");
+	if (!isValidObjectId(id)) throw new ApiError(402, "invalid comment id");
+
+	const tweet = await Tweet.findById(id);
+   if (!tweet) throw new ApiError(404, "Tweet not found");
+
+	const customLabels = {
+		totalDocs: "totalComments",
+		docs: "tweet",
+		page: "currentPage",
+	};
+	const options = { page, limit, customLabels };
+
+	const pipeline = [
+		{ $match: { _id: new mongoose.Types.ObjectId(id) } },
+		{ $lookup: { from: "comments", localField: "_id", foreignField: "tweet", as: "comments",
+				pipeline: [
+					{ $lookup: { from: "users", localField: "user", foreignField: "_id", as: "user",
+							pipeline: [
+								{ $project: { username: 1, avatar: 1, }, },
+							],
+						},
+					},
+				],
+			},
+		},
+		{ $project: { comments: 1, title: 1, owner: 1 } },
+	];
+
+	const aggregation = Tweet.aggregate(pipeline);
+
+	await Tweet.aggregatePaginate(aggregation, options)
+		.then(function (data) {
+			res
+				.status(200)
+				.json(new ApiResponse(200, data, "successfully got all comments"));
+		})
+		.catch(function (err) {
+			console.log(err);
+			throw new ApiError(500, "Internal server error");
+		});
 });
 
-const addComment = asyncHandler(async (req, res) => {
+const addVideoComment = asyncHandler(async (req, res) => {
 	// TODO: add a comment to a video
 	const { id } = req.params;
 	const { content } = req.body;
 
-	if (!id) throw new ApiError(402, "Video is required");
+	if (!id) throw new ApiError(402, "Videoid is required");
 	if (!content) throw new ApiError(402, "Comment is required");
 	if (!isValidObjectId(id)) throw new ApiError(402, "Invalid video id");
 
-	var idOf;
 	const video = await Video.findById(id);
-	const tweet = await Tweet.findById(id);
-	if (video) idOf = "video";
-	else if (tweet) idOf = "tweet";
-	else throw new ApiError(404, "Video or Tweet not found");
+   if (!video) throw new ApiError(404, "Video not found");
 
-	const comment = await Comment.create({
-		[idOf]: id,
-		user: req.user._id,
-		content,
-	});
+	const comment = await Comment.create({ video: id, user: req.user._id, content });
 
 	res
 		.status(200)
 		.json(new ApiResponse(200, comment, "Successfully commented on the video"));
 });
+
+const addTweetComment = asyncHandler(async (req, res) => {
+	// TODO: add a comment to a tweet
+	const { id } = req.params;
+	const { content } = req.body;
+
+	if (!id) throw new ApiError(402, "tweetid is required");
+	if (!content) throw new ApiError(402, "Comment is required");
+	if (!isValidObjectId(id)) throw new ApiError(402, "Invalid tweet id");
+
+	const tweet = await Tweet.findById(id);
+   if (!tweet) throw new ApiError(404, "Tweet not found");
+
+	const comment = await Comment.create({ tweet: id, user: req.user._id, content, });
+
+	res
+		.status(200)
+		.json(new ApiResponse(200, comment, "Successfully commented on the tweet"));
+});
+
 
 const updateComment = asyncHandler(async (req, res) => {
 	// TODO: update a comment
@@ -155,4 +179,11 @@ const deleteComment = asyncHandler(async (req, res) => {
 		.json(new ApiResponse(200, {}, "Successfully deleted comment"));
 });
 
-export { getComments, addComment, updateComment, deleteComment };
+export {
+	getVideoComments,
+	getTweetComments,
+	addVideoComment,
+   addTweetComment,
+	updateComment,
+	deleteComment,
+};
