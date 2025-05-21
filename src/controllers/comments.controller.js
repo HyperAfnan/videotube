@@ -15,7 +15,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
 	if (!isValidObjectId(id)) throw new ApiError(402, "invalid comment id");
 
 	const video = await Video.findById(id);
-   if (!video) throw new ApiError(404, "Video not found");
+	if (!video) throw new ApiError(404, "Video not found");
 
 	const customLabels = {
 		totalDocs: "totalComments",
@@ -26,10 +26,20 @@ const getVideoComments = asyncHandler(async (req, res) => {
 
 	const pipeline = [
 		{ $match: { _id: new mongoose.Types.ObjectId(id) } },
-		{ $lookup: { from: "comments", localField: "_id", foreignField: "video", as: "comments",
+		{
+			$lookup: {
+				from: "comments",
+				localField: "_id",
+				foreignField: "video",
+				as: "comments",
 				pipeline: [
-					{ $lookup: { from: "users", localField: "user", foreignField: "_id", as: "user",
-							pipeline: [ { $project: { username: 1, avatar: 1, }, }, ],
+					{
+						$lookup: {
+							from: "users",
+							localField: "user",
+							foreignField: "_id",
+							as: "user",
+							pipeline: [{ $project: { username: 1, avatar: 1 } }],
 						},
 					},
 				],
@@ -38,19 +48,19 @@ const getVideoComments = asyncHandler(async (req, res) => {
 		{ $project: { comments: 1, title: 1, owner: 1 } },
 	];
 
-		const aggregation = Video.aggregate(pipeline);
+	const aggregation = Video.aggregate(pipeline);
 
-		await Video.aggregatePaginate(aggregation, options)
-			.then(function (data) {
-				res
-					.status(200)
-					.json(new ApiResponse(200, data, "successfully got all comments"));
-			})
-			.catch(function (err) {
-				console.log(err);
-				throw new ApiError(500, "Internal server error");
-			});
-	});
+	await Video.aggregatePaginate(aggregation, options)
+		.then(function (data) {
+			res
+				.status(200)
+				.json(new ApiResponse(200, data, "successfully got all comments"));
+		})
+		.catch(function (err) {
+			console.log(err);
+			throw new ApiError(500, "Internal server error");
+		});
+});
 
 const getTweetComments = asyncHandler(async (req, res) => {
 	//TODO: get all comments for a tweet
@@ -61,7 +71,7 @@ const getTweetComments = asyncHandler(async (req, res) => {
 	if (!isValidObjectId(id)) throw new ApiError(402, "invalid comment id");
 
 	const tweet = await Tweet.findById(id);
-   if (!tweet) throw new ApiError(404, "Tweet not found");
+	if (!tweet) throw new ApiError(404, "Tweet not found");
 
 	const customLabels = {
 		totalDocs: "totalComments",
@@ -72,12 +82,20 @@ const getTweetComments = asyncHandler(async (req, res) => {
 
 	const pipeline = [
 		{ $match: { _id: new mongoose.Types.ObjectId(id) } },
-		{ $lookup: { from: "comments", localField: "_id", foreignField: "tweet", as: "comments",
+		{
+			$lookup: {
+				from: "comments",
+				localField: "_id",
+				foreignField: "tweet",
+				as: "comments",
 				pipeline: [
-					{ $lookup: { from: "users", localField: "user", foreignField: "_id", as: "user",
-							pipeline: [
-								{ $project: { username: 1, avatar: 1, }, },
-							],
+					{
+						$lookup: {
+							from: "users",
+							localField: "user",
+							foreignField: "_id",
+							as: "user",
+							pipeline: [{ $project: { username: 1, avatar: 1 } }],
 						},
 					},
 				],
@@ -110,9 +128,13 @@ const addVideoComment = asyncHandler(async (req, res) => {
 	if (!isValidObjectId(id)) throw new ApiError(402, "Invalid video id");
 
 	const video = await Video.findById(id);
-   if (!video) throw new ApiError(404, "Video not found");
+	if (!video) throw new ApiError(404, "Video not found");
 
-	const comment = await Comment.create({ video: id, user: req.user._id, content });
+	const comment = await Comment.create({
+		video: id,
+		user: req.user._id,
+		content,
+	});
 
 	res
 		.status(200)
@@ -129,15 +151,18 @@ const addTweetComment = asyncHandler(async (req, res) => {
 	if (!isValidObjectId(id)) throw new ApiError(402, "Invalid tweet id");
 
 	const tweet = await Tweet.findById(id);
-   if (!tweet) throw new ApiError(404, "Tweet not found");
+	if (!tweet) throw new ApiError(404, "Tweet not found");
 
-	const comment = await Comment.create({ tweet: id, user: req.user._id, content, });
+	const comment = await Comment.create({
+		tweet: id,
+		user: req.user._id,
+		content,
+	});
 
 	res
 		.status(200)
 		.json(new ApiResponse(200, comment, "Successfully commented on the tweet"));
 });
-
 
 const updateComment = asyncHandler(async (req, res) => {
 	// TODO: update a comment
@@ -183,7 +208,7 @@ export {
 	getVideoComments,
 	getTweetComments,
 	addVideoComment,
-   addTweetComment,
+	addTweetComment,
 	updateComment,
 	deleteComment,
 };

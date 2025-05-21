@@ -5,7 +5,10 @@ import { ApiError } from "../utils/apiErrors.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/fileUpload.js";
-import { deleteOnCloudinary } from "../utils/fileDelete.js";
+import {
+	deleteImageOnCloudinary,
+	deleteVideoOnCloudinary,
+} from "../utils/fileDelete.js";
 
 const getAllVideos = asyncHandler(async (req, res) => {
 	//TODO: get all videos based on query, sort, pagination
@@ -125,19 +128,19 @@ const updateVideo = asyncHandler(async (req, res) => {
 		throw new ApiError(404, "Video not found");
 
 	var thumbnail;
-	const thumbnailLocalPath = req.files?.thumbnail[0]?.path;
-	if (thumbnailLocalPath) {
-		await deleteOnCloudinary(videoData.thumbnail).catch((e) =>
-			console.log("Failed to delete thumbnail \n" + e)
-		);
-		thumbnail = await uploadOnCloudinary(thumbnailLocalPath).catch((e) =>
-			console.log("Failed to upload thumbnail \n" + e)
-		);
-	}
+   if (req.file && req.file?.path) {
+      const thumbnailLocalPath = req.file.path;
+      await deleteImageOnCloudinary(videoData.thumbnail).catch((e) =>
+         console.log("Failed to delete thumbnail \n" + e)
+      );
+      thumbnail = await uploadOnCloudinary(thumbnailLocalPath).catch((e) =>
+         console.log("Failed to upload thumbnail \n" + e)
+      );
+   }
 
 	const video = await Video.findByIdAndUpdate(
 		videoId,
-		{ title, description, thumbnail: thumbnail.secure_url },
+		{ title, description, thumbnail: thumbnail?.secure_url },
 		{ new: true }
 	);
 
@@ -156,10 +159,10 @@ const deleteVideo = asyncHandler(async (req, res) => {
 		throw new ApiError(404, "Video not found");
 	if (!video) throw new ApiError("Video not found");
 
-	await deleteOnCloudinary(video.videoFile).catch((e) =>
+	await deleteVideoOnCloudinary(video.videoFile).catch((e) =>
 		console.log("Failed to delete video file \n ", e)
 	);
-	await deleteOnCloudinary(video.thumbnail).catch((e) =>
+	await deleteImageOnCloudinary(video.thumbnail).catch((e) =>
 		console.log("Failed to delete video thumbnail \n ", e)
 	);
 	await Video.findByIdAndDelete(videoId).catch((e) =>

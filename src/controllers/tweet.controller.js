@@ -1,4 +1,4 @@
-import { isValidObjectId } from "mongoose";
+import mongoose, { isValidObjectId } from "mongoose";
 import { Tweet } from "../models/tweet.models.js";
 import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/apiErrors.js";
@@ -18,7 +18,7 @@ const createTweet = asyncHandler(async (req, res) => {
 	if (!content) throw new ApiError(404, "Tweet content not found");
 	if (!title) throw new ApiError(404, "Tweet title not found");
 
-	const tweet = await Tweet.create({ content, title, owner: req.user });
+	const tweet = await Tweet.create({ content, title, owner: req.user._id });
 
 	return res
 		.status(200)
@@ -71,26 +71,25 @@ const getUserTweets = asyncHandler(async (req, res) => {
 	// aggregate with User.aggregate
 	// return user tweets
 
-   const { userId } = req.params
-   if (!userId) throw new ApiError(400, "userId is required")
-   if (!isValidObjectId(userId)) throw new ApiError(402, "Invalid userId ")
+	const { userId } = req.params;
+	if (!userId) throw new ApiError(400, "userId is required");
+	if (!isValidObjectId(userId)) throw new ApiError(402, "Invalid userId ");
 
-   const user = await User.findById(userId)
-   if (!user) throw new ApiError(404, "user not found")
+	const user = await User.findById(userId);
+	if (!user) throw new ApiError(404, "user not found");
 
 	const tweets = await User.aggregate([
-		{ $match: { _id: new mongoose.Types.ObjectId(req.user._id), }, },
+		{ $match: { _id: new mongoose.Types.ObjectId(req.user._id) } },
 		{ $lookup: { from: "tweets", localField: "tweets", foreignField: "tweets", as: "tweets", }, },
-		{ $project: { username: 1, tweets: 1, email: 1, avatar: 1, createdAt: 1, updatedAt: 1, },
+		{ $project: { tweets: 1, username: 1, _id: 0, },
 		},
 	]);
 
-	if (!tweets?.length) throw new ApiError(404, "No tweets found");
+	if (!tweets?.tweets?.length) throw new ApiError(404, "No tweets found");
 
 	res
 		.status(200)
 		.json(new ApiResponse(200, tweets, "User tweets fetched successfully"));
 });
 
-
-export { createTweet, updateTweet, deleteTweet , getUserTweets};
+export { createTweet, updateTweet, deleteTweet, getUserTweets };

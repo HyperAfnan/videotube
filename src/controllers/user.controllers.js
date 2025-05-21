@@ -4,7 +4,7 @@ import { User } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/fileUpload.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
-import { deleteOnCloudinary } from "../utils/fileDelete.js";
+import { deleteImageOnCloudinary } from "../utils/fileDelete.js";
 import mongoose from "mongoose";
 
 const generateTokens = async (userId) => {
@@ -150,8 +150,8 @@ const logoutUser = asyncHandler(async (req, res) => {
 const deleteUser = asyncHandler(async (req, res) => {
 	const user = await User.findById(req.user._id);
 
-	await deleteOnCloudinary(user.avatar);
-	if (user.coverImage) await deleteOnCloudinary(user.coverImage);
+	await deleteImageOnCloudinary(user.avatar);
+	if (user.coverImage) await deleteImageOnCloudinary(user.coverImage);
 
 	await User.findByIdAndDelete(req.user._id);
 
@@ -235,12 +235,16 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 	const { fullName, username } = req.body;
 
 	if (!fullName || !username) throw new ApiError(400, "All fields required");
+	for (let i = 0; i < username.length; i++) {
+		if (username[i] == " ")
+			throw new ApiError(400, "no whitespace allowed in username");
+	}
 
 	const user = await User.findByIdAndUpdate(
 		req.user?._id,
 		{ $set: { fullName, username } },
 		{ new: true }
-	).select("-password");
+	).select("-password -refreshToken");
 
 	return res
 		.status(200)
@@ -257,9 +261,9 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 	if (!user) throw new ApiError(401, "Unauthorized Request");
 
 	// deletes avatar on cloudinary
-	await deleteOnCloudinary(user.avatar);
+	await deleteImageOnCloudinary(user.avatar);
 
-	const avatarLocalPath = req.files?.avatar[0]?.path;
+	const avatarLocalPath = req.file?.path;
 
 	if (!avatarLocalPath) throw new ApiError(400, "Avatar file is required");
 
@@ -286,9 +290,9 @@ const updateUserCoverImg = asyncHandler(async (req, res) => {
 	if (!user) throw new ApiError(401, "Unauthorized Request");
 
 	// deletes avatar on cloudinary
-	await deleteOnCloudinary(user.coverImage);
+	await deleteImageOnCloudinary(user.coverImage);
 
-	const coverImageLocalPath = req.files?.coverImage[0]?.path;
+	const coverImageLocalPath = req.file?.path;
 
 	// uploades new avatar on cloudinary
 	const coverImage = await uploadOnCloudinary(coverImageLocalPath);
@@ -339,7 +343,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 				subscribersCount: { $size: "$subscribers" },
 				subscribedToCount: { $size: "$subscribedTo" },
 				isSubscribed: {
-					$condition: {
+					$cond: {
 						if: { $in: [req.user?._id, "$subscribers.subscriber"] },
 						then: true,
 						else: false,
@@ -387,9 +391,11 @@ const getUserWatchHistory = asyncHandler(async (req, res) => {
 							as: "owner",
 							pipeline: [
 								{
-									fullName: 1,
-									username: 1,
-									avatar: 1,
+									$project: {
+										fullName: 1,
+										username: 1,
+										avatar: 1,
+									},
 								},
 							],
 						},

@@ -2,10 +2,10 @@ import { Router } from "express";
 import {
 	updateComment,
 	deleteComment,
-   addTweetComment,
-   addVideoComment,
-   getTweetComments,
-   getVideoComments,
+	addTweetComment,
+	addVideoComment,
+	getTweetComments,
+	getVideoComments,
 } from "../controllers/comments.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 

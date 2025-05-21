@@ -8,11 +8,7 @@ cloudinary.config({
 	api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const deleteOnCloudinary = async (imageUrl) => {
-	// get image url from db,
-	// extract image's public id from url,
-	// called destroy function to delete image
-
+const deleteImageOnCloudinary = async (imageUrl) => {
 	try {
 		if (!imageUrl) return null;
 
@@ -24,8 +20,23 @@ const deleteOnCloudinary = async (imageUrl) => {
 		});
 		return response;
 	} catch (err) {
-		console.log("error deleting file to Cloudinary ", err);
+		console.log("error deleting image to Cloudinary ", err);
+	}
+};
+const deleteVideoOnCloudinary = async (videoUrl) => {
+	try {
+		if (!videoUrl) return null;
+
+		const regex = /\/([a-zA-Z0-9]+)\.mp4$/;
+		const publicId = videoUrl.match(regex);
+
+		const response = await cloudinary.uploader.destroy(publicId[1], {
+			resource_type: "video",
+		})
+		return response;
+	} catch (err) {
+		console.log("error deleting video to Cloudinary ", err);
 	}
 };
 
-export { deleteOnCloudinary };
+export { deleteImageOnCloudinary, deleteVideoOnCloudinary };
