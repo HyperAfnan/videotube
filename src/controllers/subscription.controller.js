@@ -7,7 +7,6 @@ import asyncHandler from "../utils/asyncHandler.js";
 
 const toggleSubscription = asyncHandler(async (req, res) => {
 	const { channelId } = req.params;
-	// TODO: toggle subscription
 
 	// get channelId from params
 	// get userId from req.user._id
@@ -32,21 +31,19 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 	});
 
 	if (isSubscribed.length > 0) {
-		const subscription = await Subscription.deleteOne({
+		await Subscription.deleteOne({
 			channel: channelId,
 			subscriber: req.user._id,
 		});
-		res
-			.status(200)
-			.json(new ApiResponse(200, subscription, "Successfully unsubscribed"));
+		return res.status(204).send();
 	} else {
 		const subscription = await Subscription.create({
 			channel: channelId,
 			subscriber: req.user._id,
 		});
-		res
-			.status(200)
-			.json(new ApiResponse(200, subscription, "Successfully subscribed"));
+		return res
+			.status(201)
+			.json(new ApiResponse(201, subscription, "Successfully subscribed"));
 	}
 });
 
@@ -71,7 +68,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 		{ $project: { username: 1, subscribers: 1, _id: 0 } },
 	]);
 
-	res
+	return res
 		.status(200)
 		.json(
 			new ApiResponse(200, subscribers, "Successfully fetched subscribers")
@@ -99,10 +96,10 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
 		{ $project: { username: 1, subscriptions: 1, _id: 0 } },
 	]);
 
-	res
+	return res
 		.status(200)
 		.json(
-			new ApiResponse(200, subscriptions, "Successfully fetched subscribers")
+			new ApiResponse(200, subscriptions, "Successfully fetched subscriptions")
 		);
 });
 

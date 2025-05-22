@@ -81,7 +81,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 	return res
 		.status(201)
-		.json(new ApiResponse(200, createUser, "User registered successfully "));
+		.json(new ApiResponse(201, createUser, "User registered successfully "));
 });
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -144,7 +144,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 		.status(200)
 		.clearCookie("accessToken", options)
 		.clearCookie("refreshToken", options)
-		.json(new ApiResponse(200, {}, "User logged out successfully"));
+		.end();
 });
 
 const deleteUser = asyncHandler(async (req, res) => {
@@ -158,10 +158,10 @@ const deleteUser = asyncHandler(async (req, res) => {
 	const options = { httpOnly: true, secure: true };
 
 	return res
-		.status(200)
+		.status(204)
 		.clearCookie("accessToken", options)
 		.clearCookie("refreshToken", options)
-		.json(new ApiResponse(200, {}, "successfully delete user"));
+		.end();
 });
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
@@ -217,12 +217,12 @@ const changePassword = asyncHandler(async (req, res) => {
 	const user = await User.findById(req.user?._id);
 	const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
 
-	if (!isPasswordCorrect) throw new ApiError(401, "Invalid password");
+	if (!isPasswordCorrect) throw new ApiError(400, "Invalid password");
 
 	user.password = newPassword;
 	await user.save({ validateBeforeSave: false });
 
-	await res.status(200).json(new ApiResponse(200, {}, "Password changed"));
+	return res.status(200).json(new ApiResponse(200, {}, "Password changed"));
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
@@ -258,7 +258,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 	// update db with new avatar url
 	const user = await User.findById(req.user?._id);
 
-	if (!user) throw new ApiError(401, "Unauthorized Request");
+	if (!user) throw new ApiError(403, "Unauthorized Request");
 
 	// deletes avatar on cloudinary
 	await deleteImageOnCloudinary(user.avatar);
@@ -279,7 +279,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 		{ new: true }
 	).select("-password -refreshToken");
 
-	res
+	return res
 		.status(200)
 		.json(new ApiResponse(200, returnedUser, "successfully updated avatar"));
 });
@@ -287,7 +287,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 const updateUserCoverImg = asyncHandler(async (req, res) => {
 	const user = await User.findById(req.user?._id);
 
-	if (!user) throw new ApiError(401, "Unauthorized Request");
+	if (!user) throw new ApiError(403, "Unauthorized Request");
 
 	// deletes avatar on cloudinary
 	await deleteImageOnCloudinary(user.coverImage);
@@ -306,7 +306,7 @@ const updateUserCoverImg = asyncHandler(async (req, res) => {
 		{ new: true }
 	).select("-password -refreshToken");
 
-	res
+	return res
 		.status(200)
 		.json(
 			new ApiResponse(200, returnedUser, "successfully updated cover image")
@@ -319,7 +319,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 	if (!username) throw new ApiError(400, "Username is missing");
 
 	const user = await User.find({ username: username });
-	if (!user) throw new ApiError(404, "User not foun");
+	if (!user) throw new ApiError(404, "User not found");
 
 	const channel = await User.aggregate([
 		{

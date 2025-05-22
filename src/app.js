@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-app.disable('x-powered-by');
+app.disable("x-powered-by");
 
 import userRouter from "./routes/user.routes.js";
 import healthRouter from "./routes/health.routes.js";
