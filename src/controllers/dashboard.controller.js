@@ -94,19 +94,10 @@ const getChannelVideos = asyncHandler(async (req, res) => {
 
 	const channelVideos = await User.aggregaate([
 		{ $match: { _id: new mongoose.Types.ObjectId(req.user._id) } },
-		{
-			$lookup: {
-				from: "videos",
-				localField: "videos",
-				foreignField: "owner",
-				as: "videos",
-			},
-		},
-		{ addFields: { totalVideos: { $size: "$videos" } } },
-		{ $project: { videos: 1, username: 1, totalVideos: 1 } },
+		{ $lookup: { from: "videos", localField: "_id", foreignField: "owner", as: "videos", }, },
+		{ $addFields: { totalVideos: { $size: "$videos" } } },
+		{ $project: { videos: 1, username: 1, totalVideos: 1 , _id : 0} },
 	]);
-
-	if (!channelVideos?.length) throw new ApiError(404, "No video found");
 
 	res
 		.status(200)

@@ -32,20 +32,9 @@ const getVideoComments = asyncHandler(async (req, res) => {
 				localField: "_id",
 				foreignField: "video",
 				as: "comments",
-				pipeline: [
-					{
-						$lookup: {
-							from: "users",
-							localField: "user",
-							foreignField: "_id",
-							as: "user",
-							pipeline: [{ $project: { username: 1, avatar: 1 } }],
-						},
-					},
-				],
 			},
 		},
-		{ $project: { comments: 1, title: 1, owner: 1 } },
+		{ $project: { comments: 1, _id: 0 , title: 1, owner: 1 } },
 	];
 
 	const aggregation = Video.aggregate(pipeline);
@@ -88,20 +77,9 @@ const getTweetComments = asyncHandler(async (req, res) => {
 				localField: "_id",
 				foreignField: "tweet",
 				as: "comments",
-				pipeline: [
-					{
-						$lookup: {
-							from: "users",
-							localField: "user",
-							foreignField: "_id",
-							as: "user",
-							pipeline: [{ $project: { username: 1, avatar: 1 } }],
-						},
-					},
-				],
 			},
 		},
-		{ $project: { comments: 1, title: 1, owner: 1 } },
+		{ $project: { comments: 1, _id: 0 , title: 1, owner: 1 } },
 	];
 
 	const aggregation = Tweet.aggregate(pipeline);
