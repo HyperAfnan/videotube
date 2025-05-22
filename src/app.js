@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -22,6 +23,9 @@ import likeRouter from "./routes/like.routes.js";
 import playlistRouter from "./routes/playlist.routes.js";
 import dashboardRouter from "./routes/dashboard.routes.js";
 
+import swaggerUi from "swagger-ui-express";
+import { swaggerDocs } from "./utils/swagger.js";
+
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/health", healthRouter);
 app.use("/api/v1/tweets", tweetRouter);
@@ -31,6 +35,7 @@ app.use("/api/v1/comments", commentRouter);
 app.use("/api/v1/likes", likeRouter);
 app.use("/api/v1/playlist", playlistRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
+app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app
 	.listen(PORT, () => {
