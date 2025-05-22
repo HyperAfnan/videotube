@@ -20,6 +20,10 @@ const swaggerOptions = {
 				url: `http://localhost:${PORT}/api/v1`,
 				description: "Development server",
 			},
+         {
+            url: `https://chai-code-backend.onrender.com/api/v1`,
+            description: "Production server",
+         },
 		],
 		components: {
 			securitySchemes: {
