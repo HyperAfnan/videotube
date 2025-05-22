@@ -32,7 +32,7 @@ const deleteVideoOnCloudinary = async (videoUrl) => {
 
 		const response = await cloudinary.uploader.destroy(publicId[1], {
 			resource_type: "video",
-		})
+		});
 		return response;
 	} catch (err) {
 		console.log("error deleting video to Cloudinary ", err);

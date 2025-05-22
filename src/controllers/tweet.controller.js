@@ -80,9 +80,15 @@ const getUserTweets = asyncHandler(async (req, res) => {
 
 	const tweets = await User.aggregate([
 		{ $match: { _id: new mongoose.Types.ObjectId(req.user._id) } },
-		{ $lookup: { from: "tweets", localField: "tweets", foreignField: "tweets", as: "tweets", }, },
-		{ $project: { tweets: 1, username: 1, _id: 0, },
+		{
+			$lookup: {
+				from: "tweets",
+				localField: "tweets",
+				foreignField: "tweets",
+				as: "tweets",
+			},
 		},
+		{ $project: { tweets: 1, username: 1, _id: 0 } },
 	]);
 
 	res

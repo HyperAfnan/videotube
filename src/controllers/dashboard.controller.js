@@ -82,8 +82,6 @@ const getChannelStats = asyncHandler(async (req, res) => {
 		},
 	]);
 
-	if (!stats?.length) throw new ApiError(404, "Channel not found");
-
 	res
 		.status(200)
 		.json(new ApiResponse(200, stats, "Successfully got channel stats"));
@@ -94,9 +92,16 @@ const getChannelVideos = asyncHandler(async (req, res) => {
 
 	const channelVideos = await User.aggregaate([
 		{ $match: { _id: new mongoose.Types.ObjectId(req.user._id) } },
-		{ $lookup: { from: "videos", localField: "_id", foreignField: "owner", as: "videos", }, },
+		{
+			$lookup: {
+				from: "videos",
+				localField: "_id",
+				foreignField: "owner",
+				as: "videos",
+			},
+		},
 		{ $addFields: { totalVideos: { $size: "$videos" } } },
-		{ $project: { videos: 1, username: 1, totalVideos: 1 , _id : 0} },
+		{ $project: { videos: 1, username: 1, totalVideos: 1, _id: 0 } },
 	]);
 
 	res

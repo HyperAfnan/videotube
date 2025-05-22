@@ -34,7 +34,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
 				as: "comments",
 			},
 		},
-		{ $project: { comments: 1, _id: 0 , title: 1, owner: 1 } },
+		{ $project: { comments: 1, _id: 0, title: 1, owner: 1 } },
 	];
 
 	const aggregation = Video.aggregate(pipeline);
@@ -79,7 +79,7 @@ const getTweetComments = asyncHandler(async (req, res) => {
 				as: "comments",
 			},
 		},
-		{ $project: { comments: 1, _id: 0 , title: 1, owner: 1 } },
+		{ $project: { comments: 1, _id: 0, title: 1, owner: 1 } },
 	];
 
 	const aggregation = Tweet.aggregate(pipeline);

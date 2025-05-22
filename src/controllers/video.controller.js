@@ -128,15 +128,15 @@ const updateVideo = asyncHandler(async (req, res) => {
 		throw new ApiError(404, "Video not found");
 
 	var thumbnail;
-   if (req.file && req.file?.path) {
-      const thumbnailLocalPath = req.file.path;
-      await deleteImageOnCloudinary(videoData.thumbnail).catch((e) =>
-         console.log("Failed to delete thumbnail \n" + e)
-      );
-      thumbnail = await uploadOnCloudinary(thumbnailLocalPath).catch((e) =>
-         console.log("Failed to upload thumbnail \n" + e)
-      );
-   }
+	if (req.file && req.file?.path) {
+		const thumbnailLocalPath = req.file.path;
+		await deleteImageOnCloudinary(videoData.thumbnail).catch((e) =>
+			console.log("Failed to delete thumbnail \n" + e)
+		);
+		thumbnail = await uploadOnCloudinary(thumbnailLocalPath).catch((e) =>
+			console.log("Failed to upload thumbnail \n" + e)
+		);
+	}
 
 	const video = await Video.findByIdAndUpdate(
 		videoId,
