@@ -73,7 +73,7 @@ router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
  *         description: Invalid input
  *       401:
  *         description: Unauthorized
- * 
+ *
  *   get:
  *     summary: Get all tweets
  *     tags: [Tweets]

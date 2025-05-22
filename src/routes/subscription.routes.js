@@ -67,7 +67,7 @@ router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
  *         description: Channel not found
  *       401:
  *         description: Unauthorized
- * 
+ *
  *   post:
  *     summary: Toggle subscription
  *     tags: [Subscriptions]

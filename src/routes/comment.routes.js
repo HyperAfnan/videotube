@@ -75,7 +75,7 @@ router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
  *         description: Video not found
  *       401:
  *         description: Unauthorized
- * 
+ *
  *   post:
  *     summary: Add comment to a video
  *     tags: [Comments]
@@ -136,7 +136,7 @@ router.route("/v/:id").get(getVideoComments).post(addVideoComment);
  *         description: Tweet not found
  *       401:
  *         description: Unauthorized
- * 
+ *
  *   post:
  *     summary: Add comment to a tweet
  *     tags: [Comments]
