@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { rateLimit } from "express-rate-limit";
 import helmet from "helmet";
+import morgan from "morgan";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -21,6 +22,7 @@ app.use(
 		message: { error: "Too many requests, rate limit exceeded" },
 	})
 );
+app.use(morgan("dev"))
 
 import userRoutes from "./components/user/api/user.routes.js";
 import healthRoutes from "./components/health/api/health.routes.js";
