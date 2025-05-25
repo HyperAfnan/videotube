@@ -22,7 +22,6 @@ app.use(
 		message: { error: "Too many requests, rate limit exceeded" },
 	})
 );
-app.use(morgan("dev"))
 
 import userRoutes from "./components/user/api/user.routes.js";
 import healthRoutes from "./components/health/api/health.routes.js";
@@ -33,6 +32,7 @@ import commentRoutes from "./components/comment/api/comment.routes.js";
 import likeRoutes from "./components/like/api/like.routes.js";
 import playlistRoutes from "./components/playlist/api/playlist.routes.js";
 import dashboardRoutes from "./components/dashboard/api/dashboard.routes.js";
+if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
 import swaggerUi from "swagger-ui-express";
 import { swaggerDocs } from "./utils/swagger.js";

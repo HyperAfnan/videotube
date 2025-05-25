@@ -9,7 +9,7 @@
 		"start": "node src/index.js",
 		"lint": "npx eslint src ",
 		"lint:fix": "npm run lint -- --fix",
-		"prettier": "npm run prettier -- --write",
+		"prettier": "npx prettier --write . ",
 		"format": "npm run prettier:fix && npm run lint:fix"
 	},
 	"repository": {
@@ -35,7 +35,6 @@
 		"mongodb": "^6.16.0",
 		"mongoose": "^8.14.1",
 		"mongoose-aggregate-paginate-v2": "^1.1.4",
-		"morgan": "^1.10.0",
 		"multer": "^1.4.5-lts.2",
 		"swagger-jsdoc": "^6.2.8",
 		"swagger-ui-express": "^5.0.1"
@@ -46,6 +45,7 @@
 		"eslint-config-prettier": "^10.1.5",
 		"eslint-plugin-prettier": "^5.4.0",
 		"globals": "^16.1.0",
+		"morgan": "^1.10.0",
 		"prettier": "^3.5.3"
 	}
 }
