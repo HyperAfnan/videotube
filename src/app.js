@@ -15,17 +15,18 @@ app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-if (process.env.NODE_ENV === "development") {
-	app.use(morgan("dev"));
-} else {
-	app.use(
-		rateLimit({
-			windowMs: 15 * 60 * 1000,
-			limit: 100,
-			message: { error: "Too many requests, rate limit exceeded" },
-		})
-	);
-}
+// app.use(morgan("dev"));
+// if (process.env.NODE_ENV === "development") {
+//    console.log(true)
+// } else {
+// 	// app.use(
+// 	// 	rateLimit({
+// 	// 		windowMs: 15 * 60 * 1000,
+// 	// 		limit: 100,
+// 	// 		message: { error: "Too many requests, rate limit exceeded" },
+// 	// 	})
+// 	// );
+// }
 
 import userRoutes from "./components/user/user.routes.js";
 import healthRoutes from "./components/health/api/health.routes.js";
