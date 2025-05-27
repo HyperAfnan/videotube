@@ -6,7 +6,6 @@ import helmet from "helmet";
 import morgan from "morgan";
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 app.use(helmet());
 app.set("trust proxy", 1);
@@ -15,15 +14,20 @@ app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
-app.use(
-	rateLimit({
-		windowMs: 15 * 60 * 1000,
-		limit: 100,
-		message: { error: "Too many requests, rate limit exceeded" },
-	})
-);
 
-import userRoutes from "./components/user/api/user.routes.js";
+if (process.env.NODE_ENV === "development") {
+	app.use(morgan("dev"));
+} else {
+	app.use(
+		rateLimit({
+			windowMs: 15 * 60 * 1000,
+			limit: 100,
+			message: { error: "Too many requests, rate limit exceeded" },
+		})
+	);
+}
+
+import userRoutes from "./components/user/user.routes.js";
 import healthRoutes from "./components/health/api/health.routes.js";
 import tweetRoutes from "./components/tweet/api/tweet.routes.js";
 import subscriptionRoutes from "./components/subscription/api/subscription.routes.js";
