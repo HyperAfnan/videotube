@@ -122,7 +122,7 @@ const getCurrentUser = asyncHandler(async (req, res) =>
 );
 
 const getUserChannelProfile = asyncHandler(async (req, res) => {
-	const channel = await userService.getUserChannelProfile(req.username);
+	const channel = await userService.getUserChannelProfile(req.newUser);
 	return res
 		.status(200)
 		.json(new ApiResponse(200, channel, "Channel fetched successfully"));

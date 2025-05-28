@@ -323,7 +323,7 @@ router
  */
 router
 	.route("/updateDetails")
-	.patch(auth, updateAccountDetailsValidator, updateAccountDetails);
+	.patch(auth, updateAccountDetailsValidator, validator , updateAccountDetails);
 
 /**
  * @swagger
@@ -509,48 +509,48 @@ router
  *         description: Unauthorized
  */
 router.route("/history").get(auth, getUserWatchHistory);
-//
-// /**
-//  * @swagger
-//  * /user/ch/{username}:
-//  *   get:
-//  *     summary: Get user channel profile
-//  *     tags: [Users]
-//  *     description: Retrieve a user's channel profile by username
-//  *     security:
-//  *       - bearerAuth: []
-//  *     parameters:
-//  *       - in: path
-//  *         name: username
-//  *         schema:
-//  *           type: string
-//  *         required: true
-//  *         description: The username of the channel
-//  *     responses:
-//  *       200:
-//  *         description: Channel profile retrieved successfully
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 username:
-//  *                   type: string
-//  *                 fullName:
-//  *                   type: string
-//  *                 avatar:
-//  *                   type: string
-//  *                 coverImage:
-//  *                   type: string
-//  *                 subscribersCount:
-//  *                   type: number
-//  *                 isSubscribed:
-//  *                   type: boolean
-//  *       404:
-//  *         description: Channel not found
-//  *       401:
-//  *         description: Unauthorized
-//  */
+
+/**
+ * @swagger
+ * /user/ch/{username}:
+ *   get:
+ *     summary: Get user channel profile
+ *     tags: [Users]
+ *     description: Retrieve a user's channel profile by username
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The username of the channel
+ *     responses:
+ *       200:
+ *         description: Channel profile retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                 fullName:
+ *                   type: string
+ *                 avatar:
+ *                   type: string
+ *                 coverImage:
+ *                   type: string
+ *                 subscribersCount:
+ *                   type: number
+ *                 isSubscribed:
+ *                   type: boolean
+ *       404:
+ *         description: Channel not found
+ *       401:
+ *         description: Unauthorized
+ */
 router
 	.route("/ch/:username")
 	.get(
@@ -560,22 +560,22 @@ router
 		validator,
 		getUserChannelProfile,
 	);
-//
-// /**
-//  * @swagger
-//  * /user/delete:
-//  *   get:
-//  *     summary: Delete user account
-//  *     tags: [Users]
-//  *     description: Delete the current user's account
-//  *     security:
-//  *       - bearerAuth: []
-//  *     responses:
-//  *       200:
-//  *         description: User account deleted successfully
-//  *       401:
-//  *         description: Unauthorized
-//  */
+
+/**
+ * @swagger
+ * /user/delete:
+ *   delete:
+ *     summary: Delete user account
+ *     tags: [Users]
+ *     description: Delete the current user's account
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User account deleted successfully
+ *       401:
+ *         description: Unauthorized
+ */
 router.route("/delete").delete(auth, deleteUser);
 
 export default router;

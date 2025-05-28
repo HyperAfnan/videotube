@@ -11,9 +11,7 @@ const swaggerOptions = {
 			title: "Chai code backend docs",
 			version: "1.0.0",
 			description: "API Documentation for your Express backend",
-			contact: {
-				name: "Mohammad Afnan",
-			},
+			contact: { name: "Mohammad Afnan" },
 		},
 		servers: [
 			{

@@ -12,7 +12,6 @@ cloudinary.config({
 const uploadImageOnCloudinary = async (localFilePath) => {
 	try {
 		if (!localFilePath) return null;
-		console.log(fs.statSync(localFilePath));
 		if (fs.statSync(localFilePath).size > 5000000)
 			throw new ApiError(400, "File size exceeds 5MB limit");
 
@@ -49,7 +48,7 @@ const deleteImageOnCloudinary = async (imageUrl) => {
 	try {
 		if (!imageUrl) return null;
 
-		const regex = /\/([a-zA-Z0-9]+)\.jpg$/;
+		const regex = /\/([a-zA-Z0-9]+)\.(jpg|jpeg|png|)$/i;
 		const publicId = imageUrl.match(regex);
 
 		const response = await cloudinary.uploader.destroy(publicId[1], {

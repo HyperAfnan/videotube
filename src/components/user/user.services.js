@@ -74,8 +74,8 @@ export const logoutUser = serviceHandler(async (userId) => {
 // TODO: should also delete user's likes, subscriptions, videos, comments
 export const deleteUser = serviceHandler(async (userId) => {
 	const user = await User.findByIdAndDelete(userId);
-	await deleteImageOnCloudinary(user.avatar);
-	if (user.coverImage) await deleteImageOnCloudinary(user.coverImage);
+	await deleteImageOnCloudinary(user?.avatar);
+	if (user?.coverImage) await deleteImageOnCloudinary(user.coverImage);
 });
 
 export const refreshAccessToken = serviceHandler(async (userId) => {
@@ -141,10 +141,10 @@ export const updateCoverAvatar = serviceHandler(
 	},
 );
 
-export const getUserChannelProfile = serviceHandler(async (username) => {
+export const getUserChannelProfile = serviceHandler(async (userMeta) => {
 	const user = await User.aggregate([
 		{
-			$match: { username },
+			$match: { username: userMeta.username },
 		},
 		{
 			$lookup: {
@@ -168,7 +168,7 @@ export const getUserChannelProfile = serviceHandler(async (username) => {
 				subscribedToCount: { $size: "$subscribedTo" },
 				isSubscribed: {
 					$cond: {
-						if: { $in: [req.user?._id, "$subscribers.subscriber"] },
+						if: { $in: [userMeta._id, "$subscribers.subscriber"] },
 						then: true,
 						else: false,
 					},
