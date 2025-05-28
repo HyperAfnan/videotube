@@ -5,7 +5,7 @@ import {
 	deleteImageOnCloudinary,
 	uploadImageOnCloudinary,
 } from "../../utils/fileHandlers.js";
-import mongoose from "mongoose";
+import { ObjectId } from "mongodb";
 
 async function generateTokens(user) {
 	const accessToken = await user.generateAccessToken();
@@ -195,7 +195,7 @@ export const getUserChannelProfile = serviceHandler(async (userMeta) => {
 
 export const getUserwatchHistory = serviceHandler(async (userId) => {
 	const user = await User.aggregate([
-		{ $match: { _id: new mongoose.Types.ObjectId(userId) } },
+		{ $match: { _id: new ObjectId(String(userId)) } },
 		{
 			$lookup: {
 				from: "videos",

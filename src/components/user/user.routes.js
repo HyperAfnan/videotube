@@ -323,7 +323,7 @@ router
  */
 router
 	.route("/updateDetails")
-	.patch(auth, updateAccountDetailsValidator, validator , updateAccountDetails);
+	.patch(auth, updateAccountDetailsValidator, validator, updateAccountDetails);
 
 /**
  * @swagger

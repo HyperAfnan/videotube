@@ -1,28 +1,30 @@
-import { body, cookie, param } from "express-validator";
+import { ExpressValidator, oneOf } from "express-validator";
 import { ApiError } from "../../utils/apiErrors.js";
 import { User } from "./user.models.js";
 import jwt from "jsonwebtoken";
 import path from "node:path";
 
-function checkWhitespace(value) {
-	for (let i = 0; i < value?.length; i++) {
-		if (value[i] === " ") throw new ApiError(400, "no whitespace allowed");
-	}
-	return true;
-}
+const { body, cookie, param } = new ExpressValidator({
+	checkWhitespace: (value) => {
+		for (let i = 0; i < value?.length; i++) {
+			if (value[i] === " ") return false;
+		}
+		return true;
+	},
+	isRefreshToken: async (value) => {
+		try {
+			const decodedToken = jwt.verify(value, process.env.REFRESH_TOKEN_SECRET);
+			const user = await User.findById(decodedToken?._id);
+			if (!user) return false;
+			return value === user?.refreshToken;
+		} catch (error) {
+			return false;
+		}
+	},
+	isfirstLetterLowercase: (value) =>
+		value.charAt(0) === value.charAt(0).toLowerCase(),
+});
 
-async function verifyRefreshToken(value) {
-	const decodedToken = jwt.verify(value, process.env.REFRESH_TOKEN_SECRET);
-
-	const user = await User.findById(decodedToken?._id);
-	if (!user) throw new ApiError(401, "Invalid Token");
-	if (value !== user?.refreshToken)
-		throw new ApiError(401, "Refresh token is expired or used");
-
-	return true;
-}
-
-// BUG:if any character of username is in uppercase, it will throw an error
 export const registerValidator = [
 	body("fullName")
 		.notEmpty()
@@ -37,7 +39,6 @@ export const registerValidator = [
 		.isEmail()
 		.withMessage("Invalid email format")
 		.trim()
-		.custom(checkWhitespace)
 		.custom(async (email) => {
 			const existingUser = await User.findOne({ email });
 			if (existingUser)
@@ -49,12 +50,13 @@ export const registerValidator = [
 		.withMessage("Username is required")
 		.isString()
 		.withMessage("Username must be a string")
-		.isLowercase()
-		.withMessage("Username must be in lowercase")
+		.isfirstLetterLowercase()
+		.withMessage("first letter of username should be lowercase")
 		.trim()
-		.isLength({ min: 3, max: 12 })
-		.withMessage("Username must between 3-12 characters")
-		.custom(checkWhitespace)
+		.isLength({ min: 3, max: 15 })
+		.withMessage("Username must between 3-15 characters")
+		.checkWhitespace()
+		.withMessage("whitespace is not allowed in username")
 		.custom(async (username) => {
 			const existingUser = await User.findOne({ username });
 			if (existingUser)
@@ -71,19 +73,29 @@ export const registerValidator = [
 
 export const registerationFilesValidator = (req, _, next) => {
 	try {
-    const supportedImageTypes = [".jpg", ".jpeg", ".png"];
-    if (req?.files?.avatar && req?.files?.avatar?.length > 0) {
-      const avatarFileExt = path.extname(req.files.avatar[0].path).toLowerCase();
-      if (!supportedImageTypes.includes(avatarFileExt)) {
-        throw new ApiError(400, `Avatar image must be one of these types: ${supportedImageTypes.join(", ")}`);
-      }
-    } else throw new ApiError(400, "Avatar image is required")
-    
-    if (req?.files?.coverImage && req?.files?.coverImage?.length > 0) {
-      const coverImageFileExt = path.extname(req.files.coverImage[0].path).toLowerCase();
-      if (!supportedImageTypes.includes(coverImageFileExt)) 
-            throw new ApiError(400, `Cover image must be one of these types: ${supportedImageTypes.join(", ")}`);
-    }
+		const supportedImageTypes = [".jpg", ".jpeg", ".png"];
+		if (req?.files?.avatar && req?.files?.avatar?.length > 0) {
+			const avatarFileExt = path
+				.extname(req.files.avatar[0].path)
+				.toLowerCase();
+			if (!supportedImageTypes.includes(avatarFileExt)) {
+				throw new ApiError(
+					400,
+					`Avatar image must be one of these types: ${supportedImageTypes.join(", ")}`,
+				);
+			}
+		} else throw new ApiError(400, "Avatar image is required");
+
+		if (req?.files?.coverImage && req?.files?.coverImage?.length > 0) {
+			const coverImageFileExt = path
+				.extname(req.files.coverImage[0].path)
+				.toLowerCase();
+			if (!supportedImageTypes.includes(coverImageFileExt))
+				throw new ApiError(
+					400,
+					`Cover image must be one of these types: ${supportedImageTypes.join(", ")}`,
+				);
+		}
 		next();
 	} catch (error) {
 		next(error);
@@ -96,10 +108,13 @@ export const loginValidator = [
 		.withMessage("Username is required")
 		.isString()
 		.withMessage("Username must be a string")
+		.isfirstLetterLowercase()
+		.withMessage("first letter of username should be lowercase")
 		.trim()
-		.isLength({ min: 3, max: 12 })
-		.withMessage("Username must between 3-12 characters")
-		.custom(checkWhitespace),
+		.isLength({ min: 3, max: 15 })
+		.withMessage("Username must between 3-15 characters")
+		.checkWhitespace()
+		.withMessage("whitespace is not allowed in username"),
 	body("password")
 		.notEmpty()
 		.withMessage("Password is required")
@@ -109,16 +124,21 @@ export const loginValidator = [
 ];
 
 export const refreshAccessTokenValidator = [
-	body("refreshToken")
-		.optional()
-		.isJWT()
-		.withMessage("Invalid token format")
-		.custom(verifyRefreshToken),
-	cookie("refreshToken")
-		.optional()
-		.isJWT()
-		.withMessage("Invalid token format")
-		.custom(verifyRefreshToken),
+	oneOf(
+		[
+			body("accessToken")
+				.optional()
+				.isJWT()
+				.withMessage("Invalid token format")
+				.isRefreshToken(),
+			cookie("accessToken")
+				.optional()
+				.isJWT()
+				.withMessage("Invalid token format")
+				.isRefreshToken(),
+		],
+		{ message: "Valid access token is required" },
+	),
 ];
 
 export const changePasswordValidator = [
@@ -137,28 +157,25 @@ export const changePasswordValidator = [
 ];
 
 export const updateAccountDetailsValidator = [
-	body("fullName").optional().isString().withMessage("Name must be a string").trim(),
-
-	body("username")
-      .optional()
-		.isString()
-		.withMessage("Username must be a string")
-		.isLowercase()
-		.withMessage("Username must be in lowercase")
-		.isLength({ min: 3, max: 15 })
-		.withMessage("Username must between 3-15 characters")
-		.custom(checkWhitespace)
-		.custom(async (username) => {
-			const existingUser = await User.findOne({ username });
-			if (existingUser)
-				throw new ApiError("A user already exists with this username");
-         return true;
-		}),
-	body("").custom((body) => {
-		if (!body.fullName && !body.username)
-			throw new ApiError(400, "Atleast one field is required to update");
-      return true;
-	}),
+	oneOf(
+		[
+			body("fullName").isString().withMessage("Name must be a string").trim(),
+			body("username")
+				.isString()
+				.withMessage("Username must be a string")
+				.isfirstLetterLowercase()
+				.isLength({ min: 3, max: 15 })
+				.withMessage("Username must between 3-15 characters")
+				.checkWhitespace()
+				.custom(async (username) => {
+					const existingUser = await User.findOne({ username });
+					if (existingUser)
+						throw new ApiError("A user already exists with this username");
+					return true;
+				}),
+		],
+		{ message: "Atleast one field is required to update" },
+	),
 ];
 
 export const avatarFileValidator = (req, _, next) => {
@@ -188,15 +205,15 @@ export const getUserChannelProfileValidator = [
 		.optional()
 		.isString()
 		.withMessage("Username must be a string")
-		.isLowercase()
-		.withMessage("Username must be in lowercase")
+		.isfirstLetterLowercase()
+		.withMessage("first letter of username should be lowercase")
 		.trim(),
 ];
 
 export const usernameValidator = async (req, _, next) => {
 	const { username } = req.params;
-	var newUser = User.find({ username });
-	if (!newUser) newUser = req.user
+	let newUser = User.find({ username });
+	if (!newUser) newUser = req.user;
 
 	req.newUser = newUser;
 	next();
