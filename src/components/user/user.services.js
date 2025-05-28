@@ -140,8 +140,8 @@ export const updateCoverAvatar = serviceHandler(
 	}
 );
 
-export const getUserChannelProfile = serviceHandler(async (username) => { 
-   const user = await User.aggregate([
+export const getUserChannelProfile = serviceHandler(async (username) => {
+	const user = await User.aggregate([
 		{
 			$match: { username: username },
 		},
@@ -189,12 +189,10 @@ export const getUserChannelProfile = serviceHandler(async (username) => {
 			},
 		},
 	]);
-   return user[0]
-
-})
+	return user[0];
+});
 
 export const getUserwatchHistory = serviceHandler(async (userId) => {
-
 	const user = await User.aggregate([
 		{ $match: { _id: new mongoose.Types.ObjectId(userId) } },
 		{
@@ -225,6 +223,5 @@ export const getUserwatchHistory = serviceHandler(async (userId) => {
 			},
 		},
 	]);
-   return user[0].watchHistory
-
-})
+	return user[0].watchHistory;
+});

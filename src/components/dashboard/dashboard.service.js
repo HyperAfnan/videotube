@@ -1,5 +1,5 @@
-import {  User } from "../user/user.models.js";
-import {  serviceHandler } from "../../utils/handlers.js";
+import { User } from "../user/user.models.js";
+import { serviceHandler } from "../../utils/handlers.js";
 import mongoose from "mongoose";
 
 export const getChannelStats = serviceHandler(async (userMeta) => {
@@ -78,11 +78,10 @@ export const getChannelStats = serviceHandler(async (userMeta) => {
 		},
 	]);
 
-   return stats
-})
+	return stats;
+});
 
 export const getChannelVideos = serviceHandler(async (userMeta) => {
-
 	const channelVideos = await User.aggregaate([
 		{ $match: { _id: new mongoose.Types.ObjectId(userMeta._id) } },
 		{
@@ -97,5 +96,5 @@ export const getChannelVideos = serviceHandler(async (userMeta) => {
 		{ $project: { videos: 1, username: 1, totalVideos: 1, _id: 0 } },
 	]);
 
-   return channelVideos
- })
+	return channelVideos;
+});

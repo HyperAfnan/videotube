@@ -1,10 +1,9 @@
 import { ApiResponse } from "../../utils/apiResponse.js";
 import { asyncHandler } from "../../utils/handlers.js";
-import * as DashboardService from "./dashboard.service.js"
+import * as DashboardService from "./dashboard.service.js";
 
 const getChannelStats = asyncHandler(async (req, res) => {
-
-   const stats = await DashboardService.getChannelStats(req.user._id);
+	const stats = await DashboardService.getChannelStats(req.user._id);
 	return res
 		.status(200)
 		.json(new ApiResponse(200, stats, "Successfully got channel stats"));

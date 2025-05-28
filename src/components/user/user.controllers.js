@@ -122,23 +122,17 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 });
 
 const getUserChannelProfile = asyncHandler(async (req, res) => {
-	const channel = await userService.getUserChannelProfile(req.username)
-   return res
+	const channel = await userService.getUserChannelProfile(req.username);
+	return res
 		.status(200)
 		.json(new ApiResponse(200, channel, "Channel fetched successfully"));
 });
 
 const getUserWatchHistory = asyncHandler(async (req, res) => {
-   const user = await userService.getUserwatchHistory(req.user._id)
+	const user = await userService.getUserwatchHistory(req.user._id);
 	return res
 		.status(200)
-		.json(
-			new ApiResponse(
-				200,
-				user,
-				"watch history fetched successfully"
-			)
-		);
+		.json(new ApiResponse(200, user, "watch history fetched successfully"));
 });
 
 export {

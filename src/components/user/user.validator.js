@@ -181,20 +181,21 @@ export const coverImageFileValidator = (req, _, next) => {
 	}
 };
 
-export const  getUserChannelProfileValidator = [
-   param("username")
-   .optional()
-   .isString().withMessage("Username must be a string")
-   .isLowercase().withMessage("Username must be in lowercase")
-   .trim()
-]
+export const getUserChannelProfileValidator = [
+	param("username")
+		.optional()
+		.isString()
+		.withMessage("Username must be a string")
+		.isLowercase()
+		.withMessage("Username must be in lowercase")
+		.trim(),
+];
 
 export const usernameValidator = async (req, _, next) => {
+	const { username } = req.params;
+	const user = User.find({ username: username });
+	if (!user) username = req.user.username;
 
-   const { username } = req.params
-   const user = User.find( { username: username})
-   if (!user) username = req.user.username
-
-   req.username = username
-   next()
-}
+	req.username = username;
+	next();
+};

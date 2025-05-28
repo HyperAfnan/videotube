@@ -23,8 +23,8 @@ import {
 	avatarFileValidator,
 	coverImageFileValidator,
 	changePasswordValidator,
-    getUserChannelProfileValidator,
-    usernameValidator,
+	getUserChannelProfileValidator,
+	usernameValidator,
 } from "./user.validator.js";
 
 const router = Router();
@@ -549,7 +549,15 @@ router.route("/history").get(auth, getUserWatchHistory);
 //  *       401:
 //  *         description: Unauthorized
 //  */
-router.route("/ch/:username").get(auth, getUserChannelProfileValidator, usernameValidator, validator, getUserChannelProfile);
+router
+	.route("/ch/:username")
+	.get(
+		auth,
+		getUserChannelProfileValidator,
+		usernameValidator,
+		validator,
+		getUserChannelProfile
+	);
 //
 // /**
 //  * @swagger
