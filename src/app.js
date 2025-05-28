@@ -41,6 +41,7 @@ import dashboardRoutes from "./components/dashboard/dashboard.routes.js";
 import swaggerUi from "swagger-ui-express";
 import { swaggerDocs } from "./utils/swagger.js";
 
+app.get("/", (_, res) => res.redirect("/docs"))
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/health", healthRoutes);
 app.use("/api/v1/tweets", tweetRoutes);
@@ -50,6 +51,6 @@ app.use("/api/v1/comments", commentRoutes);
 app.use("/api/v1/likes", likeRoutes);
 app.use("/api/v1/playlist", playlistRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
-app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 export { app };
