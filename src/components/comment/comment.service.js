@@ -32,14 +32,12 @@ export const getVideoComments = serviceHandler(
 		const aggregation = Video.aggregate(pipeline);
 
 		await Video.aggregatePaginate(aggregation, options)
-			.then(function (data) {
-				return data;
-			})
-			.catch(function (err) {
-				commentDebug("Error in getVideoComments " + err);
+			.then((data) => data)
+			.catch((err) => {
+				commentDebug(`Error in getVideoComments ${err}`);
 				throw new ApiError(500, "Internal server error");
 			});
-	}
+	},
 );
 
 export const getTweetComments = serviceHandler(
@@ -67,14 +65,12 @@ export const getTweetComments = serviceHandler(
 		const aggregation = Tweet.aggregate(pipeline);
 
 		await Tweet.aggregatePaginate(aggregation, options)
-			.then(function (data) {
-				return data;
-			})
-			.catch(function (err) {
-				commentDebug("Error in getTweetComments " + err);
+			.then((data) => data)
+			.catch((err) => {
+				commentDebug(`Error in getTweetComments ${err}`);
 				throw new ApiError(500, "Internal server error");
 			});
-	}
+	},
 );
 
 export const addVideoComment = serviceHandler(
@@ -88,7 +84,7 @@ export const addVideoComment = serviceHandler(
 		if (!comment) throw new ApiError(500, "Failed to add comment");
 
 		return comment;
-	}
+	},
 );
 
 export const addTweetComment = serviceHandler(
@@ -101,14 +97,14 @@ export const addTweetComment = serviceHandler(
 
 		if (!comment) throw new ApiError(500, "Failed to add comment");
 		return comment;
-	}
+	},
 );
 
 export const updateComment = serviceHandler(async (commentMeta, content) => {
 	const comment = await Comment.findByIdAndUpdate(
 		commentMeta._id,
 		{ content },
-		{ new: true }
+		{ new: true },
 	);
 	return comment;
 });

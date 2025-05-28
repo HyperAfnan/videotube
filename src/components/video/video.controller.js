@@ -12,7 +12,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 		q,
 		sortBy,
 		sortType,
-		user
+		user,
 	);
 
 	return res
@@ -28,7 +28,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
 		title,
 		description,
 		videoFileLocalPath,
-		thumbnailLocalPath
+		thumbnailLocalPath,
 	);
 
 	return res
@@ -53,7 +53,7 @@ const updateVideo = asyncHandler(async (req, res) => {
 		title,
 		description,
 		req?.file?.path,
-		videoId
+		videoId,
 	);
 
 	return res

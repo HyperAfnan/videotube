@@ -1,4 +1,4 @@
-import { Schema, mongoose } from "mongoose";
+import { mongoose, Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { config } from "dotenv";
@@ -28,7 +28,7 @@ const userSchema = new Schema(
 		password: { type: String, required: true },
 		refreshToken: { type: String },
 	},
-	{ timestamps: true }
+	{ timestamps: true },
 );
 
 userSchema.pre("save", async function (next) {
@@ -39,7 +39,8 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.methods.isPasswordCorrect = async function (password) {
-	return await bcrypt.compare(password, this.password);
+	const isPasswordCorrect = await bcrypt.compare(password, this.password);
+	return isPasswordCorrect;
 };
 
 userSchema.methods.generateAccessToken = function () {
@@ -51,7 +52,7 @@ userSchema.methods.generateAccessToken = function () {
 			fullname: this.fullname,
 		},
 		process.env.ACCESS_TOKEN_SECRET,
-		{ expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
+		{ expiresIn: process.env.ACCESS_TOKEN_EXPIRY },
 	);
 };
 userSchema.methods.generateRefreshToken = function () {
@@ -60,7 +61,7 @@ userSchema.methods.generateRefreshToken = function () {
 			_id: this._id,
 		},
 		process.env.REFRESH_TOKEN_SECRET,
-		{ expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
+		{ expiresIn: process.env.REFRESH_TOKEN_EXPIRY },
 	);
 };
 

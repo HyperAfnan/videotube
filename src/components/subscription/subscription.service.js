@@ -21,7 +21,7 @@ export const toggleSubscription = serviceHandler(
 			});
 			return { status: "Subscribed", data: subscription };
 		}
-	}
+	},
 );
 
 export const getUserChannelSubscribers = serviceHandler(async (channelId) => {

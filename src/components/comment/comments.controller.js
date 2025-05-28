@@ -24,7 +24,7 @@ const addVideoComment = asyncHandler(async (req, res) => {
 	const comment = await CommentService.addVideoComment(
 		req.video,
 		req.user,
-		content
+		content,
 	);
 	return res
 		.status(201)
@@ -36,7 +36,7 @@ const addTweetComment = asyncHandler(async (req, res) => {
 	const comment = await CommentService.addTweetComment(
 		req.tweet,
 		req.user,
-		content
+		content,
 	);
 	return res
 		.status(201)

@@ -8,7 +8,7 @@ const createPlaylist = asyncHandler(async (req, res) => {
 	const playlist = await PlaylistService.createPlaylistService(
 		name,
 		description,
-		req.user
+		req.user,
 	);
 
 	return res
@@ -25,17 +25,17 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
 		.json(new ApiResponse(200, playlists, "Successfully get user playlist"));
 });
 
-const getPlaylistById = asyncHandler(async (req, res) => {
-	return res
+const getPlaylistById = asyncHandler(async (req, res) =>
+	res
 		.status(200)
-		.json(new ApiResponse(200, req.playlist, "Successfully get playlist"));
-});
+		.json(new ApiResponse(200, req.playlist, "Successfully get playlist")),
+);
 
 // TODO: test this method
 const addVideoToPlaylist = asyncHandler(async (req, res) => {
 	const updatedPlaylist = await PlaylistService.addVideoToPlaylistService(
 		req.playlist,
-		req.video
+		req.video,
 	);
 	return res
 		.status(200)
@@ -43,15 +43,15 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 			new ApiResponse(
 				200,
 				updatedPlaylist,
-				"Successfully added video to playlist"
-			)
+				"Successfully added video to playlist",
+			),
 		);
 });
 
 const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 	const updatedPlaylist = await PlaylistService.removeVideoFromPlaylistService(
 		req.playlist,
-		req.video
+		req.video,
 	);
 	return res
 		.status(200)
@@ -59,8 +59,8 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 			new ApiResponse(
 				200,
 				updatedPlaylist,
-				"Successfully removed video from playlist"
-			)
+				"Successfully removed video from playlist",
+			),
 		);
 });
 
@@ -74,12 +74,12 @@ const updatePlaylist = asyncHandler(async (req, res) => {
 	const updatedPlaylist = await PlaylistService.updatePlaylistService(
 		req.playlist,
 		name,
-		description
+		description,
 	);
 	return res
 		.status(200)
 		.json(
-			new ApiResponse(200, updatedPlaylist, "Successfully updated playlist")
+			new ApiResponse(200, updatedPlaylist, "Successfully updated playlist"),
 		);
 });
 

@@ -21,7 +21,7 @@ const swaggerOptions = {
 				description: "Development server",
 			},
 			{
-				url: `https://chai-code-backend.onrender.com/api/v1`,
+				url: "https://chai-code-backend.onrender.com/api/v1",
 				description: "Production server",
 			},
 		],

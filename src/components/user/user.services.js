@@ -5,6 +5,7 @@ import {
 	deleteImageOnCloudinary,
 	uploadImageOnCloudinary,
 } from "../../utils/fileHandlers.js";
+import mongoose from "mongoose";
 
 async function generateTokens(user) {
 	const accessToken = await user.generateAccessToken();
@@ -23,7 +24,7 @@ export const registerUser = serviceHandler(
 		username,
 		password,
 		avatarLocalPath,
-		coverImageLocalPath
+		coverImageLocalPath,
 	) => {
 		const avatar = await uploadImageOnCloudinary(avatarLocalPath);
 
@@ -36,18 +37,18 @@ export const registerUser = serviceHandler(
 			email,
 			avatar: avatar.secure_url,
 			coverImage: coverImage?.secure_url || "",
-			username: username,
+			username,
 			password,
 		});
 
 		const createdUser = await User.findById(user._id).select(
-			"-password -refreshToken"
+			"-password -refreshToken",
 		);
 		if (!createdUser)
 			throw new ApiError(500, "Something went wrong while creating user");
 
 		return createdUser;
-	}
+	},
 );
 
 export const loginUser = serviceHandler(async (username, password) => {
@@ -60,7 +61,7 @@ export const loginUser = serviceHandler(async (username, password) => {
 	const { accessToken, refreshToken } = await generateTokens(user);
 
 	const loggedInUser = await User.findById(user._id).select(
-		" -password -refreshToken"
+		" -password -refreshToken",
 	);
 
 	return { user: loggedInUser, accessToken, refreshToken };
@@ -91,7 +92,7 @@ export const changePassword = serviceHandler(
 
 		user.password = newPassword;
 		await user.save({ validateBeforeSave: false });
-	}
+	},
 );
 
 export const updateAccountDetails = serviceHandler(
@@ -99,11 +100,11 @@ export const updateAccountDetails = serviceHandler(
 		const user = await User.findByIdAndUpdate(
 			userId,
 			{ $set: { fullName, username } },
-			{ new: true }
+			{ new: true },
 		).select("-password -refreshToken");
 
 		return user;
-	}
+	},
 );
 
 export const updateUserAvatar = serviceHandler(
@@ -117,11 +118,11 @@ export const updateUserAvatar = serviceHandler(
 			{
 				$set: { avatar: avatar.secure_url },
 			},
-			{ new: true }
+			{ new: true },
 		).select("-password -refreshToken");
 
 		return updatedUser;
-	}
+	},
 );
 
 export const updateCoverAvatar = serviceHandler(
@@ -133,17 +134,17 @@ export const updateCoverAvatar = serviceHandler(
 		const updatedUser = await User.findByIdAndUpdate(
 			user._id,
 			{ $set: { coverImage: coverImage.secure_url } },
-			{ new: true }
+			{ new: true },
 		).select("-password -refreshToken");
 
 		return updatedUser;
-	}
+	},
 );
 
 export const getUserChannelProfile = serviceHandler(async (username) => {
 	const user = await User.aggregate([
 		{
-			$match: { username: username },
+			$match: { username },
 		},
 		{
 			$lookup: {

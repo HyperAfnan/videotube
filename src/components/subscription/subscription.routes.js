@@ -105,13 +105,13 @@ router
 		channelValidator,
 		getUserChannelSubscribersValidator,
 		validator,
-		getUserChannelSubscribers
+		getUserChannelSubscribers,
 	)
 	.post(
 		checkSelfSubscription,
 		toggleSubscriptionValidator,
 		validator,
-		toggleSubscription
+		toggleSubscription,
 	);
 
 /**
@@ -144,7 +144,7 @@ router
 		channelValidator,
 		getSubscribedChannelsValidator,
 		validator,
-		getSubscribedChannels
+		getSubscribedChannels,
 	);
 
 export default router;

@@ -13,7 +13,7 @@ export const createPlaylistService = serviceHandler(
 			owner: userMeta._id,
 		});
 		return playlist;
-	}
+	},
 );
 
 export const getUserPlaylistsService = serviceHandler(async (userId) => {
@@ -47,10 +47,10 @@ export const addVideoToPlaylistService = serviceHandler(
 				$push: { videos: new mongoose.Types.ObjectId(videoMeta._id) },
 				$set: { thumbnail: playlistMeta.thumbnail || videoMeta.thumbnail },
 			},
-			{ new: true }
+			{ new: true },
 		);
 		return playlist;
-	}
+	},
 );
 
 export const removeVideoFromPlaylistService = serviceHandler(
@@ -61,7 +61,7 @@ export const removeVideoFromPlaylistService = serviceHandler(
 		const updatedPlaylist = await Playlist.findByIdAndUpdate(
 			playlistMeta._id,
 			{ $pull: { videos: videoMeta._id } },
-			{ new: true }
+			{ new: true },
 		);
 
 		if (
@@ -76,7 +76,7 @@ export const removeVideoFromPlaylistService = serviceHandler(
 		}
 
 		return updatedPlaylist;
-	}
+	},
 );
 
 export const deletePlaylistService = serviceHandler(async (playlistMeta) => {
@@ -88,9 +88,9 @@ export const updatedPlaylistService = serviceHandler(
 		const playlist = await Playlist.findByIdAndUpdate(
 			playlistMeta._id,
 			{ name, description },
-			{ new: true }
+			{ new: true },
 		);
 
 		return playlist;
-	}
+	},
 );

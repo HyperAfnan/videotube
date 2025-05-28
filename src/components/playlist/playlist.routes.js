@@ -194,19 +194,19 @@ router
 		getPlaylistByIdValidator,
 		validator,
 		playlistIdValidator,
-		getPlaylistById
+		getPlaylistById,
 	)
 	.patch(
 		updatePlaylistValidator,
 		validator,
 		playlistIdValidator,
-		updatePlaylist
+		updatePlaylist,
 	)
 	.delete(
 		deletePlaylistValidator,
 		validator,
 		playlistIdValidator,
-		deletePlaylist
+		deletePlaylist,
 	);
 
 /**
@@ -248,7 +248,7 @@ router
 		validator,
 		videoIdValidator,
 		playlistIdValidator,
-		addVideoToPlaylist
+		addVideoToPlaylist,
 	);
 
 /**
@@ -290,7 +290,7 @@ router
 		validator,
 		videoIdValidator,
 		playlistIdValidator,
-		removeVideoFromPlaylist
+		removeVideoFromPlaylist,
 	);
 
 /**

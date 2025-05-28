@@ -7,7 +7,7 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 
 	const subscription = await SubscriptionService.toggleSubscription(
 		channelId,
-		req.user._id
+		req.user._id,
 	);
 	if (subscription.status === "Subscribed") {
 		return res
@@ -25,7 +25,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 	return res
 		.status(200)
 		.json(
-			new ApiResponse(200, subscribers, "Successfully fetched subscribers")
+			new ApiResponse(200, subscribers, "Successfully fetched subscribers"),
 		);
 });
 
@@ -38,7 +38,7 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
 	return res
 		.status(200)
 		.json(
-			new ApiResponse(200, subscriptions, "Successfully fetched subscriptions")
+			new ApiResponse(200, subscriptions, "Successfully fetched subscriptions"),
 		);
 });
 

@@ -1,4 +1,4 @@
-import { body, query, param } from "express-validator";
+import { body, param, query } from "express-validator";
 import { User } from "../user/user.models.js";
 import { Video } from "./video.models.js";
 import { ApiError } from "../../utils/apiErrors.js";

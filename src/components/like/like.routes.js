@@ -2,8 +2,8 @@ import { Router } from "express";
 import {
 	getLikedVideos,
 	toggleCommentLike,
-	toggleVideoLike,
 	toggleTweetLike,
+	toggleVideoLike,
 } from "./like.controller.js";
 import { verifyJWT } from "../../middlewares/auth.middleware.js";
 import { validator } from "../../middlewares/validator.middleware.js";
@@ -117,7 +117,7 @@ router
 		toggleCommentLikeValidator,
 		validator,
 		commentIdValidator,
-		toggleCommentLike
+		toggleCommentLike,
 	);
 
 /**

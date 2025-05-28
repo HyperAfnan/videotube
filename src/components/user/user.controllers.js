@@ -8,7 +8,7 @@ const registerUser = asyncHandler(async (req, res) => {
 	const { fullName, email, username, password } = req.body;
 
 	const avatarLocalPath = req.files?.avatar[0].path;
-	const coverImageLocalPath = req.files?.coverImage?.[0].path || undefined;
+	const coverImageLocalPath = req.files?.coverImage?.[0].path || null;
 
 	const user = await userService.registerUser(
 		fullName,
@@ -16,7 +16,7 @@ const registerUser = asyncHandler(async (req, res) => {
 		username,
 		password,
 		avatarLocalPath,
-		coverImageLocalPath
+		coverImageLocalPath,
 	);
 
 	return res
@@ -56,7 +56,7 @@ const deleteUser = asyncHandler(async (req, res) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
 	const { refreshToken, accessToken } = await userService.refreshAccessToken(
-		req.user._id
+		req.user._id,
 	);
 
 	return res
@@ -67,8 +67,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 			new ApiResponse(
 				200,
 				{ accessToken, refreshToken },
-				"Access Token refreshed"
-			)
+				"Access Token refreshed",
+			),
 		);
 });
 
@@ -83,7 +83,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 	const user = await userService.updateAccountDetails(
 		req.user._id,
 		fullName,
-		username
+		username,
 	);
 
 	return res
@@ -95,7 +95,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 	const avatarLocalPath = req.file.path;
 	const user = await userService.updateUserAvatar(
 		req.user._id,
-		avatarLocalPath
+		avatarLocalPath,
 	);
 
 	return res
@@ -107,7 +107,7 @@ const updateUserCoverImg = asyncHandler(async (req, res) => {
 	const avatarLocalPath = req.file.path;
 	const user = await userService.updateCoverAvatar(
 		req.user._id,
-		avatarLocalPath
+		avatarLocalPath,
 	);
 
 	return res
@@ -115,11 +115,11 @@ const updateUserCoverImg = asyncHandler(async (req, res) => {
 		.json(new ApiResponse(200, user, "successfully updated cover image"));
 });
 
-const getCurrentUser = asyncHandler(async (req, res) => {
-	return res
+const getCurrentUser = asyncHandler(async (req, res) =>
+	res
 		.status(200)
-		.json(new ApiResponse(200, req.user, "Current User Fetched successfully"));
-});
+		.json(new ApiResponse(200, req.user, "Current User Fetched successfully")),
+);
 
 const getUserChannelProfile = asyncHandler(async (req, res) => {
 	const channel = await userService.getUserChannelProfile(req.username);

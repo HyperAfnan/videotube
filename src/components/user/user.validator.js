@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 function checkWhitespace(value) {
 	for (let i = 0; i < value.length; i++) {
-		if (value[i] == " ") throw new ApiError(400, "no whitespace allowed");
+		if (value[i] === " ") throw new ApiError(400, "no whitespace allowed");
 	}
 	return true;
 }
@@ -193,7 +193,7 @@ export const getUserChannelProfileValidator = [
 
 export const usernameValidator = async (req, _, next) => {
 	const { username } = req.params;
-	const user = User.find({ username: username });
+	const user = User.find({ username });
 	if (!user) username = req.user.username;
 
 	req.username = username;

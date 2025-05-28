@@ -3,6 +3,8 @@ import {
 	changePassword,
 	deleteUser,
 	getCurrentUser,
+	getUserChannelProfile,
+	getUserWatchHistory,
 	loginUser,
 	logoutUser,
 	refreshAccessToken,
@@ -10,22 +12,20 @@ import {
 	updateAccountDetails,
 	updateUserAvatar,
 	updateUserCoverImg,
-   getUserChannelProfile,
-   getUserWatchHistory
 } from "./user.controllers.js";
 import { upload } from "../../middlewares/multer.middlewares.js";
 import { verifyJWT as auth } from "../../middlewares/auth.middleware.js";
 import { validator } from "../../middlewares/validator.middleware.js";
 import {
+	avatarFileValidator,
+	changePasswordValidator,
+	coverImageFileValidator,
+	getUserChannelProfileValidator,
 	loginValidator,
-	registerValidator,
 	refreshAccessTokenValidator,
 	registerationFilesValidator,
+	registerValidator,
 	updateAccountDetailsValidator,
-	avatarFileValidator,
-	coverImageFileValidator,
-	changePasswordValidator,
-	getUserChannelProfileValidator,
 	usernameValidator,
 } from "./user.validator.js";
 
@@ -169,7 +169,7 @@ router.route("/register").post(
 	registerationFilesValidator,
 	registerValidator,
 	validator,
-	registerUser
+	registerUser,
 );
 
 /**
@@ -411,7 +411,7 @@ router
 		auth,
 		upload.single("coverImage"),
 		coverImageFileValidator,
-		updateUserCoverImg
+		updateUserCoverImg,
 	);
 
 /**
@@ -558,7 +558,7 @@ router
 		getUserChannelProfileValidator,
 		usernameValidator,
 		validator,
-		getUserChannelProfile
+		getUserChannelProfile,
 	);
 //
 // /**

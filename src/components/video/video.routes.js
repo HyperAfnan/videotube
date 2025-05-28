@@ -177,7 +177,7 @@ router
 		publishVideoFilesValidator,
 		publishVideoValidator,
 		validator,
-		publishAVideo
+		publishAVideo,
 	);
 
 /**
@@ -275,14 +275,14 @@ router
 		deleteVideoValidator,
 		validator,
 		permsAndVideoIdValidator,
-		deleteVideo
+		deleteVideo,
 	)
 	.patch(
 		upload.single("thumbnail"),
 		updateVideoValidator,
 		validator,
 		permsAndVideoIdValidator,
-		updateVideo
+		updateVideo,
 	);
 
 /**
@@ -318,7 +318,7 @@ router
 		togglePublishStatusValidator,
 		validator,
 		permsAndVideoIdValidator,
-		togglePublishStatus
+		togglePublishStatus,
 	);
 
 export default router;

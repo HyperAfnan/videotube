@@ -16,8 +16,8 @@ connectDB()
 	.then(() =>
 		dbDebug(
 			"Database connected successfully %O",
-			mongoose.connection.readyState
-		)
+			mongoose.connection.readyState,
+		),
 	)
 	.catch((err) => dbDebug("Database connection failed: %O", err));
 

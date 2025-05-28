@@ -1,4 +1,4 @@
-import { Schema, mongoose } from "mongoose";
+import { mongoose, Schema } from "mongoose";
 
 const SubscriptionSchema = new Schema(
 	{
@@ -11,7 +11,7 @@ const SubscriptionSchema = new Schema(
 			ref: "user",
 		},
 	},
-	{ timestamps: true }
+	{ timestamps: true },
 );
 
 export const Subscription = mongoose.model("subscription", SubscriptionSchema);

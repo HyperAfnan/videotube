@@ -26,14 +26,12 @@ export const getAllVideos = serviceHandler(
 		const options = { page, limit, customLabels: myCustomLabels };
 
 		await Video.aggregatePaginate(aggregate, options)
-			.then(function (data) {
-				return data;
-			})
-			.catch(function (err) {
+			.then((data) => data)
+			.catch((err) => {
 				console.log(err);
 				throw new ApiError(500, "Internal Server error");
 			});
-	}
+	},
 );
 
 export const publishVideo = serviceHandler(
@@ -42,13 +40,13 @@ export const publishVideo = serviceHandler(
 			(e) => {
 				console.log(e);
 				throw new ApiError(500, "failed to upload video file");
-			}
+			},
 		);
 		const thumbnail = await uploadVideoOnCloudinary(thumbnailLocalPath).catch(
 			(e) => {
 				console.log(e);
 				throw new ApiError(500, "failed to upload video thumbnail");
-			}
+			},
 		);
 		const duration = Math.floor(videoFileLocalPath.duration);
 
@@ -63,7 +61,7 @@ export const publishVideo = serviceHandler(
 		});
 
 		return video;
-	}
+	},
 );
 
 export const getVideoById = serviceHandler(
@@ -71,42 +69,42 @@ export const getVideoById = serviceHandler(
 		const video = await Video.findByIdAndUpdate(
 			videoId,
 			{ views: videoMeta.views + 1 },
-			{ new: true }
+			{ new: true },
 		);
 
 		await User.updateOne(
 			{ _id: userMeta._id },
-			{ $push: { watchHistory: new mongoose.Types.ObjectId(videoId) } }
+			{ $push: { watchHistory: new mongoose.Types.ObjectId(videoId) } },
 		);
 
 		return video;
-	}
+	},
 );
 
 export const updateVideo = serviceHandler(
 	async (title, description, videoId, thumbnailLocalPath) => {
-		var thumbnail;
+		let thumbnail;
 		if (thumbnailLocalPath) {
 			await deleteImageOnCloudinary(videoData.thumbnail).catch((e) => {
-				console.log("Failed to delete thumbnail \n" + e);
+				console.log(`Failed to delete thumbnail \n${e}`);
 				throw new ApiError(500, "Failed to delete thumbnail");
 			});
 			thumbnail = await uploadVideoOnCloudinary(thumbnailLocalPath).catch(
 				(e) => {
-					console.log("Failed to upload thumbnail \n" + e);
+					console.log(`Failed to upload thumbnail \n${e}`);
 					throw new ApiError(500, "Failed to upload thumbnail");
-				}
+				},
 			);
 		}
 
 		const video = await Video.findByIdAndUpdate(
 			videoId,
 			{ title, description, thumbnail: thumbnail?.secure_url },
-			{ new: true }
+			{ new: true },
 		);
 
 		return video;
-	}
+	},
 );
 
 export const deleteVideo = serviceHandler(async (videoMeta) => {
@@ -125,18 +123,18 @@ export const deleteVideo = serviceHandler(async (videoMeta) => {
 });
 
 export const togglePublishStatus = serviceHandler(async (videoMeta) => {
-	var video;
+	let video;
 	if (!videoMeta.isPublished)
 		video = await Video.findByIdAndUpdate(
 			videoMeta._id,
 			{ isPublished: true },
-			{ new: true }
+			{ new: true },
 		);
 	else
 		video = await Video.findByIdAndUpdate(
 			videoMeta._id,
 			{ isPublished: false },
-			{ new: true }
+			{ new: true },
 		);
 
 	return video;

@@ -1,4 +1,4 @@
-import { Schema, mongoose } from "mongoose";
+import { mongoose, Schema } from "mongoose";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const commentSchema = new Schema(
@@ -8,7 +8,7 @@ const commentSchema = new Schema(
 		tweet: { type: Schema.Types.ObjectId, ref: "tweet" },
 		user: { type: Schema.Types.ObjectId, ref: "video" },
 	},
-	{ timestamps: true }
+	{ timestamps: true },
 );
 
 commentSchema.plugin(mongooseAggregatePaginate);

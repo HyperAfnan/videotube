@@ -1,4 +1,4 @@
-import { Schema, mongoose } from "mongoose";
+import { mongoose, Schema } from "mongoose";
 
 const PlaylistSchema = new Schema(
 	{
@@ -8,7 +8,7 @@ const PlaylistSchema = new Schema(
 		owner: { type: Schema.Types.ObjectId, ref: "user" },
 		thumbnail: { type: String },
 	},
-	{ timeseries: true }
+	{ timeseries: true },
 );
 
 export const Playlist = mongoose.model("playlist", PlaylistSchema);

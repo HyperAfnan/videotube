@@ -1,11 +1,11 @@
 import { Router } from "express";
 import {
-	updateComment,
-	deleteComment,
 	addTweetComment,
 	addVideoComment,
+	deleteComment,
 	getTweetComments,
 	getVideoComments,
+	updateComment,
 } from "./comments.controller.js";
 import { verifyJWT } from "../../middlewares/auth.middleware.js";
 import { validator } from "../../middlewares/validator.middleware.js";
@@ -132,7 +132,7 @@ router
 		addVideoCommentValidator,
 		validator,
 		videoPermsChecker,
-		addVideoComment
+		addVideoComment,
 	);
 
 /**
@@ -201,7 +201,7 @@ router
 		addTweetCommentValidator,
 		validator,
 		tweetPermsChecker,
-		addTweetComment
+		addTweetComment,
 	);
 
 /**
@@ -273,13 +273,13 @@ router
 		deleteCommentValidator,
 		validator,
 		commentIdValidatorAndPermsCheck,
-		deleteComment
+		deleteComment,
 	)
 	.patch(
 		updateCommentValidator,
 		validator,
 		commentIdValidatorAndPermsCheck,
-		updateComment
+		updateComment,
 	);
 
 export default router;

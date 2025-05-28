@@ -20,7 +20,7 @@ export const updateTweet = serviceHandler(async (content, title, tweetId) => {
 	const tweet = await Tweet.findByIdAndUpdate(
 		tweetId,
 		{ content, title },
-		{ new: true }
+		{ new: true },
 	);
 
 	if (!tweet) {
