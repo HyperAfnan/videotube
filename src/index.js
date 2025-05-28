@@ -13,7 +13,12 @@ const PORT = process.env.PORT || 5000;
 
 startupDebug("Starting the application...");
 connectDB()
-	.then(() => dbDebug("Database connected successfully %O", mongoose.connection.readyState))
+	.then(() =>
+		dbDebug(
+			"Database connected successfully %O",
+			mongoose.connection.readyState
+		)
+	)
 	.catch((err) => dbDebug("Database connection failed: %O", err));
 
 app

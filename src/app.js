@@ -29,15 +29,14 @@ app.use(cookieParser());
 // }
 
 import userRoutes from "./components/user/user.routes.js";
-import healthRoutes from "./components/health/api/health.routes.js";
-import tweetRoutes from "./components/tweet/api/tweet.routes.js";
-import subscriptionRoutes from "./components/subscription/api/subscription.routes.js";
-import videoRoutes from "./components/video/api/video.routes.js";
-import commentRoutes from "./components/comment/api/comment.routes.js";
-import likeRoutes from "./components/like/api/like.routes.js";
-import playlistRoutes from "./components/playlist/api/playlist.routes.js";
-import dashboardRoutes from "./components/dashboard/api/dashboard.routes.js";
-if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
+import healthRoutes from "./components/health/health.routes.js";
+import tweetRoutes from "./components/tweet/tweet.routes.js";
+import subscriptionRoutes from "./components/subscription/subscription.routes.js";
+import videoRoutes from "./components/video/video.routes.js";
+import commentRoutes from "./components/comment/comment.routes.js";
+import likeRoutes from "./components/like/like.routes.js";
+import playlistRoutes from "./components/playlist/playlist.routes.js";
+import dashboardRoutes from "./components/dashboard/dashboard.routes.js";
 
 import swaggerUi from "swagger-ui-express";
 import { swaggerDocs } from "./utils/swagger.js";
@@ -52,13 +51,5 @@ app.use("/api/v1/likes", likeRoutes);
 app.use("/api/v1/playlist", playlistRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-
-app
-	.listen(PORT, () => {
-		console.log(`App is running on port ${PORT}`);
-	})
-	.on("error", (error) => {
-		console.error("Failed to start server:", error.message);
-	});
 
 export { app };
