@@ -25,9 +25,9 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-	const { username, password } = req.body;
+	const { email, password } = req.body;
 
-	const loginService = await userService.loginUser(username, password);
+	const loginService = await userService.loginUser(email, password);
 	return res
 		.status(200)
 		.cookie("accessToken", loginService.accessToken, cookieOptions)

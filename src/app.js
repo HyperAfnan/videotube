@@ -41,7 +41,7 @@ import dashboardRoutes from "./components/dashboard/dashboard.routes.js";
 import swaggerUi from "swagger-ui-express";
 import { swaggerDocs } from "./utils/swagger.js";
 
-app.get("/", (_, res) => res.redirect("/docs"))
+app.get("/", (_, res) => res.redirect("/docs"));
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/health", healthRoutes);
 app.use("/api/v1/tweets", tweetRoutes);

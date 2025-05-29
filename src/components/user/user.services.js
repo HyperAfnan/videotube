@@ -51,8 +51,8 @@ export const registerUser = serviceHandler(
 	},
 );
 
-export const loginUser = serviceHandler(async (username, password) => {
-	const user = await User.findOne({ username });
+export const loginUser = serviceHandler(async (email, password) => {
+	const user = await User.findOne({ email });
 	if (!user) throw new ApiError(404, "User not found");
 
 	const isPasswordCorrect = await user.isPasswordCorrect(password);
@@ -61,7 +61,7 @@ export const loginUser = serviceHandler(async (username, password) => {
 	const { accessToken, refreshToken } = await generateTokens(user);
 
 	const loggedInUser = await User.findById(user._id).select(
-		" -password -refreshToken",
+		"-password -refreshToken",
 	);
 
 	return { user: loggedInUser, accessToken, refreshToken };

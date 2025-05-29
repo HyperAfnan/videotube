@@ -103,18 +103,14 @@ export const registerationFilesValidator = (req, _, next) => {
 };
 
 export const loginValidator = [
-	body("username")
+	body("email")
 		.notEmpty()
-		.withMessage("Username is required")
+		.withMessage("Email is required")
 		.isString()
-		.withMessage("Username must be a string")
-		.isfirstLetterLowercase()
-		.withMessage("first letter of username should be lowercase")
-		.trim()
-		.isLength({ min: 3, max: 15 })
-		.withMessage("Username must between 3-15 characters")
-		.checkWhitespace()
-		.withMessage("whitespace is not allowed in username"),
+		.withMessage("Email must be a string")
+      .isEmail()
+      .withMessage("Invalid email format")
+		.trim(),
 	body("password")
 		.notEmpty()
 		.withMessage("Password is required")
