@@ -14,6 +14,7 @@ import {
 	validateOwner,
 } from "./tweet.validator.js";
 import { validator } from "../../middlewares/validator.middleware.js";
+import { defaultRateLimiter } from "../../middlewares/rateLimiter.js";
 
 const router = Router();
 
@@ -51,6 +52,7 @@ const router = Router();
  *           format: date-time
  */
 
+router.use(defaultRateLimiter)
 router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
 
 /**
