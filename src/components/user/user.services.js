@@ -1,4 +1,10 @@
 import { User } from "./user.models.js";
+import { Comment } from "../comment/comments.models.js";
+import { Subscription } from "../subscription/subscription.models.js";
+import { Like } from "../like/like.models.js";
+import { Playlist } from "../playlist/playlist.models.js";
+import { Video } from "../video/video.models.js";
+import { Tweet } from "../tweet/tweet.models.js";
 import { serviceHandler } from "../../utils/handlers.js";
 import { ApiError } from "../../utils/apiErrors.js";
 import {
@@ -71,11 +77,18 @@ export const logoutUser = serviceHandler(async (userId) => {
 	await User.findByIdAndUpdate(userId, { $unset: { refreshToken: 1 } });
 });
 
-// TODO: should also delete user's likes, subscriptions, videos, comments
 export const deleteUser = serviceHandler(async (userId) => {
 	const user = await User.findByIdAndDelete(userId);
+
+   if (user?.coverImage) await deleteImageOnCloudinary(user.coverImage);
 	await deleteImageOnCloudinary(user?.avatar);
-	if (user?.coverImage) await deleteImageOnCloudinary(user.coverImage);
+   await Comment.deleteMany( { user: userId })
+   await Subscription.deleteMany({ $or: [{ channel: userId }, { subscriber: userId }] });
+   await Like.deleteMany({ user: userId });
+   await Playlist.deleteMany({ owner: userId });
+   await Video.deleteMany({ owner: userId });
+   await Tweet.deleteMany({ user: userId });
+
 });
 
 export const refreshAccessToken = serviceHandler(async (userId) => {
