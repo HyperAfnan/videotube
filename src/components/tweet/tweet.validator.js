@@ -90,7 +90,7 @@ export const getUserTweetsValidator = [
 
 export const getUserTweetsValidator2 = async (req, _, next) => {
    if (req?.params?.userId) {
-      const user = await User.findById(req.param.userId);
+      const user = await User.findById(req.params.userId);
       if (!user) throw new ApiError(400, "User not found");
       next();
    }
