@@ -3,6 +3,12 @@ import { ApiError } from "../../utils/apiErrors.js";
 import { serviceHandler } from "../../utils/handlers.js";
 import { User } from "../user/user.models.js";
 import { Video } from "./video.models.js";
+import {
+	deleteImageOnCloudinary,
+	deleteVideoOnCloudinary,
+	uploadImageOnCloudinary,
+   uploadVideoOnCloudinary,
+} from "../../utils/fileHandlers.js";
 
 export const getAllVideos = serviceHandler(
 	async (page, limit, q, sortBy, sortType, userId) => {
@@ -13,7 +19,7 @@ export const getAllVideos = serviceHandler(
 		if (!sortBy) sortBy = "createdAt";
 
 		const aggregate = Video.aggregate([
-			{ $match: { owner: new mongoose.Types.ObjectId(userId) } },
+			{ $match: { owner: new mongoose.Types.ObjectId(String(userId)) } },
 			{ $match: { title: { $regex: q } } },
 			{ $sort: { [sortBy]: sortType } },
 		]);
@@ -42,7 +48,7 @@ export const publishVideo = serviceHandler(
 				throw new ApiError(500, "failed to upload video file");
 			},
 		);
-		const thumbnail = await uploadVideoOnCloudinary(thumbnailLocalPath).catch(
+		const thumbnail = await uploadImageOnCloudinary(thumbnailLocalPath).catch(
 			(e) => {
 				console.log(e);
 				throw new ApiError(500, "failed to upload video thumbnail");
@@ -74,7 +80,7 @@ export const getVideoById = serviceHandler(
 
 		await User.updateOne(
 			{ _id: userMeta._id },
-			{ $push: { watchHistory: new mongoose.Types.ObjectId(videoId) } },
+			{ $push: { watchHistory: new mongoose.Types.ObjectId(String(videoId)) } },
 		);
 
 		return video;
@@ -89,7 +95,7 @@ export const updateVideo = serviceHandler(
 				console.log(`Failed to delete thumbnail \n${e}`);
 				throw new ApiError(500, "Failed to delete thumbnail");
 			});
-			thumbnail = await uploadVideoOnCloudinary(thumbnailLocalPath).catch(
+			thumbnail = await uploadImageOnCloudinary(thumbnailLocalPath).catch(
 				(e) => {
 					console.log(`Failed to upload thumbnail \n${e}`);
 					throw new ApiError(500, "Failed to upload thumbnail");
