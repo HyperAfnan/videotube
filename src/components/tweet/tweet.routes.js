@@ -7,6 +7,7 @@ import {
 } from "./tweet.controller.js";
 import { verifyJWT } from "../../middlewares/auth.middleware.js";
 import {
+	createTweetFileValidator,
 	createTweetValidator,
 	deleteTweetValidator,
 	getUserTweetsValidator,
@@ -15,6 +16,7 @@ import {
 } from "./tweet.validator.js";
 import { validator } from "../../middlewares/validator.middleware.js";
 import { defaultRateLimiter } from "../../middlewares/rateLimiter.js";
+import { upload } from "../../middlewares/multer.middlewares.js";
 
 const router = Router();
 
@@ -52,7 +54,7 @@ const router = Router();
  *           format: date-time
  */
 
-router.use(defaultRateLimiter)
+router.use(defaultRateLimiter);
 router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
 
 /**
@@ -111,7 +113,13 @@ router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
  */
 router
 	.route("/")
-	.post(createTweetValidator, validator, createTweet)
+	.post(
+		upload.single("contentImage"),
+		createTweetFileValidator,
+		createTweetValidator,
+		validator,
+		createTweet,
+	)
 	.get(getUserTweetsValidator, validator, getUserTweets);
 
 /**
