@@ -11,6 +11,7 @@ import {
 	createTweetValidator,
 	deleteTweetValidator,
 	getUserTweetsValidator,
+	getUserTweetsValidator2,
 	updateTweetValidator,
 	validateOwner,
 } from "./tweet.validator.js";
@@ -214,6 +215,7 @@ router
  *       401:
  *         description: Unauthorized
  */
-router.route("/user/:userId").get(getUserTweets);
+router.route("/user/:userId")
+   .get(getUserTweetsValidator, validator, getUserTweetsValidator2, getUserTweets);
 
 export default router;

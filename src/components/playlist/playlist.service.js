@@ -98,7 +98,7 @@ export const updatePlaylistService = serviceHandler(
 			});
 			thumbnail = await uploadImageOnCloudinary(thumbnailLocalPath).catch(
 				(e) => {
-					throw new ApiError(500, "Unable to delete new thumbnail", e);
+					throw new ApiError(500, "Unable to upload new thumbnail", e);
 				},
 			);
 		}

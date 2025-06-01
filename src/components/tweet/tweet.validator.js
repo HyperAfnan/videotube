@@ -78,12 +78,21 @@ export const getUserTweetsValidator = [
 	param("userId")
 		.optional()
 		.isString()
-		.withMessage("TweetId must be string")
+		.withMessage("UserId must be string")
 		.isMongoId()
-		.withMessage("Invalid TweetId")
+		.withMessage("Invalid UserId format")
 		.custom(async (userId) => {
 			const user = await User.findById(userId);
 			if (!user) throw new ApiError(400, "User not found");
 			return true;
 		}),
 ];
+
+export const getUserTweetsValidator2 = async (req, _, next) => {
+   if (req?.params?.userId) {
+      const user = await User.findById(req.param.userId);
+      if (!user) throw new ApiError(400, "User not found");
+      next();
+   }
+   next()
+}

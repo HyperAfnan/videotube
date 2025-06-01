@@ -50,7 +50,7 @@ export const deleteTweet = serviceHandler(async (tweetId) => {
 
 export const getUserTweets = serviceHandler(async (userId) => {
 	const tweets = await User.aggregate([
-		{ $match: { _id: new mongoose.Types.ObjectId(userId) } },
+		{ $match: { _id: new mongoose.Types.ObjectId(String(userId)) } },
 		{
 			$lookup: {
 				from: "tweets",
