@@ -8,7 +8,7 @@ const PlaylistSchema = new Schema(
 		owner: { type: Schema.Types.ObjectId, ref: "user" },
 		thumbnail: { type: String },
 	},
-	{ timeseries: true },
+	{ timestamps: true },
 );
 
 export const Playlist = mongoose.model("playlist", PlaylistSchema);

@@ -6,14 +6,13 @@ const createTweet = asyncHandler(async (req, res) => {
 	const { content, title } = req.body;
 	const contentImage = req?.file?.path || null;
 
-	const tweet = tweetService.createTweet(
+	const tweet = await tweetService.createTweet(
 		content,
 		title,
 		req.user._id,
 		contentImage,
 	);
 
-	tweetDebug("Tweet created: 201, tweetId: %s", tweet?._id);
 	return res
 		.status(201)
 		.json(new ApiResponse(201, tweet, "Successfully create tweet"));

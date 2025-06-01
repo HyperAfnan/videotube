@@ -1,4 +1,4 @@
-import { body, param, query } from "express-validator";
+import { body, oneOf, param, query } from "express-validator";
 import { ApiError } from "../../utils/apiErrors.js";
 import { Video } from "../video/video.models.js";
 import { User } from "../user/user.models.js";
@@ -96,12 +96,16 @@ export const updatePlaylistValidator = [
 		.withMessage("Playlist ID is required")
 		.isMongoId()
 		.withMessage("Invalid Playlist ID format"),
-	body("name")
-		.optional()
-		.isLength({ max: 100 })
-		.withMessage("Playlist name must be less than 100 characters"),
-	body("description")
-		.optional()
-		.isLength({ max: 500 })
-		.withMessage("Playlist description must be less than 500 characters"),
+	oneOf([
+    body("name")
+      .optional()
+      .isLength({ max: 100 })
+      .withMessage("Playlist name must be less than 100 characters"),
+    body("description")
+      .optional()
+      .isLength({ max: 500 })
+      .withMessage("Playlist description must be less than 500 characters")
+      ], 
+      { message: "Either of field is required" }
+   )
 ];

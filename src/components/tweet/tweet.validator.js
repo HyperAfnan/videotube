@@ -20,14 +20,13 @@ export const createTweetValidator = [
 		.trim(),
 	body("content")
 		.notEmpty()
-		.withMessage("content is requied")
+		.withMessage("Content is requied")
 		.isString()
 		.withMessage("Title must be string")
 		.trim(),
 ];
 
 export const createTweetFileValidator = async (req, _, next) => {
-	console.log(req.body.title);
 	const file = req?.file?.path;
 	const supportedFileTypes = ["png", "jpg", "jpeg", "gif"];
 	if (file) {
@@ -37,6 +36,7 @@ export const createTweetFileValidator = async (req, _, next) => {
 		}
 		throw new ApiError(400, `Unsupported file type: ${file.split(".")[1]}`);
 	}
+   next()
 };
 
 export const updateTweetValidator = [
@@ -50,37 +50,37 @@ export const updateTweetValidator = [
 			body("content")
 				.optional()
 				.isString()
-				.withMessage("Title must be string")
+				.withMessage("Content must be string")
 				.trim(),
 		],
 		{ message: "At least one field required" },
 	),
 	param("tweetId")
 		.notEmpty()
-		.withMessage("tweetId is requied")
+		.withMessage("TweetId is required")
 		.isString()
-		.withMessage("tweetId must be string")
+		.withMessage("TweetId must be string")
 		.isMongoId()
-		.withMessage("Invalid tweetId"),
+		.withMessage("Invalid TweetId"),
 ];
 
 export const deleteTweetValidator = [
 	param("tweetId")
 		.notEmpty()
-		.withMessage("tweetId is requied")
+		.withMessage("TweetId is required")
 		.isString()
-		.withMessage("tweetId must be string")
+		.withMessage("TweetId must be string")
 		.isMongoId()
-		.withMessage("Invalid tweetId"),
+		.withMessage("Invalid TweetId"),
 ];
 
 export const getUserTweetsValidator = [
 	param("userId")
 		.optional()
 		.isString()
-		.withMessage("tweetId must be string")
+		.withMessage("TweetId must be string")
 		.isMongoId()
-		.withMessage("Invalid tweetId")
+		.withMessage("Invalid TweetId")
 		.custom(async (userId) => {
 			const user = await User.findById(userId);
 			if (!user) throw new ApiError(400, "User not found");

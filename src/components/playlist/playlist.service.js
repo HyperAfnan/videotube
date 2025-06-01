@@ -38,18 +38,20 @@ export const getUserPlaylistsService = serviceHandler(async (userId) => {
 
 export const addVideoToPlaylistService = serviceHandler(
 	async (playlistMeta, videoMeta) => {
-		if (playlistMeta.videos.includes(videoMeta._id.toString())) {
-			const playlist = await Playlist.aggregate(aggregationPipeline);
-			return res
-				.status(200)
-				.json(new ApiResponse(200, playlist, "Video already in playlist"));
-		}
+		if (playlistMeta.videos.includes(videoMeta._id.toString()))
+			return {
+				playlist: playlistMeta,
+				message: "Video already exists in the playlist",
+			};
 
 		const playlist = await Playlist.findByIdAndUpdate(
 			playlistMeta._id,
 			{
 				$push: { videos: new mongoose.Types.ObjectId(String(videoMeta._id)) },
-				$set: { thumbnail: playlistMeta.thumbnail || videoMeta.thumbnail },
+				$cond: {
+					if: { $eq: ["$thumbnail", null] },
+					then: { $set: { thumbnail: videoMeta.thumbnail } },
+				},
 			},
 			{ new: true },
 		);
@@ -88,16 +90,15 @@ export const deletePlaylistService = serviceHandler(async (playlistMeta) => {
 });
 
 export const updatePlaylistService = serviceHandler(
-	async (playlistMeta, name, description, thumnailLocalPath) => {
-
+	async (playlistMeta, name, description, thumbnailLocalPath) => {
 		let thumbnail;
-		if (thumnailLocalPath) {
+		if (thumbnailLocalPath) {
 			await deleteImageOnCloudinary(playlistMeta.thumbnail).catch((e) => {
 				throw new ApiError(500, "Unable to delete old thumbnail", e);
 			});
-			thumbnail = await uploadImageOnCloudinary(thumnailLocalPath).catch(
+			thumbnail = await uploadImageOnCloudinary(thumbnailLocalPath).catch(
 				(e) => {
-					throw new ApiError(500, "Unable to delete old thumbnail", e);
+					throw new ApiError(500, "Unable to delete new thumbnail", e);
 				},
 			);
 		}

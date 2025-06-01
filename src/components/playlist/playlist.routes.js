@@ -19,9 +19,9 @@ import {
 	removeVideoFromPlaylistValidator,
 	updatePlaylistValidator,
 	userIdValidator,
+   videoIdValidator,
 } from "./playlist.validator.js";
 import { validator } from "../../middlewares/validator.middleware.js";
-import { videoIdValidator } from "../comment/comment.validator.js";
 import { defaultRateLimiter } from "../../middlewares/rateLimiter.js";
 import { upload } from "../../middlewares/multer.middlewares.js";
 
@@ -200,7 +200,7 @@ router
 		getPlaylistById,
 	)
 	.patch(
-      upload.single("thumbnail"),
+		upload.single("thumbnail"),
 		updatePlaylistValidator,
 		validator,
 		playlistIdValidator,

@@ -85,5 +85,6 @@ export {
 	getVideoById,
 	updateVideo,
 	deleteVideo,
+   downloadVideo,
 	togglePublishStatus,
 };
