@@ -69,6 +69,7 @@ const deletePlaylist = asyncHandler(async (req, res) => {
 	return res.status(204).end();
 });
 
+// TODO: test this method too with the new logic
 const updatePlaylist = asyncHandler(async (req, res) => {
 	const { name, description } = req.body;
 	const updatedPlaylist = await PlaylistService.updatePlaylistService(

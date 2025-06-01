@@ -4,6 +4,10 @@ import { serviceHandler } from "../../utils/handlers.js";
 import { User } from "../user/user.models.js";
 import { Video } from "../video/video.models.js";
 import { Playlist } from "./playlist.models.js";
+import {
+	uploadImageOnCloudinary,
+	deleteImageOnCloudinary,
+} from "../../utils/fileHandlers.js";
 
 export const createPlaylistService = serviceHandler(
 	async (name, description, userMeta) => {
@@ -44,7 +48,7 @@ export const addVideoToPlaylistService = serviceHandler(
 		const playlist = await Playlist.findByIdAndUpdate(
 			playlistMeta._id,
 			{
-				$push: { videos: new mongoose.Types.ObjectId(videoMeta._id) },
+				$push: { videos: new mongoose.Types.ObjectId(String(videoMeta._id)) },
 				$set: { thumbnail: playlistMeta.thumbnail || videoMeta.thumbnail },
 			},
 			{ new: true },
@@ -83,11 +87,24 @@ export const deletePlaylistService = serviceHandler(async (playlistMeta) => {
 	await Playlist.findByIdAndDelete(playlistMeta._id);
 });
 
-export const updatedPlaylistService = serviceHandler(
-	async (playlistMeta, name, description) => {
+export const updatePlaylistService = serviceHandler(
+	async (playlistMeta, name, description, thumnailLocalPath) => {
+
+		let thumbnail;
+		if (thumnailLocalPath) {
+			await deleteImageOnCloudinary(playlistMeta.thumbnail).catch((e) => {
+				throw new ApiError(500, "Unable to delete old thumbnail", e);
+			});
+			thumbnail = await uploadImageOnCloudinary(thumnailLocalPath).catch(
+				(e) => {
+					throw new ApiError(500, "Unable to delete old thumbnail", e);
+				},
+			);
+		}
+
 		const playlist = await Playlist.findByIdAndUpdate(
 			playlistMeta._id,
-			{ name, description },
+			{ name, description, thumbnail: thumbnail?.secure_url },
 			{ new: true },
 		);
 
