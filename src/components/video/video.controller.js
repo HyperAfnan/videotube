@@ -68,7 +68,7 @@ const deleteVideo = asyncHandler(async (req, res) => {
 });
 
 const downloadVideo = asyncHandler(async (req, res) => {
-	return res.status(200).redirect(req.video.videoFile);
+	return res.redirect(req.video.videoFile);
 });
 
 const togglePublishStatus = asyncHandler(async (req, res) => {

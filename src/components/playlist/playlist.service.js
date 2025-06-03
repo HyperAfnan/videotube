@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import { ApiError } from "../../utils/apiErrors.js";
 import { serviceHandler } from "../../utils/handlers.js";
 import { User } from "../user/user.models.js";
-import { Video } from "../video/video.models.js";
 import { Playlist } from "./playlist.models.js";
 import {
 	uploadImageOnCloudinary,
@@ -22,11 +21,11 @@ export const createPlaylistService = serviceHandler(
 
 export const getUserPlaylistsService = serviceHandler(async (userId) => {
 	const playlists = await User.aggregate([
-		{ $match: { _id: new Video.Types.ObjectId(userId) } },
+		{ $match: { _id: new mongoose.Types.ObjectId(String(userId)) } },
 		{
 			$lookup: {
 				from: "playlists",
-				localFields: "_id",
+				localField: "_id",
 				foreignField: "owner",
 				as: "playlists",
 			},
@@ -44,19 +43,12 @@ export const addVideoToPlaylistService = serviceHandler(
 				message: "Video already exists in the playlist",
 			};
 
-		const playlist = await Playlist.findByIdAndUpdate(
-			playlistMeta._id,
-			{
-				$push: { videos: new mongoose.Types.ObjectId(String(videoMeta._id)) },
-				$cond: {
-					if: { $eq: ["$thumbnail", null] },
-					then: { $set: { thumbnail: videoMeta.thumbnail } },
-				},
-			},
-			{ new: true },
-		);
+      const updateOps = { $push: { videos: new mongoose.Types.ObjectId(String(videoMeta._id)) } };
+      if (!playlistMeta.thumbnail) updateOps.$set = { thumbnail: videoMeta.thumbnail };
+      const playlist = await Playlist.findByIdAndUpdate( playlistMeta._id, updateOps, { new: true });
+
 		return playlist;
-	},
+   }
 );
 
 export const removeVideoFromPlaylistService = serviceHandler(

@@ -14,13 +14,13 @@ export const validateOwner = async (req, _, next) => {
 export const createTweetValidator = [
 	body("title")
 		.notEmpty()
-		.withMessage("Title is requied")
+		.withMessage("Title is required")
 		.isString()
 		.withMessage("Title must be string")
 		.trim(),
 	body("content")
 		.notEmpty()
-		.withMessage("Content is requied")
+		.withMessage("Content is required")
 		.isString()
 		.withMessage("Title must be string")
 		.trim(),
