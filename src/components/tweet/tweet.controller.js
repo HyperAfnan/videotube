@@ -4,7 +4,14 @@ import * as tweetService from "./tweet.service.js";
 
 const createTweet = asyncHandler(async (req, res) => {
 	const { content, title } = req.body;
-	const tweet = tweetService.createTweet(content, title, req.user._id);
+	const contentImage = req?.file?.path || null;
+
+	const tweet = await tweetService.createTweet(
+		content,
+		title,
+		req.user._id,
+		contentImage,
+	);
 
 	return res
 		.status(201)
