@@ -31,18 +31,20 @@ const getPlaylistById = asyncHandler(async (req, res) =>
 		.json(new ApiResponse(200, req.playlist, "Successfully get playlist")),
 );
 
-// TODO: test this method
 const addVideoToPlaylist = asyncHandler(async (req, res) => {
-	const updatedPlaylist = await PlaylistService.addVideoToPlaylistService(
+	const playlist = await PlaylistService.addVideoToPlaylistService(
 		req.playlist,
 		req.video,
 	);
+
+   if (playlist.message) return res.status(200).json( new ApiResponse( 200, playlist.playlist, playlist.message));
+
 	return res
 		.status(200)
 		.json(
 			new ApiResponse(
 				200,
-				updatedPlaylist,
+				playlist,
 				"Successfully added video to playlist",
 			),
 		);
@@ -69,12 +71,14 @@ const deletePlaylist = asyncHandler(async (req, res) => {
 	return res.status(204).end();
 });
 
+// TODO: test this method too with the new logic
 const updatePlaylist = asyncHandler(async (req, res) => {
 	const { name, description } = req.body;
 	const updatedPlaylist = await PlaylistService.updatePlaylistService(
 		req.playlist,
 		name,
 		description,
+      req?.file?.path,
 	);
 	return res
 		.status(200)

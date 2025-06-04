@@ -2,8 +2,11 @@ import mongoose from "mongoose";
 import { ApiError } from "../../utils/apiErrors.js";
 import { serviceHandler } from "../../utils/handlers.js";
 import { User } from "../user/user.models.js";
-import { Video } from "../video/video.models.js";
 import { Playlist } from "./playlist.models.js";
+import {
+	uploadImageOnCloudinary,
+	deleteImageOnCloudinary,
+} from "../../utils/fileHandlers.js";
 
 export const createPlaylistService = serviceHandler(
 	async (name, description, userMeta) => {
@@ -18,11 +21,11 @@ export const createPlaylistService = serviceHandler(
 
 export const getUserPlaylistsService = serviceHandler(async (userId) => {
 	const playlists = await User.aggregate([
-		{ $match: { _id: new Video.Types.ObjectId(userId) } },
+		{ $match: { _id: new mongoose.Types.ObjectId(String(userId)) } },
 		{
 			$lookup: {
 				from: "playlists",
-				localFields: "_id",
+				localField: "_id",
 				foreignField: "owner",
 				as: "playlists",
 			},
@@ -34,23 +37,18 @@ export const getUserPlaylistsService = serviceHandler(async (userId) => {
 
 export const addVideoToPlaylistService = serviceHandler(
 	async (playlistMeta, videoMeta) => {
-		if (playlistMeta.videos.includes(videoMeta._id.toString())) {
-			const playlist = await Playlist.aggregate(aggregationPipeline);
-			return res
-				.status(200)
-				.json(new ApiResponse(200, playlist, "Video already in playlist"));
-		}
+		if (playlistMeta.videos.includes(videoMeta._id.toString()))
+			return {
+				playlist: playlistMeta,
+				message: "Video already exists in the playlist",
+			};
 
-		const playlist = await Playlist.findByIdAndUpdate(
-			playlistMeta._id,
-			{
-				$push: { videos: new mongoose.Types.ObjectId(videoMeta._id) },
-				$set: { thumbnail: playlistMeta.thumbnail || videoMeta.thumbnail },
-			},
-			{ new: true },
-		);
+      const updateOps = { $push: { videos: new mongoose.Types.ObjectId(String(videoMeta._id)) } };
+      if (!playlistMeta.thumbnail) updateOps.$set = { thumbnail: videoMeta.thumbnail };
+      const playlist = await Playlist.findByIdAndUpdate( playlistMeta._id, updateOps, { new: true });
+
 		return playlist;
-	},
+   }
 );
 
 export const removeVideoFromPlaylistService = serviceHandler(
@@ -83,11 +81,23 @@ export const deletePlaylistService = serviceHandler(async (playlistMeta) => {
 	await Playlist.findByIdAndDelete(playlistMeta._id);
 });
 
-export const updatedPlaylistService = serviceHandler(
-	async (playlistMeta, name, description) => {
+export const updatePlaylistService = serviceHandler(
+	async (playlistMeta, name, description, thumbnailLocalPath) => {
+		let thumbnail;
+		if (thumbnailLocalPath) {
+			await deleteImageOnCloudinary(playlistMeta.thumbnail).catch((e) => {
+				throw new ApiError(500, "Unable to delete old thumbnail", e);
+			});
+			thumbnail = await uploadImageOnCloudinary(thumbnailLocalPath).catch(
+				(e) => {
+					throw new ApiError(500, "Unable to upload new thumbnail", e);
+				},
+			);
+		}
+
 		const playlist = await Playlist.findByIdAndUpdate(
 			playlistMeta._id,
-			{ name, description },
+			{ name, description, thumbnail: thumbnail?.secure_url },
 			{ new: true },
 		);
 
