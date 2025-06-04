@@ -54,28 +54,12 @@ export const publishVideoValidator = [
 		.trim(),
 ];
 
-export const publishVideoFilesValidator = async function (req, _, next) {
-	try {
-		if (
-			!req.files ||
-			!req.files.videoFile ||
-			!req.files.videoFile[0] ||
-			!req.files.videoFile[0].path
-		)
-			throw new ApiError(400, "video file is required");
-
-		if (
-			!req.files ||
-			!req.files.thumbnail ||
-			!req.files.thumbnail[0] ||
-			!req.files.thumbnail[0].path
-		)
-			throw new ApiError(400, "thumbnail image is required");
-
-		next();
-	} catch (error) {
-		next(error);
-	}
+export const publishVideoFilesValidator = function (req, _, next) {
+	if (!req?.files?.videoFile[0]?.path)
+		throw new ApiError(400, "video file is required");
+	if (!req?.files?.thumbnail[0]?.path)
+		throw new ApiError(400, "thumbnail image is required");
+	next();
 };
 
 export const getVideoByIdValidator = [
@@ -88,7 +72,7 @@ export const getVideoByIdValidator = [
 		.withMessage("invalid videoId"),
 ];
 
-export const getVideoByIdValidator2 = async function (req, _, next) {
+export const videoIdValidator = async function (req, _, next) {
 	const { videoId } = req.params;
 	const video = await Video.findById(videoId);
 	if (!video) throw new ApiError(404, "Video not found");

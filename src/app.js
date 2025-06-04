@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { rateLimit } from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
 
@@ -15,18 +14,9 @@ app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-// app.use(morgan("dev"));
-// if (process.env.NODE_ENV === "development") {
-//    console.log(true)
-// } else {
-// 	// app.use(
-// 	// 	rateLimit({
-// 	// 		windowMs: 15 * 60 * 1000,
-// 	// 		limit: 100,
-// 	// 		message: { error: "Too many requests, rate limit exceeded" },
-// 	// 	})
-// 	// );
-// }
+if (process.env.NODE_ENV === "development") {
+   app.use(morgan("dev"));
+} 
 
 import userRoutes from "./components/user/user.routes.js";
 import healthRoutes from "./components/health/health.routes.js";
@@ -41,8 +31,9 @@ import dashboardRoutes from "./components/dashboard/dashboard.routes.js";
 import swaggerUi from "swagger-ui-express";
 import { swaggerDocs } from "./utils/swagger.js";
 
+app.get("/", (_, res) => res.redirect("/docs"));
+app.use("/health", healthRoutes);
 app.use("/api/v1/user", userRoutes);
-app.use("/api/v1/health", healthRoutes);
 app.use("/api/v1/tweets", tweetRoutes);
 app.use("/api/v1/subscriptions", subscriptionRoutes);
 app.use("/api/v1/videos", videoRoutes);
@@ -50,6 +41,6 @@ app.use("/api/v1/comments", commentRoutes);
 app.use("/api/v1/likes", likeRoutes);
 app.use("/api/v1/playlist", playlistRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
-app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 export { app };

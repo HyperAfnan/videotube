@@ -39,7 +39,10 @@
 		"mongoose-aggregate-paginate-v2": "^1.1.4",
 		"morgan": "^1.10.0",
 		"multer": "^2.0.0",
+<<<<<<< HEAD
 		"nodemailer": "^7.0.3",
+=======
+>>>>>>> origin/master
 		"swagger-jsdoc": "^6.2.8",
 		"swagger-ui-express": "^5.0.1"
 	},

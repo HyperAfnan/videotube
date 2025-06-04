@@ -35,9 +35,9 @@ const confirmEmail = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-	const { username, password } = req.body;
+	const { email, password } = req.body;
 
-	const loginService = await userService.loginUser(username, password);
+	const loginService = await userService.loginUser(email, password);
 	return res
 		.status(200)
 		.cookie("accessToken", loginService.accessToken, cookieOptions)
@@ -132,7 +132,7 @@ const getCurrentUser = asyncHandler(async (req, res) =>
 );
 
 const getUserChannelProfile = asyncHandler(async (req, res) => {
-	const channel = await userService.getUserChannelProfile(req.username);
+	const channel = await userService.getUserChannelProfile(req.newUser);
 	return res
 		.status(200)
 		.json(new ApiResponse(200, channel, "Channel fetched successfully"));

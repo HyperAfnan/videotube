@@ -1,5 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
+import fs from "fs/promises";
 import dotenv from "dotenv";
 import { ApiError } from "./apiErrors.js";
 dotenv.config();
@@ -12,19 +12,19 @@ cloudinary.config({
 const uploadImageOnCloudinary = async (localFilePath) => {
 	try {
 		if (!localFilePath) return null;
-		console.log(fs.statSync(localFilePath));
-		if (fs.statSync(localFilePath).size > 5000000)
+		const stats = await fs.stat(localFilePath);
+		if (stats.size > 5000000)
 			throw new ApiError(400, "File size exceeds 5MB limit");
 
 		const response = await cloudinary.uploader.upload(localFilePath, {
 			resource_type: "image",
 		});
 
-		fs.unlinkSync(localFilePath);
+		await fs.unlink(localFilePath);
 
 		return response;
 	} catch (err) {
-		fs.unlinkSync(localFilePath);
+      await fs.unlink(localFilePath);
 		console.log("error uploading file to Cloudinary ", err);
 	}
 };
@@ -36,11 +36,11 @@ const uploadVideoOnCloudinary = async (localFilePath) => {
 			resource_type: "video",
 		});
 
-		fs.unlinkSync(localFilePath);
+      await fs.unlink(localFilePath);
 
 		return response;
 	} catch (err) {
-		fs.unlinkSync(localFilePath);
+		await fs.unlink(localFilePath);
 		console.log("error uploading file to Cloudinary ", err);
 	}
 };
@@ -49,10 +49,8 @@ const deleteImageOnCloudinary = async (imageUrl) => {
 	try {
 		if (!imageUrl) return null;
 
-		const regex = /\/([a-zA-Z0-9]+)\.jpg$/;
-		const publicId = imageUrl.match(regex);
-
-		const response = await cloudinary.uploader.destroy(publicId[1], {
+      const publicId = URL.parse(imageUrl).pathname.split("/").at(-1).split(".").at(0)
+		const response = await cloudinary.uploader.destroy(publicId, {
 			resource_type: "image",
 		});
 		return response;
@@ -65,10 +63,8 @@ const deleteVideoOnCloudinary = async (videoUrl) => {
 	try {
 		if (!videoUrl) return null;
 
-		const regex = /\/([a-zA-Z0-9]+)\.mp4$/;
-		const publicId = videoUrl.match(regex);
-
-		const response = await cloudinary.uploader.destroy(publicId[1], {
+      const publicId = URL.parse(imageUrl).pathname.split("/").at(-1).split(".").at(0)
+		const response = await cloudinary.uploader.destroy(publicId, {
 			resource_type: "video",
 		});
 		return response;

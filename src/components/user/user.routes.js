@@ -31,6 +31,7 @@ import {
 	updateAccountDetailsValidator,
 	usernameValidator,
 } from "./user.validator.js";
+import { authRateLimiter, defaultRateLimiter } from "../../middlewares/rateLimiter.js";
 
 const router = Router();
 
@@ -165,6 +166,7 @@ const router = Router();
  *         description: Invalid input or username/email already exists
  */
 router.route("/register").post(
+   authRateLimiter,
 	upload.fields([
 		{ name: "avatar", maxCount: 1 },
 		{ name: "coverImage", maxCount: 1 },
@@ -234,7 +236,7 @@ router
  *       401:
  *         description: Invalid credentials
  */
-router.route("/login").post(loginValidator, validator, loginUser);
+router.route("/login").post(authRateLimiter , loginValidator, validator, loginUser);
 
 /**
  * @swagger
@@ -251,7 +253,7 @@ router.route("/login").post(loginValidator, validator, loginUser);
  *       401:
  *         description: Unauthorized or invalid token
  */
-router.route("/logout").post(auth, logoutUser);
+router.route("/logout").post( authRateLimiter ,auth, logoutUser);
 
 /**
  * @swagger
@@ -291,7 +293,7 @@ router.route("/logout").post(auth, logoutUser);
  */
 router
 	.route("/refreshToken")
-	.post(auth, refreshAccessTokenValidator, validator, refreshAccessToken);
+	.post(authRateLimiter , auth, refreshAccessTokenValidator, validator, refreshAccessToken);
 
 /**
  * @swagger
@@ -330,7 +332,7 @@ router
  */
 router
 	.route("/updateDetails")
-	.patch(auth, updateAccountDetailsValidator, updateAccountDetails);
+	.patch( defaultRateLimiter ,auth, updateAccountDetailsValidator, validator, updateAccountDetails);
 
 /**
  * @swagger
@@ -372,7 +374,7 @@ router
  */
 router
 	.route("/updateAvatar")
-	.patch(auth, upload.single("avatar"), avatarFileValidator, updateUserAvatar);
+	.patch( defaultRateLimiter, auth, upload.single("avatar"), avatarFileValidator, updateUserAvatar);
 
 /**
  * @swagger
@@ -415,6 +417,7 @@ router
 router
 	.route("/updateCoverImage")
 	.patch(
+      defaultRateLimiter,
 		auth,
 		upload.single("coverImage"),
 		coverImageFileValidator,
@@ -453,7 +456,7 @@ router
  *       401:
  *         description: Unauthorized
  */
-router.route("/").get(auth, getCurrentUser);
+router.route("/").get(defaultRateLimiter , auth, getCurrentUser);
 
 /**
  * @swagger
@@ -492,7 +495,7 @@ router.route("/").get(auth, getCurrentUser);
  */
 router
 	.route("/changePassword")
-	.patch(auth, changePasswordValidator, validator, changePassword);
+	.patch(defaultRateLimiter, auth, changePasswordValidator, validator, changePassword);
 
 /**
  * @swagger
@@ -515,74 +518,75 @@ router
  *       401:
  *         description: Unauthorized
  */
-router.route("/history").get(auth, getUserWatchHistory);
-//
-// /**
-//  * @swagger
-//  * /user/ch/{username}:
-//  *   get:
-//  *     summary: Get user channel profile
-//  *     tags: [Users]
-//  *     description: Retrieve a user's channel profile by username
-//  *     security:
-//  *       - bearerAuth: []
-//  *     parameters:
-//  *       - in: path
-//  *         name: username
-//  *         schema:
-//  *           type: string
-//  *         required: true
-//  *         description: The username of the channel
-//  *     responses:
-//  *       200:
-//  *         description: Channel profile retrieved successfully
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 username:
-//  *                   type: string
-//  *                 fullName:
-//  *                   type: string
-//  *                 avatar:
-//  *                   type: string
-//  *                 coverImage:
-//  *                   type: string
-//  *                 subscribersCount:
-//  *                   type: number
-//  *                 isSubscribed:
-//  *                   type: boolean
-//  *       404:
-//  *         description: Channel not found
-//  *       401:
-//  *         description: Unauthorized
-//  */
+router.route("/history").get(defaultRateLimiter , auth, getUserWatchHistory);
+
+/**
+ * @swagger
+ * /user/ch/{username}:
+ *   get:
+ *     summary: Get user channel profile
+ *     tags: [Users]
+ *     description: Retrieve a user's channel profile by username
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: username
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The username of the channel
+ *     responses:
+ *       200:
+ *         description: Channel profile retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                 fullName:
+ *                   type: string
+ *                 avatar:
+ *                   type: string
+ *                 coverImage:
+ *                   type: string
+ *                 subscribersCount:
+ *                   type: number
+ *                 isSubscribed:
+ *                   type: boolean
+ *       404:
+ *         description: Channel not found
+ *       401:
+ *         description: Unauthorized
+ */
 router
 	.route("/ch/:username")
 	.get(
+      defaultRateLimiter,
 		auth,
 		getUserChannelProfileValidator,
 		usernameValidator,
 		validator,
 		getUserChannelProfile,
 	);
-//
-// /**
-//  * @swagger
-//  * /user/delete:
-//  *   get:
-//  *     summary: Delete user account
-//  *     tags: [Users]
-//  *     description: Delete the current user's account
-//  *     security:
-//  *       - bearerAuth: []
-//  *     responses:
-//  *       200:
-//  *         description: User account deleted successfully
-//  *       401:
-//  *         description: Unauthorized
-//  */
-router.route("/delete").delete(auth, deleteUser);
+
+/**
+ * @swagger
+ * /user/delete:
+ *   delete:
+ *     summary: Delete user account
+ *     tags: [Users]
+ *     description: Delete the current user's account
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User account deleted successfully
+ *       401:
+ *         description: Unauthorized
+ */
+router.route("/delete").delete( authRateLimiter , auth, deleteUser);
 
 export default router;

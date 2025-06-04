@@ -19,9 +19,11 @@ import {
 	removeVideoFromPlaylistValidator,
 	updatePlaylistValidator,
 	userIdValidator,
+   videoIdValidator,
 } from "./playlist.validator.js";
 import { validator } from "../../middlewares/validator.middleware.js";
-import { videoIdValidator } from "../comment/comment.validator.js";
+import { defaultRateLimiter } from "../../middlewares/rateLimiter.js";
+import { upload } from "../../middlewares/multer.middlewares.js";
 
 const router = Router();
 
@@ -67,6 +69,7 @@ const router = Router();
  *           format: date-time
  */
 
+router.use(defaultRateLimiter);
 router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
 
 /**
@@ -197,6 +200,7 @@ router
 		getPlaylistById,
 	)
 	.patch(
+		upload.single("thumbnail"),
 		updatePlaylistValidator,
 		validator,
 		playlistIdValidator,

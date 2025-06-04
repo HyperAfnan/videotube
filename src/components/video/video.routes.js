@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
 	deleteVideo,
+	downloadVideo,
 	getAllVideos,
 	getVideoById,
 	publishAVideo,
@@ -13,7 +14,7 @@ import {
 	deleteVideoValidator,
 	getAllVideosValidator,
 	getVideoByIdValidator,
-	getVideoByIdValidator2,
+	videoIdValidator,
 	permsAndVideoIdValidator,
 	publishVideoFilesValidator,
 	publishVideoValidator,
@@ -21,6 +22,7 @@ import {
 	updateVideoValidator,
 } from "./video.validator.js";
 import { validator } from "../../middlewares/validator.middleware.js";
+import { defaultRateLimiter } from "../../middlewares/rateLimiter.js";
 
 const router = Router();
 
@@ -79,6 +81,7 @@ const router = Router();
  *           format: date-time
  */
 
+router.use(defaultRateLimiter);
 router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
 
 /**
@@ -270,7 +273,7 @@ router
  */
 router
 	.route("/:videoId")
-	.get(getVideoByIdValidator, validator, getVideoByIdValidator2, getVideoById)
+	.get(getVideoByIdValidator, validator, videoIdValidator, getVideoById)
 	.delete(
 		deleteVideoValidator,
 		validator,
@@ -320,5 +323,9 @@ router
 		permsAndVideoIdValidator,
 		togglePublishStatus,
 	);
+
+router
+	.route("/download/:videoId")
+	.get(videoIdValidator, validator, downloadVideo);
 
 export default router;

@@ -1,12 +1,22 @@
 import { User } from "./user.models.js";
+import { Comment } from "../comment/comments.models.js";
+import { Subscription } from "../subscription/subscription.models.js";
+import { Like } from "../like/like.models.js";
+import { Playlist } from "../playlist/playlist.models.js";
+import { Video } from "../video/video.models.js";
+import { Tweet } from "../tweet/tweet.models.js";
 import { serviceHandler } from "../../utils/handlers.js";
 import { ApiError } from "../../utils/apiErrors.js";
 import {
 	deleteImageOnCloudinary,
 	uploadImageOnCloudinary,
 } from "../../utils/fileHandlers.js";
+<<<<<<< HEAD
 import mongoose from "mongoose";
 import { sendRegistrationEmail } from "./email.services.js";
+=======
+import { ObjectId } from "mongodb";
+>>>>>>> origin/master
 
 async function generateTokens(user) {
 	const accessToken = await user.generateAccessToken();
@@ -68,6 +78,7 @@ export const registerUser = serviceHandler(
 	},
 );
 
+<<<<<<< HEAD
 export const confirmEmail = serviceHandler(async (userMeta) => {
 	const user = await User.findByIdAndUpdate(
 		userMeta,
@@ -80,6 +91,10 @@ export const confirmEmail = serviceHandler(async (userMeta) => {
 
 export const loginUser = serviceHandler(async (username, password) => {
 	const user = await User.findOne({ username });
+=======
+export const loginUser = serviceHandler(async (email, password) => {
+	const user = await User.findOne({ email });
+>>>>>>> origin/master
 	if (!user) throw new ApiError(404, "User not found");
 
 	const isPasswordCorrect = await user.isPasswordCorrect(password);
@@ -88,7 +103,7 @@ export const loginUser = serviceHandler(async (username, password) => {
 	const { accessToken, refreshToken } = await generateTokens(user);
 
 	const loggedInUser = await User.findById(user._id).select(
-		" -password -refreshToken",
+		"-password -refreshToken",
 	);
 
 	return { user: loggedInUser, accessToken, refreshToken };
@@ -98,11 +113,18 @@ export const logoutUser = serviceHandler(async (userId) => {
 	await User.findByIdAndUpdate(userId, { $unset: { refreshToken: 1 } });
 });
 
-// TODO: should also delete user's likes, subscriptions, videos, comments
 export const deleteUser = serviceHandler(async (userId) => {
 	const user = await User.findByIdAndDelete(userId);
-	await deleteImageOnCloudinary(user.avatar);
-	if (user.coverImage) await deleteImageOnCloudinary(user.coverImage);
+
+   if (user?.coverImage) await deleteImageOnCloudinary(user.coverImage);
+	await deleteImageOnCloudinary(user?.avatar);
+   await Comment.deleteMany( { user: userId })
+   await Subscription.deleteMany({ $or: [{ channel: userId }, { subscriber: userId }] });
+   await Like.deleteMany({ user: userId });
+   await Playlist.deleteMany({ owner: userId });
+   await Video.deleteMany({ owner: userId });
+   await Tweet.deleteMany({ user: userId });
+
 });
 
 export const refreshAccessToken = serviceHandler(async (userId) => {
@@ -168,10 +190,10 @@ export const updateCoverAvatar = serviceHandler(
 	},
 );
 
-export const getUserChannelProfile = serviceHandler(async (username) => {
+export const getUserChannelProfile = serviceHandler(async (userMeta) => {
 	const user = await User.aggregate([
 		{
-			$match: { username },
+			$match: { username: userMeta.username },
 		},
 		{
 			$lookup: {
@@ -195,7 +217,7 @@ export const getUserChannelProfile = serviceHandler(async (username) => {
 				subscribedToCount: { $size: "$subscribedTo" },
 				isSubscribed: {
 					$cond: {
-						if: { $in: [req.user?._id, "$subscribers.subscriber"] },
+						if: { $in: [userMeta._id, "$subscribers.subscriber"] },
 						then: true,
 						else: false,
 					},
@@ -222,7 +244,11 @@ export const getUserChannelProfile = serviceHandler(async (username) => {
 
 export const getUserwatchHistory = serviceHandler(async (userId) => {
 	const user = await User.aggregate([
+<<<<<<< HEAD
 		{ $match: { _id: new mongoose.Types.ObjectId(String(userId)) } },
+=======
+		{ $match: { _id: new ObjectId(String(userId)) } },
+>>>>>>> origin/master
 		{
 			$lookup: {
 				from: "videos",

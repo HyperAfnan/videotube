@@ -2,19 +2,35 @@ import { ApiError } from "../../utils/apiErrors.js";
 import { serviceHandler } from "../../utils/handlers.js";
 import { User } from "../user/user.models.js";
 import { Tweet } from "./tweet.models.js";
+import { uploadImageOnCloudinary } from "../../utils/fileHandlers.js";
 import mongoose from "mongoose";
 
-export const createTweet = serviceHandler(async (content, title, ownerId) => {
-	const tweet = await Tweet.create({
-		content,
-		title,
-		owner: ownerId,
-	});
-	if (!tweet)
-		throw new ApiError(400, "Something went wrong while creating tweet");
+export const createTweet = serviceHandler(
+	async (content, title, ownerId, contentImageLocalPath) => {
+		let contentImage;
+		if (contentImageLocalPath) {
+			contentImage = await uploadImageOnCloudinary(contentImageLocalPath).catch(
+				(error) => {
+					throw new ApiError(
+						500,
+						"Something went wrong while uploading image",
+						error,
+					);
+				},
+			);
+		}
+		const tweet = await Tweet.create({
+			content,
+			contentImage: contentImage?.secure_url || "",
+			title,
+			owner: ownerId,
+		});
+		if (!tweet)
+			throw new ApiError(400, "Something went wrong while creating tweet");
 
-	return tweet;
-});
+		return tweet;
+	},
+);
 
 export const updateTweet = serviceHandler(async (content, title, tweetId) => {
 	const tweet = await Tweet.findByIdAndUpdate(
@@ -34,7 +50,7 @@ export const deleteTweet = serviceHandler(async (tweetId) => {
 
 export const getUserTweets = serviceHandler(async (userId) => {
 	const tweets = await User.aggregate([
-		{ $match: { _id: new mongoose.Types.ObjectId(userId) } },
+		{ $match: { _id: new mongoose.Types.ObjectId(String(userId)) } },
 		{
 			$lookup: {
 				from: "tweets",
