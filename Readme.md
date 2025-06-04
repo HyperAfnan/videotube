@@ -114,8 +114,20 @@ Define all sensitive and environment-specific variables in a `.env` file at the 
 **Example:**
 
 ```
-PORT=3000
-DB_URI=mongodb://localhost:27017/chai-code
+PORT=5000
+
+MONGODB_URI=your mongodb uri
+ACCESS_TOKEN_SECRET="your access token secret"
+ACCESS_TOKEN_EXPIRY=1d
+REFRESH_TOKEN_SECRET="your refresh token secret"
+REFRESH_TOKEN_EXPIRY=10d
+CONFIRMATION_TOKEN_SECRET="your confirmation token secret"
+CONFIRMATION_TOKEN_EXPIRY=2h
+
+CLOUDINARY_CLOUD_NAME=your cloudinary cloud name
+CLOUDINARY_API_SECRET=your cloudinary api secret
+CLOUDINARY_API_KEY=your cloudinary api key
+
 NODE_ENV=development
 ```
 
