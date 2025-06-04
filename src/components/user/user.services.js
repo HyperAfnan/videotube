@@ -6,6 +6,7 @@ import {
 	uploadImageOnCloudinary,
 } from "../../utils/fileHandlers.js";
 import mongoose from "mongoose";
+import { sendRegistrationEmail } from "./email.services.js";
 
 async function generateTokens(user) {
 	const accessToken = await user.generateAccessToken();
@@ -35,8 +36,6 @@ export const registerUser = serviceHandler(
 		avatarLocalPath,
 		coverImageLocalPath,
 	) => {
-		// here now we will generae our confirmation token,
-		// and call the email service to send email with our token in its parameter
 		const avatar = await uploadImageOnCloudinary(avatarLocalPath);
 
 		let coverImage;
@@ -50,10 +49,14 @@ export const registerUser = serviceHandler(
 			coverImage: coverImage?.secure_url || "",
 			username,
 			password,
+		}).then(async (userMeta) => {
+            const { conformationToken } = await generateConfirmationToken(userMeta)
+            await sendRegistrationEmail(
+               userMeta.username,
+               userMeta.email,
+               `Hey, Your Conformation Link is http://localhost:5000/api/v1/user/confirmEmail/${conformationToken}`,
+            );
 		});
-
-		// here we will call the email service
-		const { confirmationToken } = await generateConfirmationToken(user);
 
 		const createdUser = await User.findById(user._id).select(
 			"-password -refreshToken",
@@ -219,7 +222,7 @@ export const getUserChannelProfile = serviceHandler(async (username) => {
 
 export const getUserwatchHistory = serviceHandler(async (userId) => {
 	const user = await User.aggregate([
-		{ $match: { _id: new mongoose.Types.ObjectId(userId) } },
+		{ $match: { _id: new mongoose.Types.ObjectId(String(userId)) } },
 		{
 			$lookup: {
 				from: "videos",
