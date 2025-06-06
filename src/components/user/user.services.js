@@ -55,20 +55,20 @@ export const registerUser = serviceHandler(
 			coverImage: coverImage?.secure_url || "",
 			username,
 			password,
-		}).then(async (userMeta) => {
-            const { conformationToken } = await generateConfirmationToken(userMeta)
-            await sendRegistrationEmail(
-               userMeta.username,
-               userMeta.email,
-               `Hey, Your Conformation Link is http://localhost:5000/api/v1/user/confirmEmail/${conformationToken}`,
-            );
-		});
+		})
 
 		const createdUser = await User.findById(user._id).select(
 			"-password -refreshToken",
 		);
 		if (!createdUser)
 			throw new ApiError(500, "Something went wrong while creating user");
+
+      const { confirmationToken } = await generateConfirmationToken(user)
+      await sendRegistrationEmail(
+         user.username,
+         user.email,
+         `Hey, Your Confirmation Link is http://localhost:5000/api/v1/user/confirmEmail/${confirmationToken}`,
+      );
 
 		return createdUser;
 	},
@@ -77,16 +77,18 @@ export const registerUser = serviceHandler(
 export const confirmEmail = serviceHandler(async (userMeta) => {
 	const user = await User.findByIdAndUpdate(
 		userMeta,
-		{ isEmailVerified: true, ConfirmationToken: "" },
+		{ isEmailConfirmed: true, confirmationToken: null },
 		{ new: true },
 	);
-	const { accessToken, refreshToken } = generateTokens(user);
+	const { accessToken, refreshToken } = await generateTokens(user);
 	return { accessToken, refreshToken };
 });
 
 export const loginUser = serviceHandler(async (email, password) => {
 	const user = await User.findOne({ email });
 	if (!user) throw new ApiError(404, "User not found");
+
+   if (!user.isEmailConfirmed) throw new ApiError(401, "Email not confirmed")
 
 	const isPasswordCorrect = await user.isPasswordCorrect(password);
 	if (!isPasswordCorrect) throw new ApiError(401, "Invalid User Credientials");

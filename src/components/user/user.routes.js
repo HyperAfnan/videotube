@@ -179,7 +179,7 @@ router.route("/register").post(
 
 router
 	.route("/confirmEmail/:confirmationToken")
-	.get(confirmEmailValidator, validator, confirmationTokenValidator , confirmEmail);
+	.get(authRateLimiter, confirmEmailValidator, validator, confirmationTokenValidator , confirmEmail);
 
 /**
  * @swagger

@@ -38,12 +38,12 @@ export const registerValidator = [
 		.withMessage("Email is required")
 		.isEmail()
 		.withMessage("Invalid email format")
-		.trim()
-		.custom(async (email) => {
-			const existingUser = await User.findOne({ email });
-			if (existingUser)
-				throw new ApiError("A user already exists with this e-mail address");
-		}),
+		.trim(),
+		// .custom(async (email) => {
+		// 	const existingUser = await User.findOne({ email });
+		// 	if (existingUser)
+		// 		throw new ApiError("A user already exists with this e-mail address");
+		// }),
 
 	body("username")
 		.notEmpty()
@@ -56,12 +56,12 @@ export const registerValidator = [
 		.isLength({ min: 3, max: 15 })
 		.withMessage("Username must between 3-15 characters")
 		.checkWhitespace()
-		.withMessage("whitespace is not allowed in username")
-		.custom(async (username) => {
-			const existingUser = await User.findOne({ username });
-			if (existingUser)
-				throw new ApiError("A user already exists with this username");
-		}),
+		.withMessage("whitespace is not allowed in username"),
+		// .custom(async (username) => {
+		// 	const existingUser = await User.findOne({ username });
+		// 	if (existingUser)
+		// 		throw new ApiError("A user already exists with this username");
+		// }),
 
 	body("password")
 		.notEmpty()
@@ -114,20 +114,21 @@ export const confirmEmailValidator = [
 
 export const confirmationTokenValidator = async (req, _, next) => {
 	try {
-		const token = req.params.ConfirmationToken;
+		const token = req?.params?.confirmationToken;
 		const decodedToken = jwt.verify(
 			token,
 			process.env.CONFIRMATION_TOKEN_SECRET,
 		);
 		const user = await User.findById(decodedToken?._id);
+
+      if (user.isEmailConfirmed) throw new ApiError(400, "Email is already confirmed");
+
 		if (!user) throw new ApiError(401, "Invalid confirmation token");
-		if (user.isEmailConfirmed)
-			throw new ApiError(400, "Email is already confirmed");
 
 		req.user = user;
 		next();
 	} catch (error) {
-		throw new ApiError(401, "Invalid confirmation token");
+		throw new ApiError(401, error);
 	}
 };
 

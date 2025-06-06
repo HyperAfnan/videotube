@@ -9,13 +9,13 @@ const userSchema = new Schema(
 		username: {
 			type: String,
 			required: true,
-			unique: true,
+/* 			unique: true, */
 			lowercase: true,
 			trim: true,
 			index: true,
 		},
 		watchHistory: [{ type: Schema.Types.ObjectId, ref: "video" }],
-		email: { type: String, required: true, unique: true, trim: true },
+		email: { type: String, required: true, /* unique: true,  */trim: true },
 		fullName: {
 			type: String,
 			required: true,
