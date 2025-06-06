@@ -11,12 +11,8 @@ import {
 	deleteImageOnCloudinary,
 	uploadImageOnCloudinary,
 } from "../../utils/fileHandlers.js";
-<<<<<<< HEAD
-import mongoose from "mongoose";
 import { sendRegistrationEmail } from "./email.services.js";
-=======
 import { ObjectId } from "mongodb";
->>>>>>> origin/master
 
 async function generateTokens(user) {
 	const accessToken = await user.generateAccessToken();
@@ -78,7 +74,6 @@ export const registerUser = serviceHandler(
 	},
 );
 
-<<<<<<< HEAD
 export const confirmEmail = serviceHandler(async (userMeta) => {
 	const user = await User.findByIdAndUpdate(
 		userMeta,
@@ -89,12 +84,8 @@ export const confirmEmail = serviceHandler(async (userMeta) => {
 	return { accessToken, refreshToken };
 });
 
-export const loginUser = serviceHandler(async (username, password) => {
-	const user = await User.findOne({ username });
-=======
 export const loginUser = serviceHandler(async (email, password) => {
 	const user = await User.findOne({ email });
->>>>>>> origin/master
 	if (!user) throw new ApiError(404, "User not found");
 
 	const isPasswordCorrect = await user.isPasswordCorrect(password);
@@ -244,11 +235,7 @@ export const getUserChannelProfile = serviceHandler(async (userMeta) => {
 
 export const getUserwatchHistory = serviceHandler(async (userId) => {
 	const user = await User.aggregate([
-<<<<<<< HEAD
-		{ $match: { _id: new mongoose.Types.ObjectId(String(userId)) } },
-=======
 		{ $match: { _id: new ObjectId(String(userId)) } },
->>>>>>> origin/master
 		{
 			$lookup: {
 				from: "videos",
