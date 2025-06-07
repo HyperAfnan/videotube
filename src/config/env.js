@@ -23,6 +23,11 @@ const ENV = {
   EMAIL_SERVICE: process.env.EMAIL_SERVICE || 'gmail',
   EMAIL_USER: process.env.EMAIL_USER,
   EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
+
+  REDIS_HOST: process.env.REDIS_HOST,
+  REDIS_PORT: parseInt(process.env.REDIS_PORT, 10) || 6379,
+  REDIS_USERNAME: process.env.REDIS_USERNAME,
+  REDIS_PASSWORD: process.env.REDIS_PASSWORD,
 };
 
 const requiredKeys = [
@@ -35,6 +40,8 @@ const requiredKeys = [
   'CLOUDINARY_API_SECRET',
   'EMAIL_USER',
   'EMAIL_PASSWORD',
+  'REDIS_HOST',
+  'REDIS_PORT',
 ];
 
 for (const key of requiredKeys) {
