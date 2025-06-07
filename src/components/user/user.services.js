@@ -12,7 +12,8 @@ import {
 	uploadImageOnCloudinary,
 } from "../../utils/fileHandlers.js";
 import { ObjectId } from "mongodb";
-import emailQueue from "../../queues/email.queue.js";
+import emailQueue from "../../jobs/queues/email.queue.js";
+import { templates } from "../../microservices/email/email.templates.js";
 
 async function generateTokens(user) {
 	const accessToken = await user.generateAccessToken();
@@ -65,11 +66,16 @@ export const registerUser = serviceHandler(
 
 		const { confirmationToken } = await generateConfirmationToken(user);
 
-      await emailQueue.add("registrationEmail", {
-         username: user.username,
+		const { subject, html } = templates.registration(
+			user.username,
+			confirmationToken,
+		);
+
+		await emailQueue.add("registrationEmail", {
 			to: user.email,
-			text: `Hey, Your Confirmation Link is http://localhost:5000/api/v1/user/confirmEmail/${confirmationToken}`,
-      })
+			html,
+			subject,
+		});
 
 		return createdUser;
 	},

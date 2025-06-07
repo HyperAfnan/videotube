@@ -116,10 +116,7 @@ export const confirmEmailValidator = [
 export const confirmationTokenValidator = async (req, _, next) => {
 	try {
 		const token = req?.params?.confirmationToken;
-		const decodedToken = jwt.verify(
-			token,
-			ENV.CONFIRMATION_TOKEN_SECRET,
-		);
+		const decodedToken = jwt.verify(token, ENV.CONFIRMATION_TOKEN_SECRET);
 		const user = await User.findById(decodedToken?._id);
 
 		if (user.isEmailConfirmed)
