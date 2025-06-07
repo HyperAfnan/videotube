@@ -3,6 +3,7 @@ import { ApiError } from "../../utils/apiErrors.js";
 import { User } from "./user.models.js";
 import jwt from "jsonwebtoken";
 import path from "node:path";
+import ENV from "../../config/env.js";
 
 const { body, cookie, param } = new ExpressValidator({
 	checkWhitespace: (value) => {
@@ -13,7 +14,7 @@ const { body, cookie, param } = new ExpressValidator({
 	},
 	isRefreshToken: async (value) => {
 		try {
-			const decodedToken = jwt.verify(value, process.env.REFRESH_TOKEN_SECRET);
+			const decodedToken = jwt.verify(value, ENV.REFRESH_TOKEN_SECRET);
 			const user = await User.findById(decodedToken?._id);
 			if (!user) return false;
 			return value === user?.refreshToken;
@@ -39,11 +40,11 @@ export const registerValidator = [
 		.isEmail()
 		.withMessage("Invalid email format")
 		.trim(),
-		// .custom(async (email) => {
-		// 	const existingUser = await User.findOne({ email });
-		// 	if (existingUser)
-		// 		throw new ApiError("A user already exists with this e-mail address");
-		// }),
+	// .custom(async (email) => {
+	// 	const existingUser = await User.findOne({ email });
+	// 	if (existingUser)
+	// 		throw new ApiError("A user already exists with this e-mail address");
+	// }),
 
 	body("username")
 		.notEmpty()
@@ -57,11 +58,11 @@ export const registerValidator = [
 		.withMessage("Username must between 3-15 characters")
 		.checkWhitespace()
 		.withMessage("whitespace is not allowed in username"),
-		// .custom(async (username) => {
-		// 	const existingUser = await User.findOne({ username });
-		// 	if (existingUser)
-		// 		throw new ApiError("A user already exists with this username");
-		// }),
+	// .custom(async (username) => {
+	// 	const existingUser = await User.findOne({ username });
+	// 	if (existingUser)
+	// 		throw new ApiError("A user already exists with this username");
+	// }),
 
 	body("password")
 		.notEmpty()
@@ -117,11 +118,12 @@ export const confirmationTokenValidator = async (req, _, next) => {
 		const token = req?.params?.confirmationToken;
 		const decodedToken = jwt.verify(
 			token,
-			process.env.CONFIRMATION_TOKEN_SECRET,
+			ENV.CONFIRMATION_TOKEN_SECRET,
 		);
 		const user = await User.findById(decodedToken?._id);
 
-      if (user.isEmailConfirmed) throw new ApiError(400, "Email is already confirmed");
+		if (user.isEmailConfirmed)
+			throw new ApiError(400, "Email is already confirmed");
 
 		if (!user) throw new ApiError(401, "Invalid confirmation token");
 
@@ -138,8 +140,8 @@ export const loginValidator = [
 		.withMessage("Email is required")
 		.isString()
 		.withMessage("Email must be a string")
-      .isEmail()
-      .withMessage("Invalid email format")
+		.isEmail()
+		.withMessage("Invalid email format")
 		.trim(),
 	body("password")
 		.notEmpty()
