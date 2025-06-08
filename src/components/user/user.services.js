@@ -71,11 +71,11 @@ export const registerUser = serviceHandler(
 			confirmationToken,
 		);
 
-		await emailQueue.add("registrationEmail", {
-			to: user.email,
-			html,
-			subject,
-		});
+		await emailQueue.add(
+			"registrationEmail",
+			{ to: user.email, html, subject },
+			{ removeOnComplete: true, removeOnFail: true },
+		);
 
 		return createdUser;
 	},

@@ -6,7 +6,11 @@
 	"type": "module",
 	"scripts": {
 		"dev": "nodemon src/index.js",
+		"dev:worker:email": "nodemon src/microservices/email/email.worker.js",
+		"dev:worker:dlemail": "nodemon src/microservices/email/email.deadletter.worker.js",
 		"start": "node src/index.js",
+		"start:worker:email": "node src/microservices/email/email.worker.js",
+		"start:worker:dlemail": "node src/microservices/email/email.deadletter.worker.js",
 		"lint": "npx eslint src ",
 		"lint:fix": "npm run lint -- --fix",
 		"prettier": "npx prettier --write . ",
