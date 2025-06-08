@@ -8,13 +8,13 @@ const userSchema = new Schema(
 		username: {
 			type: String,
 			required: true,
-			/* 			unique: true, */
+			unique: true,
 			lowercase: true,
 			trim: true,
 			index: true,
 		},
 		watchHistory: [{ type: Schema.Types.ObjectId, ref: "video" }],
-		email: { type: String, required: true, /* unique: true,  */ trim: true },
+		email: { type: String, required: true, unique: true, trim: true },
 		fullName: {
 			type: String,
 			required: true,
@@ -27,6 +27,7 @@ const userSchema = new Schema(
 		password: { type: String, required: true },
 		refreshToken: { type: String },
 		confirmationToken: { type: String },
+      forgotPasswordToken: { type: String },
 		isEmailConfirmed: { type: Boolean, default: false },
 	},
 	{ timestamps: true },
@@ -65,6 +66,17 @@ userSchema.methods.generateConfirmationToken = function () {
 		},
 		ENV.CONFIRMATION_TOKEN_SECRET,
 		{ expiresIn: ENV.CONFIRMATION_TOKEN_EXPIRY },
+	);
+};
+
+userSchema.methods.generateForgotPasswordToken = function () {
+	return jwt.sign(
+		{
+			_id: this._id,
+         email: this.email
+		},
+		ENV.FORGET_PASSWORD_TOKEN_SECRET,
+		{ expiresIn: ENV.FORGET_PASSWORD_TOKEN_EXPIRY },
 	);
 };
 

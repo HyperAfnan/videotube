@@ -5,7 +5,7 @@ import {
 	toggleTweetLike,
 	toggleVideoLike,
 } from "./like.controller.js";
-import { verifyJWT } from "../../middlewares/auth.middleware.js";
+import { verifyAccessToken } from "../../middlewares/auth.middleware.js";
 import { validator } from "../../middlewares/validator.middleware.js";
 import {
 	commentIdValidator,
@@ -59,7 +59,7 @@ const router = Router();
  */
 
 router.use(defaultRateLimiter)
-router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
+router.use(verifyAccessToken); // Apply verifyJWT middleware to all routes in this file
 
 /**
  * @swagger

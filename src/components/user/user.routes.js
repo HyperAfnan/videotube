@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
 	changePassword,
+	changePasswordByToken,
 	confirmEmail,
 	deleteUser,
 	getCurrentUser,
@@ -15,14 +16,16 @@ import {
 	updateUserCoverImg,
 } from "./user.controllers.js";
 import { upload } from "../../middlewares/multer.middlewares.js";
-import { verifyJWT as auth } from "../../middlewares/auth.middleware.js";
+import { verifyAccessToken as auth } from "../../middlewares/auth.middleware.js";
 import { validator } from "../../middlewares/validator.middleware.js";
 import {
 	avatarFileValidator,
+	changePasswordByTokenValidator,
 	changePasswordValidator,
 	confirmationTokenValidator,
 	confirmEmailValidator,
 	coverImageFileValidator,
+	forgotPasswordValidator,
 	getUserChannelProfileValidator,
 	loginValidator,
 	refreshAccessTokenValidator,
@@ -35,6 +38,7 @@ import {
 	authRateLimiter,
 	defaultRateLimiter,
 } from "../../middlewares/rateLimiter.js";
+import { forgotPassword } from "./user.services.js";
 
 const router = Router();
 
@@ -487,6 +491,19 @@ router
  */
 router.route("/").get(defaultRateLimiter, auth, getCurrentUser);
 
+router
+   .route("/forgotPassword")
+   .post(authRateLimiter, forgotPasswordValidator, validator, forgotPassword)
+
+router
+	.route("/resetPassword/:token")
+	.patch(
+		authRateLimiter,
+		changePasswordByTokenValidator,
+		validator,
+		changePasswordByToken,
+	);
+
 /**
  * @swagger
  * /user/changePassword:
@@ -522,6 +539,7 @@ router.route("/").get(defaultRateLimiter, auth, getCurrentUser);
  *       401:
  *         description: Unauthorized
  */
+
 router
 	.route("/changePassword")
 	.patch(
@@ -531,6 +549,7 @@ router
 		validator,
 		changePassword,
 	);
+
 
 /**
  * @swagger

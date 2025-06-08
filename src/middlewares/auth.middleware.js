@@ -4,7 +4,7 @@ import { asyncHandler } from "../utils/handlers.js";
 import { User } from "../components/user/user.models.js";
 import ENV from "../config/env.js";
 
-export const verifyJWT = asyncHandler(async (req, _, next) => {
+export const verifyAccessToken = asyncHandler(async (req, _, next) => {
 	try {
 		const token =
 			req.cookies?.accessToken ||

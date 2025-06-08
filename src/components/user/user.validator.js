@@ -181,6 +181,31 @@ export const changePasswordValidator = [
 		.trim(),
 ];
 
+export const changePasswordByTokenValidator = [
+	param("token")
+		.notEmpty()
+		.withMessage("Forgot Password Token is required")
+		.isString()
+		.withMessage("Forgot Password Token must be string")
+      .isJWT()
+		.withMessage("Invalid Forgot Password Token "),
+	body("newPassword")
+		.notEmpty()
+		.withMessage("New Password field is required")
+		.isString()
+		.withMessage("New Password field must be string")
+		.trim(),
+];
+
+export const forgotPasswordValidator = [
+	body("email")
+		.notEmpty()
+		.withMessage("Email is required")
+		.isEmail()
+		.withMessage("Invalid email format")
+		.trim(),
+]
+
 export const updateAccountDetailsValidator = [
 	oneOf(
 		[

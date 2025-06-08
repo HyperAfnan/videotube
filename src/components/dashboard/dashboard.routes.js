@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getChannelStats, getChannelVideos } from "./dashboard.controller.js";
-import { verifyJWT } from "../../middlewares/auth.middleware.js";
+import { verifyAccessToken } from "../../middlewares/auth.middleware.js";
 import { defaultRateLimiter } from "../../middlewares/rateLimiter.js";
 
 const router = Router();
@@ -13,7 +13,7 @@ const router = Router();
  */
 
 router.use(defaultRateLimiter)
-router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
+router.use(verifyAccessToken); // Apply verifyJWT middleware to all routes in this file
 
 /**
  * @swagger
