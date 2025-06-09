@@ -184,6 +184,34 @@ router.route("/register").post(
 	registerUser,
 );
 
+/**
+ * @swagger
+ * /user/confirmEmail/{confirmationToken}:
+ *   get:
+ *     summary: Confirm user email address
+ *     tags: [Users]
+ *     description: Confirm a user's email address using a confirmation token sent to their email.
+ *     parameters:
+ *       - in: path
+ *         name: confirmationToken
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Email confirmation token
+ *     responses:
+ *       200:
+ *         description: Email confirmed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Email confirmed successfully
+ *       400:
+ *         description: Invalid or expired confirmation token
+ */
 router
 	.route("/confirmEmail/:confirmationToken")
 	.get(
@@ -491,10 +519,85 @@ router
  */
 router.route("/").get(defaultRateLimiter, auth, getCurrentUser);
 
+/**
+ * @swagger
+ * /user/forgotPassword:
+ *   post:
+ *     summary: Send password reset email
+ *     tags: [Users]
+ *     description: Send a password reset link to the user's email address.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: User's email address
+ *     responses:
+ *       200:
+ *         description: Password reset email sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password reset email sent
+ *       400:
+ *         description: Invalid email or user not found
+ */
 router
    .route("/forgotPassword")
    .post(authRateLimiter, forgotPasswordValidator, validator, forgotPassword)
 
+/**
+ * @swagger
+ * /user/resetPassword/{token}:
+ *   patch:
+ *     summary: Reset password using token
+ *     tags: [Users]
+ *     description: Reset the user's password using a valid reset token.
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Password reset token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - newPassword
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *                 format: password
+ *                 description: The new password
+ *     responses:
+ *       200:
+ *         description: Password reset successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password has been reset
+ *       400:
+ *         description: Invalid or expired token, or invalid password
+ */
 router
 	.route("/resetPassword/:token")
 	.patch(
@@ -549,7 +652,6 @@ router
 		validator,
 		changePassword,
 	);
-
 
 /**
  * @swagger
