@@ -109,7 +109,6 @@ export const forgotPassword = serviceHandler(async (email) => {
    const { forgotPasswordToken } = await generateForgotPasswordToken(user)
 
    const { subject, html } = templates.resetPassword(
-      user.username,
       forgotPasswordToken,
    );
 
@@ -170,10 +169,9 @@ export const changePasswordViaToken = serviceHandler(async (token, newPassword) 
 
    if (!user) { throw new ApiError(404, "User not found") }
 
-   await User.updateOne( 
-      { _id: user._id }, 
-      { $set: { password: newPassword }, $unset: { forgotPasswordToken: 1 } }
-   )
+   user.password = newPassword;
+   user.forgotPasswordToken = null;
+   await user.save({ validateBeforeSave: false})
 })
 
 export const changePassword = serviceHandler(

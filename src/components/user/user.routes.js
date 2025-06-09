@@ -4,6 +4,7 @@ import {
 	changePasswordByToken,
 	confirmEmail,
 	deleteUser,
+   forgotPassword,
 	getCurrentUser,
 	getUserChannelProfile,
 	getUserWatchHistory,
@@ -38,7 +39,6 @@ import {
 	authRateLimiter,
 	defaultRateLimiter,
 } from "../../middlewares/rateLimiter.js";
-import { forgotPassword } from "./user.services.js";
 
 const router = Router();
 
