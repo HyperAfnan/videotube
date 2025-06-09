@@ -94,10 +94,10 @@ const changePassword = asyncHandler(async (req, res) => {
 	return res.status(204).end();
 });
 
-const changePasswordByToken = asyncHandler(async (req, res) => {
+const resetPassword = asyncHandler(async (req, res) => {
    const { token } = req.params;
    const { newPassword } = req.body;
-   await userService.changePasswordViaToken(token, newPassword);
+   await userService.resetPassword(token, newPassword);
    return res.status(204).end();
 })
 
@@ -166,7 +166,7 @@ export {
    forgotPassword,
 	refreshAccessToken,
 	changePassword,
-   changePasswordByToken,
+   resetPassword,
 	confirmEmail,
 	getCurrentUser,
 	updateAccountDetails,

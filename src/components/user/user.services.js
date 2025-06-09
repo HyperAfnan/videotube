@@ -162,7 +162,7 @@ export const refreshAccessToken = serviceHandler(async (userId) => {
 	return { refreshToken, accessToken };
 });
 
-export const changePasswordViaToken = serviceHandler(async (token, newPassword) => {
+export const resetPassword = serviceHandler(async (token, newPassword) => {
    const decodedToken = jwt.decode(token, ENV.FORGET_PASSWORD_TOKEN_SECRET )
 
    const user = await User.findById(decodedToken?._id)
