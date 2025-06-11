@@ -5,7 +5,7 @@ import {
 	getUserTweets,
 	updateTweet,
 } from "./tweet.controller.js";
-import { verifyJWT } from "../../middlewares/auth.middleware.js";
+import { verifyAccessToken } from "../../middlewares/auth.middleware.js";
 import {
 	createTweetFileValidator,
 	createTweetValidator,
@@ -56,7 +56,7 @@ const router = Router();
  */
 
 router.use(defaultRateLimiter);
-router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
+router.use(verifyAccessToken); // Apply verifyJWT middleware to all routes in this file
 
 /**
  * @swagger

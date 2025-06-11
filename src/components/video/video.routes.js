@@ -8,7 +8,7 @@ import {
 	togglePublishStatus,
 	updateVideo,
 } from "./video.controller.js";
-import { verifyJWT } from "../../middlewares/auth.middleware.js";
+import { verifyAccessToken } from "../../middlewares/auth.middleware.js";
 import { upload } from "../../middlewares/multer.middlewares.js";
 import {
 	deleteVideoValidator,
@@ -82,7 +82,7 @@ const router = Router();
  */
 
 router.use(defaultRateLimiter);
-router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
+router.use(verifyAccessToken); // Apply verifyJWT middleware to all routes in this file
 
 /**
  * @swagger

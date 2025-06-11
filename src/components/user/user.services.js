@@ -12,6 +12,11 @@ import {
 	uploadImageOnCloudinary,
 } from "../../utils/fileHandlers.js";
 import { ObjectId } from "mongodb";
+import emailQueue from "../../jobs/queues/email/email.normal.js";
+import userQueue from '../../jobs/queues/user/user.normal.js'
+import { templates } from "../../microservices/email/email.templates.js";
+import jwt from "jsonwebtoken";
+import ENV from "../../config/env.js";
 
 async function generateTokens(user) {
 	const accessToken = await user.generateAccessToken();
@@ -21,6 +26,24 @@ async function generateTokens(user) {
 	await user.save({ validateBeforeSave: false });
 
 	return { accessToken, refreshToken };
+}
+
+async function generateConfirmationToken(user) {
+	const confirmationToken = await user.generateConfirmationToken();
+
+	user.confirmationToken = confirmationToken;
+	await user.save({ validateBeforeSave: false });
+
+	return { confirmationToken };
+}
+
+async function generateForgotPasswordToken(user) {
+	const forgotPasswordToken = await user.generateForgotPasswordToken ();
+
+	user.forgotPasswordToken = forgotPasswordToken;
+	await user.save({ validateBeforeSave: false });
+
+	return { forgotPasswordToken };
 }
 
 export const registerUser = serviceHandler(
@@ -53,13 +76,57 @@ export const registerUser = serviceHandler(
 		if (!createdUser)
 			throw new ApiError(500, "Something went wrong while creating user");
 
+		const { confirmationToken } = await generateConfirmationToken(user);
+
+		const { subject, html } = templates.registration(
+			user.username,
+			confirmationToken,
+		);
+
+		await emailQueue.add(
+			"registrationEmail",
+			{ to: user.email, html, subject },
+			{ removeOnComplete: true, removeOnFail: true },
+		);
+
+      await userQueue.add("removeUnverifiedUser", {}, { delay: 3600000, attempts: 1 });
+
 		return createdUser;
 	},
 );
 
+export const confirmEmail = serviceHandler(async (userMeta) => {
+	const user = await User.findByIdAndUpdate(
+		userMeta,
+		{ isEmailConfirmed: true, confirmationToken: null },
+		{ new: true },
+	);
+	const { accessToken, refreshToken } = await generateTokens(user);
+	return { accessToken, refreshToken };
+});
+
+export const forgotPassword = serviceHandler(async (email) => {
+   const user = await User.findOne( { email: email })
+   if (!user) { throw new ApiError(404, "User Not Found") }
+
+   const { forgotPasswordToken } = await generateForgotPasswordToken(user)
+
+   const { subject, html } = templates.resetPassword(
+      forgotPasswordToken,
+   );
+
+   await emailQueue.add(
+      "resetPassword",
+      { to: user.email, html, subject },
+      { removeOnComplete: true, removeOnFail: true },
+   );
+})
+
 export const loginUser = serviceHandler(async (email, password) => {
 	const user = await User.findOne({ email });
 	if (!user) throw new ApiError(404, "User not found");
+
+	if (!user.isEmailConfirmed) throw new ApiError(401, "Email not confirmed");
 
 	const isPasswordCorrect = await user.isPasswordCorrect(password);
 	if (!isPasswordCorrect) throw new ApiError(401, "Invalid User Credientials");
@@ -80,15 +147,16 @@ export const logoutUser = serviceHandler(async (userId) => {
 export const deleteUser = serviceHandler(async (userId) => {
 	const user = await User.findByIdAndDelete(userId);
 
-   if (user?.coverImage) await deleteImageOnCloudinary(user.coverImage);
+	if (user?.coverImage) await deleteImageOnCloudinary(user.coverImage);
 	await deleteImageOnCloudinary(user?.avatar);
-   await Comment.deleteMany( { user: userId })
-   await Subscription.deleteMany({ $or: [{ channel: userId }, { subscriber: userId }] });
-   await Like.deleteMany({ user: userId });
-   await Playlist.deleteMany({ owner: userId });
-   await Video.deleteMany({ owner: userId });
-   await Tweet.deleteMany({ user: userId });
-
+	await Comment.deleteMany({ user: userId });
+	await Subscription.deleteMany({
+		$or: [{ channel: userId }, { subscriber: userId }],
+	});
+	await Like.deleteMany({ user: userId });
+	await Playlist.deleteMany({ owner: userId });
+	await Video.deleteMany({ owner: userId });
+	await Tweet.deleteMany({ user: userId });
 });
 
 export const refreshAccessToken = serviceHandler(async (userId) => {
@@ -96,6 +164,18 @@ export const refreshAccessToken = serviceHandler(async (userId) => {
 	const { refreshToken, accessToken } = await generateTokens(user);
 	return { refreshToken, accessToken };
 });
+
+export const resetPassword = serviceHandler(async (token, newPassword) => {
+   const decodedToken = jwt.verify(token, ENV.FORGET_PASSWORD_TOKEN_SECRET )
+
+   const user = await User.findById(decodedToken?._id)
+
+   if (!user) { throw new ApiError(404, "User not found") }
+
+   user.password = newPassword;
+   user.forgotPasswordToken = null;
+   await user.save({ validateBeforeSave: false})
+})
 
 export const changePassword = serviceHandler(
 	async (userId, oldPassword, newPassword) => {

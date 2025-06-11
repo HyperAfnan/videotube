@@ -24,6 +24,16 @@ const registerUser = asyncHandler(async (req, res) => {
 		.json(new ApiResponse(201, user, "User registered successfully"));
 });
 
+const confirmEmail = asyncHandler(async (req, res) => {
+	const confirmEmail = await userService.confirmEmail(req.user);
+
+	return res
+		.status(200)
+		.cookie("accessToken", confirmEmail.accessToken, cookieOptions)
+		.cookie("refreshToken", confirmEmail.refreshToken, cookieOptions)
+		.json(new ApiResponse(200, null, "Email confirmed successfully"));
+});
+
 const loginUser = asyncHandler(async (req, res) => {
 	const { email, password } = req.body;
 
@@ -72,11 +82,24 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 		);
 });
 
+const forgotPassword = asyncHandler(async (req, res) => {
+   const { email } = req.body
+   await userService.forgotPassword(email)
+	return res.status(204).end();
+})
+
 const changePassword = asyncHandler(async (req, res) => {
 	const { oldPassword, newPassword } = req.body;
 	await userService.changePassword(req.user._id, oldPassword, newPassword);
 	return res.status(204).end();
 });
+
+const resetPassword = asyncHandler(async (req, res) => {
+   const { token } = req.params;
+   const { newPassword } = req.body;
+   await userService.resetPassword(token, newPassword);
+   return res.status(204).end();
+})
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
 	const { fullName, username } = req.body;
@@ -140,8 +163,11 @@ export {
 	loginUser,
 	logoutUser,
 	deleteUser,
+   forgotPassword,
 	refreshAccessToken,
 	changePassword,
+   resetPassword,
+	confirmEmail,
 	getCurrentUser,
 	updateAccountDetails,
 	updateUserAvatar,

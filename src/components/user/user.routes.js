@@ -1,7 +1,10 @@
 import { Router } from "express";
 import {
 	changePassword,
+	resetPassword,
+	confirmEmail,
 	deleteUser,
+   forgotPassword,
 	getCurrentUser,
 	getUserChannelProfile,
 	getUserWatchHistory,
@@ -14,12 +17,16 @@ import {
 	updateUserCoverImg,
 } from "./user.controllers.js";
 import { upload } from "../../middlewares/multer.middlewares.js";
-import { verifyJWT as auth } from "../../middlewares/auth.middleware.js";
+import { verifyAccessToken as auth } from "../../middlewares/auth.middleware.js";
 import { validator } from "../../middlewares/validator.middleware.js";
 import {
 	avatarFileValidator,
+   resetPasswordValidator,
 	changePasswordValidator,
+	confirmationTokenValidator,
+	confirmEmailValidator,
 	coverImageFileValidator,
+	forgotPasswordValidator,
 	getUserChannelProfileValidator,
 	loginValidator,
 	refreshAccessTokenValidator,
@@ -28,7 +35,10 @@ import {
 	updateAccountDetailsValidator,
 	usernameValidator,
 } from "./user.validator.js";
-import { authRateLimiter, defaultRateLimiter } from "../../middlewares/rateLimiter.js";
+import {
+	authRateLimiter,
+	defaultRateLimiter,
+} from "../../middlewares/rateLimiter.js";
 
 const router = Router();
 
@@ -163,7 +173,7 @@ const router = Router();
  *         description: Invalid input or username/email already exists
  */
 router.route("/register").post(
-   authRateLimiter,
+	authRateLimiter,
 	upload.fields([
 		{ name: "avatar", maxCount: 1 },
 		{ name: "coverImage", maxCount: 1 },
@@ -173,6 +183,44 @@ router.route("/register").post(
 	validator,
 	registerUser,
 );
+
+/**
+ * @swagger
+ * /user/confirmEmail/{confirmationToken}:
+ *   get:
+ *     summary: Confirm user email address
+ *     tags: [Users]
+ *     description: Confirm a user's email address using a confirmation token sent to their email.
+ *     parameters:
+ *       - in: path
+ *         name: confirmationToken
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Email confirmation token
+ *     responses:
+ *       200:
+ *         description: Email confirmed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Email confirmed successfully
+ *       400:
+ *         description: Invalid or expired confirmation token
+ */
+router
+	.route("/confirmEmail/:confirmationToken")
+	.get(
+		authRateLimiter,
+		confirmEmailValidator,
+		validator,
+		confirmationTokenValidator,
+		confirmEmail,
+	);
 
 /**
  * @swagger
@@ -229,7 +277,9 @@ router.route("/register").post(
  *       401:
  *         description: Invalid credentials
  */
-router.route("/login").post(authRateLimiter , loginValidator, validator, loginUser);
+router
+	.route("/login")
+	.post(authRateLimiter, loginValidator, validator, loginUser);
 
 /**
  * @swagger
@@ -246,7 +296,7 @@ router.route("/login").post(authRateLimiter , loginValidator, validator, loginUs
  *       401:
  *         description: Unauthorized or invalid token
  */
-router.route("/logout").post( authRateLimiter ,auth, logoutUser);
+router.route("/logout").post(authRateLimiter, auth, logoutUser);
 
 /**
  * @swagger
@@ -286,7 +336,13 @@ router.route("/logout").post( authRateLimiter ,auth, logoutUser);
  */
 router
 	.route("/refreshToken")
-	.post(authRateLimiter , auth, refreshAccessTokenValidator, validator, refreshAccessToken);
+	.post(
+		authRateLimiter,
+		auth,
+		refreshAccessTokenValidator,
+		validator,
+		refreshAccessToken,
+	);
 
 /**
  * @swagger
@@ -325,7 +381,13 @@ router
  */
 router
 	.route("/updateDetails")
-	.patch( defaultRateLimiter ,auth, updateAccountDetailsValidator, validator, updateAccountDetails);
+	.patch(
+		defaultRateLimiter,
+		auth,
+		updateAccountDetailsValidator,
+		validator,
+		updateAccountDetails,
+	);
 
 /**
  * @swagger
@@ -367,7 +429,13 @@ router
  */
 router
 	.route("/updateAvatar")
-	.patch( defaultRateLimiter, auth, upload.single("avatar"), avatarFileValidator, updateUserAvatar);
+	.patch(
+		defaultRateLimiter,
+		auth,
+		upload.single("avatar"),
+		avatarFileValidator,
+		updateUserAvatar,
+	);
 
 /**
  * @swagger
@@ -410,7 +478,7 @@ router
 router
 	.route("/updateCoverImage")
 	.patch(
-      defaultRateLimiter,
+		defaultRateLimiter,
 		auth,
 		upload.single("coverImage"),
 		coverImageFileValidator,
@@ -449,7 +517,95 @@ router
  *       401:
  *         description: Unauthorized
  */
-router.route("/").get(defaultRateLimiter , auth, getCurrentUser);
+router.route("/").get(defaultRateLimiter, auth, getCurrentUser);
+
+/**
+ * @swagger
+ * /user/forgotPassword:
+ *   post:
+ *     summary: Send password reset email
+ *     tags: [Users]
+ *     description: Send a password reset link to the user's email address.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: User's email address
+ *     responses:
+ *       200:
+ *         description: Password reset email sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password reset email sent
+ *       400:
+ *         description: Invalid email or user not found
+ */
+router
+   .route("/forgotPassword")
+   .post(authRateLimiter, forgotPasswordValidator, validator, forgotPassword)
+
+/**
+ * @swagger
+ * /user/resetPassword/{token}:
+ *   patch:
+ *     summary: Reset password using token
+ *     tags: [Users]
+ *     description: Reset the user's password using a valid reset token.
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Password reset token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - newPassword
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *                 format: password
+ *                 description: The new password
+ *     responses:
+ *       200:
+ *         description: Password reset successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password has been reset
+ *       400:
+ *         description: Invalid or expired token, or invalid password
+ */
+router
+	.route("/resetPassword/:token")
+	.patch(
+		authRateLimiter,
+		resetPasswordValidator,
+		validator,
+      resetPassword
+	);
 
 /**
  * @swagger
@@ -486,9 +642,16 @@ router.route("/").get(defaultRateLimiter , auth, getCurrentUser);
  *       401:
  *         description: Unauthorized
  */
+
 router
 	.route("/changePassword")
-	.patch(defaultRateLimiter, auth, changePasswordValidator, validator, changePassword);
+	.patch(
+		defaultRateLimiter,
+		auth,
+		changePasswordValidator,
+		validator,
+		changePassword,
+	);
 
 /**
  * @swagger
@@ -511,7 +674,7 @@ router
  *       401:
  *         description: Unauthorized
  */
-router.route("/history").get(defaultRateLimiter , auth, getUserWatchHistory);
+router.route("/history").get(defaultRateLimiter, auth, getUserWatchHistory);
 
 /**
  * @swagger
@@ -557,7 +720,7 @@ router.route("/history").get(defaultRateLimiter , auth, getUserWatchHistory);
 router
 	.route("/ch/:username")
 	.get(
-      defaultRateLimiter,
+		defaultRateLimiter,
 		auth,
 		getUserChannelProfileValidator,
 		usernameValidator,
@@ -580,6 +743,6 @@ router
  *       401:
  *         description: Unauthorized
  */
-router.route("/delete").delete( authRateLimiter , auth, deleteUser);
+router.route("/delete").delete(authRateLimiter, auth, deleteUser);
 
 export default router;
