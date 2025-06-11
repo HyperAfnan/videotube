@@ -166,7 +166,7 @@ export const refreshAccessToken = serviceHandler(async (userId) => {
 });
 
 export const resetPassword = serviceHandler(async (token, newPassword) => {
-   const decodedToken = jwt.decode(token, ENV.FORGET_PASSWORD_TOKEN_SECRET )
+   const decodedToken = jwt.verify(token, ENV.FORGET_PASSWORD_TOKEN_SECRET )
 
    const user = await User.findById(decodedToken?._id)
 
