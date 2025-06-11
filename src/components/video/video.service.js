@@ -7,7 +7,7 @@ import {
 	deleteImageOnCloudinary,
 	deleteVideoOnCloudinary,
 	uploadImageOnCloudinary,
-   uploadVideoOnCloudinary,
+	uploadVideoOnCloudinary,
 } from "../../utils/fileHandlers.js";
 
 export const getAllVideos = serviceHandler(

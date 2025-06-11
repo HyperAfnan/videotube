@@ -27,7 +27,7 @@ const userSchema = new Schema(
 		password: { type: String, required: true },
 		refreshToken: { type: String },
 		confirmationToken: { type: String },
-      forgotPasswordToken: { type: String },
+		forgotPasswordToken: { type: String },
 		isEmailConfirmed: { type: Boolean, default: false },
 	},
 	{ timestamps: true },
@@ -73,7 +73,7 @@ userSchema.methods.generateForgotPasswordToken = function () {
 	return jwt.sign(
 		{
 			_id: this._id,
-         email: this.email
+			email: this.email,
 		},
 		ENV.FORGET_PASSWORD_TOKEN_SECRET,
 		{ expiresIn: ENV.FORGET_PASSWORD_TOKEN_EXPIRY },

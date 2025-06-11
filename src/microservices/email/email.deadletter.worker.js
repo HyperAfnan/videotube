@@ -16,26 +16,26 @@ const emailDeadLetterWorker = new Worker(
 		try {
 			await sendEmail(to, subject, html);
 		} catch (err) {
-         error(`Email sending failed for job ${job.id}:`, err.message);
+			error(`Email sending failed for job ${job.id}:`, err.message);
 			throw new Error(`Email sending failed: ${err.message}`);
 		}
 	},
-	{ 
-      connection ,
-      concurrency: 10,
-      limiter: {
-         max: 40,
-         duration: 24 * 60 * 60 * 1000, 
-      },
- },
+	{
+		connection,
+		concurrency: 10,
+		limiter: {
+			max: 40,
+			duration: 24 * 60 * 60 * 1000,
+		},
+	},
 );
 
 emailDeadLetterWorker.on("completed", (job) => {
 	log(`Dead letter job ${job.id} completed`);
 });
 
-emailDeadLetterWorker.on('error', err => { 
-   error("Worker error: ", err)
+emailDeadLetterWorker.on("error", (err) => {
+	error("Worker error: ", err);
 });
 
 emailDeadLetterWorker.on("failed", (job, err) => {

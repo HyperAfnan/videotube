@@ -51,7 +51,7 @@ const router = Router();
  *           format: date-time
  */
 
-router.use(defaultRateLimiter)
+router.use(defaultRateLimiter);
 router.use(verifyAccessToken); // Apply verifyJWT middleware to all routes in this file
 
 /**

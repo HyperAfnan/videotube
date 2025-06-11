@@ -1,10 +1,9 @@
 import { Router } from "express";
 import {
 	changePassword,
-	resetPassword,
 	confirmEmail,
 	deleteUser,
-   forgotPassword,
+	forgotPassword,
 	getCurrentUser,
 	getUserChannelProfile,
 	getUserWatchHistory,
@@ -12,6 +11,7 @@ import {
 	logoutUser,
 	refreshAccessToken,
 	registerUser,
+	resetPassword,
 	updateAccountDetails,
 	updateUserAvatar,
 	updateUserCoverImg,
@@ -21,7 +21,6 @@ import { verifyAccessToken as auth } from "../../middlewares/auth.middleware.js"
 import { validator } from "../../middlewares/validator.middleware.js";
 import {
 	avatarFileValidator,
-   resetPasswordValidator,
 	changePasswordValidator,
 	confirmationTokenValidator,
 	confirmEmailValidator,
@@ -32,6 +31,7 @@ import {
 	refreshAccessTokenValidator,
 	registerationFilesValidator,
 	registerValidator,
+	resetPasswordValidator,
 	updateAccountDetailsValidator,
 	usernameValidator,
 } from "./user.validator.js";
@@ -554,8 +554,8 @@ router.route("/").get(defaultRateLimiter, auth, getCurrentUser);
  *         description: Invalid email or user not found
  */
 router
-   .route("/forgotPassword")
-   .post(authRateLimiter, forgotPasswordValidator, validator, forgotPassword)
+	.route("/forgotPassword")
+	.post(authRateLimiter, forgotPasswordValidator, validator, forgotPassword);
 
 /**
  * @swagger
@@ -600,12 +600,7 @@ router
  */
 router
 	.route("/resetPassword/:token")
-	.patch(
-		authRateLimiter,
-		resetPasswordValidator,
-		validator,
-      resetPassword
-	);
+	.patch(authRateLimiter, resetPasswordValidator, validator, resetPassword);
 
 /**
  * @swagger

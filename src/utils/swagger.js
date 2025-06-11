@@ -1,5 +1,5 @@
 import swaggerJsDoc from "swagger-jsdoc";
-import ENV from "../config/env.js"
+import ENV from "../config/env.js";
 
 const PORT = ENV.PORT || 5000;
 

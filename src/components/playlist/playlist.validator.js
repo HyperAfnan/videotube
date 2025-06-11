@@ -96,16 +96,17 @@ export const updatePlaylistValidator = [
 		.withMessage("Playlist ID is required")
 		.isMongoId()
 		.withMessage("Invalid Playlist ID format"),
-	oneOf([
-    body("name")
-      .optional()
-      .isLength({ max: 100 })
-      .withMessage("Playlist name must be less than 100 characters"),
-    body("description")
-      .optional()
-      .isLength({ max: 500 })
-      .withMessage("Playlist description must be less than 500 characters")
-      ], 
-      { message: "Either of field is required" }
-   )
+	oneOf(
+		[
+			body("name")
+				.optional()
+				.isLength({ max: 100 })
+				.withMessage("Playlist name must be less than 100 characters"),
+			body("description")
+				.optional()
+				.isLength({ max: 500 })
+				.withMessage("Playlist description must be less than 500 characters"),
+		],
+		{ message: "Either of field is required" },
+	),
 ];

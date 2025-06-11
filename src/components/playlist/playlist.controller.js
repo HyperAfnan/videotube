@@ -37,16 +37,15 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 		req.video,
 	);
 
-   if (playlist.message) return res.status(200).json( new ApiResponse( 200, playlist.playlist, playlist.message));
+	if (playlist.message)
+		return res
+			.status(200)
+			.json(new ApiResponse(200, playlist.playlist, playlist.message));
 
 	return res
 		.status(200)
 		.json(
-			new ApiResponse(
-				200,
-				playlist,
-				"Successfully added video to playlist",
-			),
+			new ApiResponse(200, playlist, "Successfully added video to playlist"),
 		);
 });
 
@@ -78,7 +77,7 @@ const updatePlaylist = asyncHandler(async (req, res) => {
 		req.playlist,
 		name,
 		description,
-      req?.file?.path,
+		req?.file?.path,
 	);
 	return res
 		.status(200)

@@ -19,7 +19,7 @@ import {
 	removeVideoFromPlaylistValidator,
 	updatePlaylistValidator,
 	userIdValidator,
-   videoIdValidator,
+	videoIdValidator,
 } from "./playlist.validator.js";
 import { validator } from "../../middlewares/validator.middleware.js";
 import { defaultRateLimiter } from "../../middlewares/rateLimiter.js";

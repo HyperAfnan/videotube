@@ -4,13 +4,13 @@ import debug from "debug";
 const error = debug("worker:user:processor:error");
 const log = debug("worker:user:processor:log");
 
-export const deleteUnVerifiedUsers = serviceHandler( async () => {
-   log("Starting to delete unverified users");
+export const deleteUnVerifiedUsers = serviceHandler(async () => {
+	log("Starting to delete unverified users");
 
-   const result = await User.deleteMany({ isEmailConfirmed: false })
+	const result = await User.deleteMany({ isEmailConfirmed: false });
 
-   if (!result.acknowledged) {
-      error("Failed to delete unerified users")
-      throw new Error("Failed to delete unverified users")
-   }
-})
+	if (!result.acknowledged) {
+		error("Failed to delete unerified users");
+		throw new Error("Failed to delete unverified users");
+	}
+});

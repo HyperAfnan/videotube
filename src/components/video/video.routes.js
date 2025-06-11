@@ -14,12 +14,12 @@ import {
 	deleteVideoValidator,
 	getAllVideosValidator,
 	getVideoByIdValidator,
-	videoIdValidator,
 	permsAndVideoIdValidator,
 	publishVideoFilesValidator,
 	publishVideoValidator,
 	togglePublishStatusValidator,
 	updateVideoValidator,
+	videoIdValidator,
 } from "./video.validator.js";
 import { validator } from "../../middlewares/validator.middleware.js";
 import { defaultRateLimiter } from "../../middlewares/rateLimiter.js";

@@ -37,7 +37,6 @@ export default defineConfig([
 			"no-implicit-coercion": "error", // Disallow implicit type conversion
 			"no-return-await": "error", // Disallow unnecessary return await
 			"no-throw-literal": "error", // Require throwing Error objects
-			complexity: ["warn", 10], // Warn when function complexity exceeds threshold
 			"max-depth": ["warn", 4], // Warn on deeply nested blocks
 			"max-params": ["warn", 8], // Limit number of function parameters
 			"arrow-body-style": ["error", "as-needed"], // Enforce concise arrow function bodies when possible

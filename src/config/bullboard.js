@@ -6,17 +6,17 @@ import emailDeadLetterQueue from "../jobs/queues/email/email.deadletter.js";
 import emailQueue from "../jobs/queues/email/email.normal.js";
 
 export const setupBullBoard = (app) => {
-   const serverAdapter = new ExpressAdapter();
-   serverAdapter.setBasePath("/admin/queues");
+	const serverAdapter = new ExpressAdapter();
+	serverAdapter.setBasePath("/admin/queues");
 
-   createBullBoard({
-      queues: [
-         new BullMQAdapter(userQueue),
-         new BullMQAdapter(emailQueue),
-         new BullMQAdapter(emailDeadLetterQueue)
-      ],
-      serverAdapter,
-   });
+	createBullBoard({
+		queues: [
+			new BullMQAdapter(userQueue),
+			new BullMQAdapter(emailQueue),
+			new BullMQAdapter(emailDeadLetterQueue),
+		],
+		serverAdapter,
+	});
 
-   app.use("/admin/queues", serverAdapter.getRouter());
+	app.use("/admin/queues", serverAdapter.getRouter());
 };

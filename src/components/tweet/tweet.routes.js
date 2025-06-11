@@ -215,7 +215,13 @@ router
  *       401:
  *         description: Unauthorized
  */
-router.route("/user/:userId")
-   .get(getUserTweetsValidator, validator, getUserTweetsValidator2, getUserTweets);
+router
+	.route("/user/:userId")
+	.get(
+		getUserTweetsValidator,
+		validator,
+		getUserTweetsValidator2,
+		getUserTweets,
+	);
 
 export default router;

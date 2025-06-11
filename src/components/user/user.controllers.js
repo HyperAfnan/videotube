@@ -83,10 +83,10 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 });
 
 const forgotPassword = asyncHandler(async (req, res) => {
-   const { email } = req.body
-   await userService.forgotPassword(email)
+	const { email } = req.body;
+	await userService.forgotPassword(email);
 	return res.status(204).end();
-})
+});
 
 const changePassword = asyncHandler(async (req, res) => {
 	const { oldPassword, newPassword } = req.body;
@@ -95,11 +95,11 @@ const changePassword = asyncHandler(async (req, res) => {
 });
 
 const resetPassword = asyncHandler(async (req, res) => {
-   const { token } = req.params;
-   const { newPassword } = req.body;
-   await userService.resetPassword(token, newPassword);
-   return res.status(204).end();
-})
+	const { token } = req.params;
+	const { newPassword } = req.body;
+	await userService.resetPassword(token, newPassword);
+	return res.status(204).end();
+});
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
 	const { fullName, username } = req.body;
@@ -163,10 +163,10 @@ export {
 	loginUser,
 	logoutUser,
 	deleteUser,
-   forgotPassword,
+	forgotPassword,
 	refreshAccessToken,
 	changePassword,
-   resetPassword,
+	resetPassword,
 	confirmEmail,
 	getCurrentUser,
 	updateAccountDetails,

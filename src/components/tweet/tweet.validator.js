@@ -1,4 +1,4 @@
-import { body, param, oneOf } from "express-validator";
+import { body, oneOf, param } from "express-validator";
 import { Tweet } from "./tweet.models.js";
 import { ApiError } from "../../utils/apiErrors.js";
 import { User } from "../user/user.models.js";
@@ -36,7 +36,7 @@ export const createTweetFileValidator = async (req, _, next) => {
 		}
 		throw new ApiError(400, `Unsupported file type: ${file.split(".")[1]}`);
 	}
-   next()
+	next();
 };
 
 export const updateTweetValidator = [
@@ -89,10 +89,10 @@ export const getUserTweetsValidator = [
 ];
 
 export const getUserTweetsValidator2 = async (req, _, next) => {
-   if (req?.params?.userId) {
-      const user = await User.findById(req.params.userId);
-      if (!user) throw new ApiError(400, "User not found");
-      return next();
-   }
-   next()
-}
+	if (req?.params?.userId) {
+		const user = await User.findById(req.params.userId);
+		if (!user) throw new ApiError(400, "User not found");
+		return next();
+	}
+	next();
+};

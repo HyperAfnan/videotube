@@ -12,7 +12,7 @@ const router = Router();
  *   description: API endpoints for user dashboard
  */
 
-router.use(defaultRateLimiter)
+router.use(defaultRateLimiter);
 router.use(verifyAccessToken); // Apply verifyJWT middleware to all routes in this file
 
 /**

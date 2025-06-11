@@ -16,13 +16,14 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 if (ENV.NODE_ENV === "development") {
+	import("./config/bullboard.js")
+		.then(({ setupBullBoard }) => setupBullBoard(app))
+		.catch((err) =>
+			console.error("Failed to load Bull Board in development:", err),
+		);
 
-   import("./config/bullboard.js")
-     .then(({ setupBullBoard }) => setupBullBoard(app))
-     .catch((err) => console.error("Failed to load Bull Board in development:", err));
-
-   app.use(morgan("dev"));
-} 
+	app.use(morgan("dev"));
+}
 
 import userRoutes from "./components/user/user.routes.js";
 import healthRoutes from "./components/health/health.routes.js";

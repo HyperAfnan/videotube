@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs/promises";
 import { ApiError } from "./apiErrors.js";
-import ENV from "../config/env.js"
+import ENV from "../config/env.js";
 
 cloudinary.config({
 	cloud_name: ENV.CLOUDINARY_CLOUD_NAME,
@@ -23,7 +23,7 @@ const uploadImageOnCloudinary = async (localFilePath) => {
 
 		return response;
 	} catch (err) {
-      await fs.unlink(localFilePath);
+		await fs.unlink(localFilePath);
 		console.log("error uploading file to Cloudinary ", err);
 	}
 };
@@ -35,7 +35,7 @@ const uploadVideoOnCloudinary = async (localFilePath) => {
 			resource_type: "video",
 		});
 
-      await fs.unlink(localFilePath);
+		await fs.unlink(localFilePath);
 
 		return response;
 	} catch (err) {
@@ -48,7 +48,11 @@ const deleteImageOnCloudinary = async (imageUrl) => {
 	try {
 		if (!imageUrl) return null;
 
-      const publicId = URL.parse(imageUrl).pathname.split("/").at(-1).split(".").at(0)
+		const publicId = URL.parse(imageUrl)
+			.pathname.split("/")
+			.at(-1)
+			.split(".")
+			.at(0);
 		const response = await cloudinary.uploader.destroy(publicId, {
 			resource_type: "image",
 		});
@@ -62,7 +66,11 @@ const deleteVideoOnCloudinary = async (videoUrl) => {
 	try {
 		if (!videoUrl) return null;
 
-      const publicId = URL.parse(imageUrl).pathname.split("/").at(-1).split(".").at(0)
+		const publicId = URL.parse(imageUrl)
+			.pathname.split("/")
+			.at(-1)
+			.split(".")
+			.at(0);
 		const response = await cloudinary.uploader.destroy(publicId, {
 			resource_type: "video",
 		});

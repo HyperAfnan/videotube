@@ -18,7 +18,8 @@ const { body, cookie, param } = new ExpressValidator({
 			const user = await User.findById(decodedToken?._id);
 			if (!user) return false;
 			return value === user?.refreshToken;
-		} catch (error) {
+		} catch (err) {
+        console.error("Token verification failed:", err); 
 			return false;
 		}
 	},
@@ -40,11 +41,11 @@ export const registerValidator = [
 		.isEmail()
 		.withMessage("Invalid email format")
 		.trim()
-      .custom(async (email) => {
-         const existingUser = await User.findOne({ email });
-         if (existingUser)
-            throw new ApiError("A user already exists with this e-mail address");
-      }),
+		.custom(async (email) => {
+			const existingUser = await User.findOne({ email });
+			if (existingUser)
+				throw new ApiError("A user already exists with this e-mail address");
+		}),
 
 	body("username")
 		.notEmpty()
@@ -58,11 +59,11 @@ export const registerValidator = [
 		.withMessage("Username must between 3-15 characters")
 		.checkWhitespace()
 		.withMessage("whitespace is not allowed in username")
-      .custom(async (username) => {
-         const existingUser = await User.findOne({ username });
-         if (existingUser)
-            throw new ApiError("A user already exists with this username");
-      }),
+		.custom(async (username) => {
+			const existingUser = await User.findOne({ username });
+			if (existingUser)
+				throw new ApiError("A user already exists with this username");
+		}),
 
 	body("password")
 		.notEmpty()
@@ -187,7 +188,7 @@ export const resetPasswordValidator = [
 		.withMessage("Forgot Password Token is required")
 		.isString()
 		.withMessage("Forgot Password Token must be string")
-      .isJWT()
+		.isJWT()
 		.withMessage("Invalid Forgot Password Token "),
 	body("newPassword")
 		.notEmpty()
@@ -204,7 +205,7 @@ export const forgotPasswordValidator = [
 		.isEmail()
 		.withMessage("Invalid email format")
 		.trim(),
-]
+];
 
 export const updateAccountDetailsValidator = [
 	oneOf(

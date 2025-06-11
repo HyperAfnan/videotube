@@ -13,7 +13,7 @@ import {
 } from "../../utils/fileHandlers.js";
 import { ObjectId } from "mongodb";
 import emailQueue from "../../jobs/queues/email/email.normal.js";
-import userQueue from '../../jobs/queues/user/user.normal.js'
+import userQueue from "../../jobs/queues/user/user.normal.js";
 import { templates } from "../../microservices/email/email.templates.js";
 import jwt from "jsonwebtoken";
 import ENV from "../../config/env.js";
@@ -38,7 +38,7 @@ async function generateConfirmationToken(user) {
 }
 
 async function generateForgotPasswordToken(user) {
-	const forgotPasswordToken = await user.generateForgotPasswordToken ();
+	const forgotPasswordToken = await user.generateForgotPasswordToken();
 
 	user.forgotPasswordToken = forgotPasswordToken;
 	await user.save({ validateBeforeSave: false });
@@ -89,7 +89,11 @@ export const registerUser = serviceHandler(
 			{ removeOnComplete: true, removeOnFail: true },
 		);
 
-      await userQueue.add("removeUnverifiedUser", {}, { delay: 3600000, attempts: 1 });
+		await userQueue.add(
+			"removeUnverifiedUser",
+			{},
+			{ delay: 3600000, attempts: 1 },
+		);
 
 		return createdUser;
 	},
@@ -106,21 +110,21 @@ export const confirmEmail = serviceHandler(async (userMeta) => {
 });
 
 export const forgotPassword = serviceHandler(async (email) => {
-   const user = await User.findOne( { email: email })
-   if (!user) { throw new ApiError(404, "User Not Found") }
+	const user = await User.findOne({ email });
+	if (!user) {
+		throw new ApiError(404, "User Not Found");
+	}
 
-   const { forgotPasswordToken } = await generateForgotPasswordToken(user)
+	const { forgotPasswordToken } = await generateForgotPasswordToken(user);
 
-   const { subject, html } = templates.resetPassword(
-      forgotPasswordToken,
-   );
+	const { subject, html } = templates.resetPassword(forgotPasswordToken);
 
-   await emailQueue.add(
-      "resetPassword",
-      { to: user.email, html, subject },
-      { removeOnComplete: true, removeOnFail: true },
-   );
-})
+	await emailQueue.add(
+		"resetPassword",
+		{ to: user.email, html, subject },
+		{ removeOnComplete: true, removeOnFail: true },
+	);
+});
 
 export const loginUser = serviceHandler(async (email, password) => {
 	const user = await User.findOne({ email });
@@ -166,16 +170,18 @@ export const refreshAccessToken = serviceHandler(async (userId) => {
 });
 
 export const resetPassword = serviceHandler(async (token, newPassword) => {
-   const decodedToken = jwt.verify(token, ENV.FORGET_PASSWORD_TOKEN_SECRET )
+	const decodedToken = jwt.verify(token, ENV.FORGET_PASSWORD_TOKEN_SECRET);
 
-   const user = await User.findById(decodedToken?._id)
+	const user = await User.findById(decodedToken?._id);
 
-   if (!user) { throw new ApiError(404, "User not found") }
+	if (!user) {
+		throw new ApiError(404, "User not found");
+	}
 
-   user.password = newPassword;
-   user.forgotPasswordToken = null;
-   await user.save({ validateBeforeSave: false})
-})
+	user.password = newPassword;
+	user.forgotPasswordToken = null;
+	await user.save({ validateBeforeSave: false });
+});
 
 export const changePassword = serviceHandler(
 	async (userId, oldPassword, newPassword) => {
