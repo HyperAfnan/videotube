@@ -1,10 +1,10 @@
 import { Worker } from "bullmq";
 import { redisWorkerConnection as connection } from "../../config/redis.js";
 import { sendEmail } from "./email.processor.js";
-import emailDeadLetterQueue from "../../jobs/queues/email.deadletterqueue.js";
+import emailDeadLetterQueue from "../../jobs/queues/email/email.deadletter.js";
 import debug from "debug";
-const log = debug("worker:email:log");
-const error = debug("worker:email:error");
+const log = debug("app:worker:email:log");
+const error = debug("app:worker:email:error");
 
 const emailWorker = new Worker(
 	"emailQueue",
@@ -39,7 +39,7 @@ emailWorker.on("completed", async (job) => {
 });
 
 emailWorker.on('error', err => { 
-   error("Worker error: ", err)
+   error(`Worker encountered an error: ${err.message}`);
 });
 
 emailWorker.on("failed", async (job, err) => {

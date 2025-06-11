@@ -6,6 +6,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "nodemon src/index.js",
+		"dev:worker:user": "nodemon src/microservices/user/user.worker.js",
 		"dev:worker:email": "nodemon src/microservices/email/email.worker.js",
 		"dev:worker:dlemail": "nodemon src/microservices/email/email.deadletter.worker.js",
 		"start": "node src/index.js",
@@ -45,12 +46,13 @@
 		"mongoose-aggregate-paginate-v2": "^1.1.4",
 		"morgan": "^1.10.0",
 		"multer": "^2.0.0",
-		"node-cron": "^4.1.0",
 		"nodemailer": "^7.0.3",
 		"swagger-jsdoc": "^6.2.8",
 		"swagger-ui-express": "^5.0.1"
 	},
 	"devDependencies": {
+		"@bull-board/api": "^6.10.1",
+		"@bull-board/express": "^6.10.1",
 		"@eslint/js": "^9.26.0",
 		"eslint": "^9.26.0",
 		"eslint-config-prettier": "^10.1.5",

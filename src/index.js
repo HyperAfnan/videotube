@@ -7,6 +7,9 @@ import ENV from "./config/env.js";
 const startupDebug = debug("app:startup");
 const dbDebug = debug("app:db");
 
+import "./microservices/email/email.worker.js"
+import "./microservices/user/user.worker.js"
+
 const PORT = ENV.PORT || 5000;
 
 startupDebug("Starting the application...");
@@ -22,9 +25,7 @@ connectDB()
 app
 	.listen(PORT, () => {
 		startupDebug(`App is running on port ${PORT}`);
-		console.log(`App is running on port ${PORT}`);
 	})
 	.on("error", (error) => {
 		startupDebug("Server error: %O", error);
-		console.error("Failed to start server:", error.message);
 	});

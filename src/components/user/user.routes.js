@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {
 	changePassword,
-	changePasswordByToken,
+	resetPassword,
 	confirmEmail,
 	deleteUser,
    forgotPassword,
@@ -21,7 +21,7 @@ import { verifyAccessToken as auth } from "../../middlewares/auth.middleware.js"
 import { validator } from "../../middlewares/validator.middleware.js";
 import {
 	avatarFileValidator,
-	changePasswordByTokenValidator,
+   resetPasswordValidator,
 	changePasswordValidator,
 	confirmationTokenValidator,
 	confirmEmailValidator,
@@ -602,9 +602,9 @@ router
 	.route("/resetPassword/:token")
 	.patch(
 		authRateLimiter,
-		changePasswordByTokenValidator,
+		resetPasswordValidator,
 		validator,
-		changePasswordByToken,
+      resetPassword
 	);
 
 /**

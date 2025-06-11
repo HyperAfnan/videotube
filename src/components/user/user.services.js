@@ -12,7 +12,8 @@ import {
 	uploadImageOnCloudinary,
 } from "../../utils/fileHandlers.js";
 import { ObjectId } from "mongodb";
-import emailQueue from "../../jobs/queues/email.queue.js";
+import emailQueue from "../../jobs/queues/email/email.normal.js";
+import userQueue from '../../jobs/queues/user/user.normal.js'
 import { templates } from "../../microservices/email/email.templates.js";
 import jwt from "jsonwebtoken";
 import ENV from "../../config/env.js";
@@ -87,6 +88,8 @@ export const registerUser = serviceHandler(
 			{ to: user.email, html, subject },
 			{ removeOnComplete: true, removeOnFail: true },
 		);
+
+      await userQueue.add("removeUnverifiedUser", {}, { delay: 3600000, attempts: 1 });
 
 		return createdUser;
 	},

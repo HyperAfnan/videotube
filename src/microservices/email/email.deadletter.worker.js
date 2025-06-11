@@ -2,8 +2,8 @@ import { Worker } from "bullmq";
 import { redisWorkerConnection as connection } from "../../config/redis.js";
 import { sendEmail } from "./email.processor.js";
 import debug from "debug";
-const log = debug("worker:emailDeadLetter:log");
-const error = debug("worker:emailDeadLetter:error");
+const log = debug("app:worker:emailDeadLetter:log");
+const error = debug("app:worker:emailDeadLetter:error");
 
 const emailDeadLetterWorker = new Worker(
 	"emailDeadLetterQueue",

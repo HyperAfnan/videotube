@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import morgan from "morgan";
-import ENV from "./config/db.js";
+import ENV from "./config/env.js";
 
 const app = express();
 
@@ -16,6 +16,11 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 if (ENV.NODE_ENV === "development") {
+
+   import("./config/bullboard.js")
+     .then(({ setupBullBoard }) => setupBullBoard(app))
+     .catch((err) => console.error("Failed to load Bull Board in development:", err));
+
    app.use(morgan("dev"));
 } 
 

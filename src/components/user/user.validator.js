@@ -181,7 +181,7 @@ export const changePasswordValidator = [
 		.trim(),
 ];
 
-export const changePasswordByTokenValidator = [
+export const resetPasswordValidator = [
 	param("token")
 		.notEmpty()
 		.withMessage("Forgot Password Token is required")
