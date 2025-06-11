@@ -3,8 +3,8 @@ import { redisWorkerConnection as connection } from "../../config/redis.js";
 import { sendEmail } from "./email.processor.js";
 import emailDeadLetterQueue from "../../jobs/queues/email/email.deadletter.js";
 import debug from "debug";
-const log = debug("app:worker:email:log");
-const error = debug("app:worker:email:error");
+const log = debug("app:worker:email:worker:log");
+const error = debug("app:worker:email:worker:error");
 
 const emailWorker = new Worker(
 	"emailQueue",

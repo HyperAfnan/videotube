@@ -8,6 +8,7 @@ const startupDebug = debug("app:startup");
 const dbDebug = debug("app:db");
 
 import "./microservices/email/email.worker.js"
+import "./microservices/email/email.deadletter.worker.js"
 import "./microservices/user/user.worker.js"
 
 const PORT = ENV.PORT || 5000;

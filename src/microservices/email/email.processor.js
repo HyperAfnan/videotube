@@ -1,24 +1,27 @@
 import { serviceHandler } from "../../utils/handlers.js";
 import nodemailer from "nodemailer";
 import ENV from "../../config/env.js";
+const log = debug("app:worker:email:processor:log");
+const error = debug("app:worker:email:processor:error");
 
 const transporter = nodemailer.createTransport({
-	server: ENV.EMAIL_SERVICE,
-	host: "smtp.gmail.com",
-	port: 587,
-	secure: false,
-	auth: { user: ENV.EMAIL_USER, pass: ENV.EMAIL_PASSWORD },
+   host:ENV.BREVO_SERVER_URL,
+   port: ENV.BREVO_PORT,
+   secure: false, 
+	auth: { user: ENV.BREVO_USERNAME, pass: ENV.BREVO_PASSWORD },
 });
 
-export const sendEmail = serviceHandler(async (to, subject, html) => {
-	const mailOptions = {
-		from: ENV.EMAIL_USER,
-		to,
-		subject,
-		html,
+export const sendEmail = serviceHandler( async (to, subject, html) => {
+   const mailOptions = {
+      from: ENV.BREVO_EMAIL_FROM,
+      to,
+      subject,
+      html,
 	};
+
+   log(`Sending email to ${to} with subject ${subject} and html content ${html}`)
 
 	await transporter
 		.sendMail(mailOptions)
-		.catch((error) => console.log("Error sending email: ", error));
+      .catch((err) => error("Error sending email: ", err))
 });

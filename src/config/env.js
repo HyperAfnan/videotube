@@ -20,10 +20,6 @@ const ENV = {
 	CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
 	CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
 
-	EMAIL_SERVICE: process.env.EMAIL_SERVICE || "gmail",
-	EMAIL_USER: process.env.EMAIL_USER,
-	EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
-
 	REDIS_HOST: process.env.REDIS_HOST,
 	REDIS_PORT: parseInt(process.env.REDIS_PORT, 10) || 6379,
 	REDIS_USERNAME: process.env.REDIS_USERNAME,
@@ -31,6 +27,13 @@ const ENV = {
 
 	FORGET_PASSWORD_TOKEN_SECRET: process.env.FORGET_PASSWORD_TOKEN_SECRET,
 	FORGET_PASSWORD_TOKEN_EXPIRY: process.env.FORGET_PASSWORD_TOKEN_EXPIRY || "1h",
+
+   BREVO_SERVER_URL: process.env.BREVO_SERVER_URL,
+   BREVO_PORT: parseInt(process.env.BREVO_PORT, 10) || 587,
+   BREVO_USERNAME: process.env.BREVO_USERNAME,
+   BREVO_PASSWORD: process.env.BREVO_PASSWORD,
+	BREVO_EMAIL_FROM: process.env.EMAIL_USER,
+
 
 };
 
@@ -46,6 +49,8 @@ const requiredKeys = [
 	"EMAIL_PASSWORD",
 	"REDIS_HOST",
 	"REDIS_PORT",
+   "BREVO_USERNAME",
+   "BREVO_PASSWORD",
 ];
 
 for (const key of requiredKeys) {
