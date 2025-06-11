@@ -39,12 +39,12 @@ export const registerValidator = [
 		.withMessage("Email is required")
 		.isEmail()
 		.withMessage("Invalid email format")
-		.trim(),
-	// .custom(async (email) => {
-	// 	const existingUser = await User.findOne({ email });
-	// 	if (existingUser)
-	// 		throw new ApiError("A user already exists with this e-mail address");
-	// }),
+		.trim()
+      .custom(async (email) => {
+         const existingUser = await User.findOne({ email });
+         if (existingUser)
+            throw new ApiError("A user already exists with this e-mail address");
+      }),
 
 	body("username")
 		.notEmpty()
@@ -57,12 +57,12 @@ export const registerValidator = [
 		.isLength({ min: 3, max: 15 })
 		.withMessage("Username must between 3-15 characters")
 		.checkWhitespace()
-		.withMessage("whitespace is not allowed in username"),
-	// .custom(async (username) => {
-	// 	const existingUser = await User.findOne({ username });
-	// 	if (existingUser)
-	// 		throw new ApiError("A user already exists with this username");
-	// }),
+		.withMessage("whitespace is not allowed in username")
+      .custom(async (username) => {
+         const existingUser = await User.findOne({ username });
+         if (existingUser)
+            throw new ApiError("A user already exists with this username");
+      }),
 
 	body("password")
 		.notEmpty()
