@@ -1,6 +1,7 @@
 import { serviceHandler } from "../../utils/handlers.js";
 import nodemailer from "nodemailer";
 import ENV from "../../config/env.js";
+import debug from "debug";
 const log = debug("app:worker:email:processor:log");
 const error = debug("app:worker:email:processor:error");
 
