@@ -54,8 +54,8 @@ export const getUserTweets = serviceHandler(async (userId) => {
 		{
 			$lookup: {
 				from: "tweets",
-				localField: "tweets",
-				foreignField: "tweets",
+				localField: "_id",
+				foreignField: "owner",
 				as: "tweets",
 			},
 		},
