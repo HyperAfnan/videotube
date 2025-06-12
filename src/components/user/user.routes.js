@@ -22,7 +22,6 @@ import { validator } from "../../middlewares/validator.middleware.js";
 import {
 	avatarFileValidator,
 	changePasswordValidator,
-	confirmationTokenValidator,
 	confirmEmailValidator,
 	coverImageFileValidator,
 	forgotPasswordValidator,
@@ -33,7 +32,6 @@ import {
 	registerValidator,
 	resetPasswordValidator,
 	updateAccountDetailsValidator,
-	usernameValidator,
 } from "./user.validator.js";
 import {
 	authRateLimiter,
@@ -218,7 +216,6 @@ router
 		authRateLimiter,
 		confirmEmailValidator,
 		validator,
-		confirmationTokenValidator,
 		confirmEmail,
 	);
 
@@ -718,7 +715,6 @@ router
 		defaultRateLimiter,
 		auth,
 		getUserChannelProfileValidator,
-		usernameValidator,
 		validator,
 		getUserChannelProfile,
 	);
