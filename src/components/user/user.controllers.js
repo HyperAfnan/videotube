@@ -11,12 +11,13 @@ const registerUser = asyncHandler(async (req, res) => {
 	const avatarLocalPath = req.files?.avatar[0].path;
 	const coverImageLocalPath = req.files?.coverImage?.[0].path || null;
 
-   const isEmailExists = await userService.findUserByEmail(email)
-   if (isEmailExists) throw new ApiError(400, "A user already exists with this e-mail address");
+	const isEmailExists = await userService.findUserByEmail(email);
+	if (isEmailExists)
+		throw new ApiError(400, "A user already exists with this e-mail address");
 
-   const isUsernameExists = await userService.findUserByUsername(username)
-   if (isUsernameExists) throw new ApiError(400, "A user already exists with this username");
-
+	const isUsernameExists = await userService.findUserByUsername(username);
+	if (isUsernameExists)
+		throw new ApiError(400, "A user already exists with this username");
 
 	const user = await userService.registerUser(
 		fullName,
@@ -33,11 +34,11 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const confirmEmail = asyncHandler(async (req, res) => {
+	const { confirmationToken } = req.params;
 
-   const { confirmationToken } = req.params
-
-   const isTokenValid = await userService.isConfirmationTokenValid(confirmationToken)
-   if (!isTokenValid.status) throw new ApiError(400, isTokenValid.message)
+	const isTokenValid =
+		await userService.isConfirmationTokenValid(confirmationToken);
+	if (!isTokenValid.status) throw new ApiError(400, isTokenValid.message);
 
 	const confirmEmail = await userService.confirmEmail(isTokenValid.userMeta);
 
@@ -79,16 +80,17 @@ const deleteUser = asyncHandler(async (req, res) => {
 });
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
+	const { refreshToken: bodyrefreshToken } = req.body;
+	const { refreshToken: cookierefreshToken } = req.cookies;
 
-   const { refreshToken: bodyrefreshToken } = req.body;
-   const { refreshToken: cookierefreshToken  } = req.cookies;
+	const token = bodyrefreshToken || cookierefreshToken;
 
-   const token = bodyrefreshToken || cookierefreshToken
+	const isTokenValid = await userService.isRefreshTokenValid(token);
+	if (!isTokenValid.status) throw new ApiError(400, isTokenValid.message);
 
-   const isTokenValid = await userService.isRefreshTokenValid(token)
-   if (!isTokenValid.status) throw new ApiError(400, isTokenValid.message)
-
-	const { refreshToken, accessToken } = await userService.refreshAccessToken(isTokenValid.userMeta);
+	const { refreshToken, accessToken } = await userService.refreshAccessToken(
+		isTokenValid.userMeta,
+	);
 
 	return res
 		.status(200)
@@ -125,8 +127,10 @@ const resetPassword = asyncHandler(async (req, res) => {
 const updateAccountDetails = asyncHandler(async (req, res) => {
 	const { fullName, username } = req.body;
 
-   const isUserExistsWithUsername = await userService.findUserByEmail(username)
-   if (isUserExistsWithUsername) { throw new ApiError(400, "User already exists with this username") }
+	const isUserExistsWithUsername = await userService.findUserByEmail(username);
+	if (isUserExistsWithUsername) {
+		throw new ApiError(400, "User already exists with this username");
+	}
 
 	const user = await userService.updateAccountDetails(
 		req.user._id,
@@ -170,11 +174,10 @@ const getCurrentUser = asyncHandler(async (req, res) =>
 );
 
 const getUserChannelProfile = asyncHandler(async (req, res) => {
+	const { username } = req.params;
 
-   const { username } = req.params;
-
-   const isUsernameExists = await userService.findUserByUsername(username);
-   const userMeta = isUsernameExists || req.user;
+	const isUsernameExists = await userService.findUserByUsername(username);
+	const userMeta = isUsernameExists || req.user;
 
 	const channel = await userService.getUserChannelProfile(userMeta);
 	return res

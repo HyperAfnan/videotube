@@ -173,7 +173,7 @@ export const updateAccountDetailsValidator = [
 				.isfirstLetterLowercase()
 				.isLength({ min: 3, max: 15 })
 				.withMessage("Username must between 3-15 characters")
-				.checkWhitespace()
+				.checkWhitespace(),
 		],
 		{ message: "Atleast one field is required to update" },
 	),

@@ -212,12 +212,7 @@ router.route("/register").post(
  */
 router
 	.route("/confirmEmail/:confirmationToken")
-	.get(
-		authRateLimiter,
-		confirmEmailValidator,
-		validator,
-		confirmEmail,
-	);
+	.get(authRateLimiter, confirmEmailValidator, validator, confirmEmail);
 
 /**
  * @swagger
