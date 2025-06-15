@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
-import morgan from "morgan";
 import ENV from "./config/env.js";
 
 const app = express();
@@ -22,7 +21,9 @@ if (ENV.NODE_ENV === "development") {
 			console.error("Failed to load Bull Board in development:", err),
 		);
 
-	app.use(morgan("dev"));
+   import("morgan")
+   .then((morganModule) => app.use(morganModule.default("dev")))
+   .catch((err) => console.error("Failed to load morgan in development:", err));
 }
 
 import userRoutes from "./components/user/user.routes.js";
