@@ -25,7 +25,7 @@ export const toggleSubscription = serviceHandler(
 				channel: channelId,
 				subscriber: subscriberId,
 			});
-			return { status: "Unsubscriber" };
+			return { status: "Unsubscribed" };
 		} else {
 			const subscription = await Subscription.create({
 				channel: channelId,

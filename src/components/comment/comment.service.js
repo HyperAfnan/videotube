@@ -139,5 +139,5 @@ export const updateComment = serviceHandler(async (commentMeta, content) => {
 
 // TODO:delete corresponding likes too
 export const deleteComment = serviceHandler(async (commentMeta) => {
-	await Comment.findByIdAndDelete(commentMeta);
+	await Comment.findByIdAndDelete(commentMeta._id);
 });
