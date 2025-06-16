@@ -32,26 +32,26 @@ export const isLikedVideo = serviceHandler(async (videoMeta, userMeta) => {
 		likedBy: userMeta._id,
 	});
 
-   return isLiked;
-})
+	return isLiked;
+});
 
 export const isLikedComment = serviceHandler(async (commentMeta, userMeta) => {
-   const isLiked = await Like.find({
-      comment: commentMeta._id,
-      likedBy: userMeta._id,
-   });
+	const isLiked = await Like.find({
+		comment: commentMeta._id,
+		likedBy: userMeta._id,
+	});
 
-   return isLiked;
-})
+	return isLiked;
+});
 
 export const isLikedTweet = serviceHandler(async (tweetMeta, userMeta) => {
-   const isLiked = await Like.find({
-      tweet: tweetMeta._id,
-      likedBy: userMeta._id,
-   });
+	const isLiked = await Like.find({
+		tweet: tweetMeta._id,
+		likedBy: userMeta._id,
+	});
 
-   return isLiked;
-})
+	return isLiked;
+});
 
 export const likeVideo = serviceHandler(async (videoMeta, userMeta) => {
 	const like = await Like.create({

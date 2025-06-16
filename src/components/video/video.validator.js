@@ -20,7 +20,7 @@ export const getAllVideosValidator = [
 		.isString()
 		.withMessage("userId must be string")
 		.isMongoId()
-		.withMessage("invalid userId")
+		.withMessage("invalid userId"),
 ];
 
 export const publishVideoValidator = [

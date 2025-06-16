@@ -16,7 +16,7 @@ const createTweet = asyncHandler(async (req, res) => {
 		contentImage,
 	);
 
-   log("Tweet created successfully", tweet);
+	log("Tweet created successfully", tweet);
 
 	return res
 		.status(201)
@@ -32,7 +32,6 @@ const updateTweet = asyncHandler(async (req, res) => {
 
 	const isOwner = await tweetService.isTweetOwner(tweetId, req.user._id);
 	if (!isOwner) throw new ApiError(402, "Unauthorized to perform this task");
-
 
 	const updatedTweet = await tweetService.updateTweet(content, title, tweetId);
 	return res
@@ -56,8 +55,8 @@ const deleteTweet = asyncHandler(async (req, res) => {
 const getUserTweets = asyncHandler(async (req, res) => {
 	const { userId } = req.params;
 
-   const user = await tweetService.findUserById(userId);
-   if (!user) throw new ApiError(404, "User not found");
+	const user = await tweetService.findUserById(userId);
+	if (!user) throw new ApiError(404, "User not found");
 
 	const tweets = await tweetService.getUserTweets(user._id);
 

@@ -4,10 +4,10 @@ import { asyncHandler } from "../../utils/handlers.js";
 import * as LikeService from "./like.service.js";
 
 const toggleVideoLike = asyncHandler(async (req, res) => {
-   const { videoId } = req.params;
+	const { videoId } = req.params;
 
-   const video = await LikeService.findVideoById(videoId)
-   if (!video) throw new ApiError(404, "Video not found")
+	const video = await LikeService.findVideoById(videoId);
+	if (!video) throw new ApiError(404, "Video not found");
 
 	const isLiked = await LikeService.isLikedVideo(video, req.user);
 	if (isLiked.length > 0) {
@@ -20,13 +20,13 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
 });
 
 const toggleCommentLike = asyncHandler(async (req, res) => {
-   const { commentId } = req.params;
+	const { commentId } = req.params;
 
-   const comment = await LikeService.findCommentById(commentId)
-   if (!comment) throw new ApiError(404, "Comment not found")
+	const comment = await LikeService.findCommentById(commentId);
+	if (!comment) throw new ApiError(404, "Comment not found");
 
 	const isLiked = await LikeService.isLikedComment(comment, req.user);
-   if (isLiked.length > 0) {
+	if (isLiked.length > 0) {
 		await LikeService.unlikeComment(comment, req.user);
 		return res.status(204).end();
 	} else {
@@ -36,13 +36,13 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
 });
 
 const toggleTweetLike = asyncHandler(async (req, res) => {
-   const { tweetId } = req.params;
+	const { tweetId } = req.params;
 
-   const tweet = await LikeService.findTweetById(tweetId)
-   if (!tweet) throw new ApiError(404, "Tweet not found")
+	const tweet = await LikeService.findTweetById(tweetId);
+	if (!tweet) throw new ApiError(404, "Tweet not found");
 
 	const isLiked = await LikeService.isLikedTweet(tweet, req.user);
-   if (isLiked.length > 0) {
+	if (isLiked.length > 0) {
 		await LikeService.unlikeTweet(tweet, req.user);
 		return res.status(204).end();
 	} else {
@@ -54,10 +54,10 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
 const getLikedVideos = asyncHandler(async (req, res) => {
 	const { userId } = req.params;
 
-   if (userId){
-      const user = await LikeService.findUserById(userId);
-      if (!user) throw new ApiError(404, "User not found");
-   }
+	if (userId) {
+		const user = await LikeService.findUserById(userId);
+		if (!user) throw new ApiError(404, "User not found");
+	}
 
 	const user = userId || req.user._id;
 	const likedVideos = await LikeService.getLikedVideos(user);

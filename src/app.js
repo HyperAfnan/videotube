@@ -21,9 +21,11 @@ if (ENV.NODE_ENV === "development") {
 			console.error("Failed to load Bull Board in development:", err),
 		);
 
-   import("morgan")
-   .then((morganModule) => app.use(morganModule.default("dev")))
-   .catch((err) => console.error("Failed to load morgan in development:", err));
+	import("morgan")
+		.then((morganModule) => app.use(morganModule.default("dev")))
+		.catch((err) =>
+			console.error("Failed to load morgan in development:", err),
+		);
 }
 
 import userRoutes from "./components/user/user.routes.js";
@@ -41,14 +43,14 @@ import { swaggerDocs } from "./utils/swagger.js";
 
 app.get("/", (_, res) => res.redirect("/docs"));
 app.use("/api/v1/health", healthRoutes);
-app.use("/api/v1/user", userRoutes); // done
-app.use("/api/v1/tweets", tweetRoutes); // done
-app.use("/api/v1/videos", videoRoutes); // done
-app.use("/api/v1/playlist", playlistRoutes); //done
-app.use("/api/v1/subscriptions", subscriptionRoutes); // done
-app.use("/api/v1/comments", commentRoutes); // done
-app.use("/api/v1/likes", likeRoutes); //TODO: test routes else done
-app.use("/api/v1/dashboard", dashboardRoutes);//TODO: test routes else done
+app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/tweets", tweetRoutes);
+app.use("/api/v1/videos", videoRoutes);
+app.use("/api/v1/playlist", playlistRoutes);
+app.use("/api/v1/subscriptions", subscriptionRoutes);
+app.use("/api/v1/comments", commentRoutes);
+app.use("/api/v1/likes", likeRoutes);
+app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 export { app };

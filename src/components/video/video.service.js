@@ -16,11 +16,13 @@ export const findUserById = serviceHandler(async (userId) => {
 });
 
 export const findVideoById = serviceHandler(async (videoId) => {
-   const video = await Video.findById(videoId);
-   return video;
-})
+	const video = await Video.findById(videoId);
+	return video;
+});
 
-export const isVideoOwner = serviceHandler(async (video, user) => video.owner.toString() === user._id.toString());
+export const isVideoOwner = serviceHandler(
+	async (video, user) => video.owner.toString() === user._id.toString(),
+);
 
 export const getAllVideos = serviceHandler(
 	async (page, limit, q, sortBy, sortType, userId) => {
@@ -43,12 +45,13 @@ export const getAllVideos = serviceHandler(
 		};
 		const options = { page, limit, customLabels: myCustomLabels };
 
-		const data = await Video.aggregatePaginate(aggregate, options)
-			.catch((err) => {
+		const data = await Video.aggregatePaginate(aggregate, options).catch(
+			(err) => {
 				console.log(err);
 				throw new ApiError(500, "Internal Server error");
-			});
-      return data
+			},
+		);
+		return data;
 	},
 );
 
@@ -67,7 +70,7 @@ export const publishVideo = serviceHandler(
 			},
 		);
 		const duration = Math.floor(videoFile.duration);
-      console.log("uploading video with data", {
+		console.log("uploading video with data", {
 			videoFile: videoFile.secure_url,
 			thumbnail: thumbnail.secure_url,
 			title,
@@ -75,7 +78,7 @@ export const publishVideo = serviceHandler(
 			duration,
 			owner: user._id,
 			isPublished: true,
-      })
+		});
 
 		const video = await Video.create({
 			videoFile: videoFile.secure_url,
@@ -86,7 +89,7 @@ export const publishVideo = serviceHandler(
 			owner: user._id,
 			isPublished: true,
 		});
-      if (!video) throw new ApiError(500, "Internal server error");
+		if (!video) throw new ApiError(500, "Internal server error");
 
 		return video;
 	},
@@ -101,7 +104,7 @@ export const getUserVideoById = serviceHandler(
 		);
 
 		await User.updateOne(
-			{ _id: userId},
+			{ _id: userId },
 			{ $push: { watchHistory: new mongoose.Types.ObjectId(String(videoId)) } },
 		);
 

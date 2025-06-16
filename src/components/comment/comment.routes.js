@@ -125,7 +125,7 @@ router.use(verifyAccessToken); // Apply verifyJWT middleware to all routes in th
 router
 	.route("/v/:id")
 	.get(getVideoCommentsValidator, validator, getVideoComments)
-	.post( addVideoCommentValidator, validator, addVideoComment);
+	.post(addVideoCommentValidator, validator, addVideoComment);
 
 /**
  * @swagger
@@ -189,7 +189,7 @@ router
 router
 	.route("/t/:id")
 	.get(getTweetCommentsValidator, validator, getTweetComments)
-	.post( addTweetCommentValidator, validator, addTweetComment);
+	.post(addTweetCommentValidator, validator, addTweetComment);
 
 /**
  * @swagger
@@ -256,7 +256,7 @@ router
  */
 router
 	.route("/c/:commentId")
-	.delete( deleteCommentValidator, validator, deleteComment)
-	.patch( updateCommentValidator, validator, updateComment);
+	.delete(deleteCommentValidator, validator, deleteComment)
+	.patch(updateCommentValidator, validator, updateComment);
 
 export default router;

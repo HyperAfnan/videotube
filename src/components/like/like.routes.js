@@ -111,11 +111,7 @@ router
  */
 router
 	.route("/toggle/c/:commentId")
-	.post(
-		toggleCommentLikeValidator,
-		validator,
-		toggleCommentLike,
-	);
+	.post(toggleCommentLikeValidator, validator, toggleCommentLike);
 
 /**
  * @swagger

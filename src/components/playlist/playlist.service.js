@@ -10,22 +10,24 @@ import {
 } from "../../utils/fileHandlers.js";
 
 export const findVideoById = serviceHandler(async (videoId) => {
-   const video = await Video.findById(videoId);
-   return video;
-})
+	const video = await Video.findById(videoId);
+	return video;
+});
 
 export const findPlaylistById = serviceHandler(async (playlistId) => {
-   const playlist = await Playlist.findById(playlistId);
-   return playlist;
-})
+	const playlist = await Playlist.findById(playlistId);
+	return playlist;
+});
 
 export const findUserById = serviceHandler(async (userId) => {
 	const user = await User.findById(userId);
 	return user;
 });
 
-export const isPlaylistOwner = serviceHandler(async (playlistMeta, userMeta) => 
-   playlistMeta.owner.toString() === userMeta._id.toString())
+export const isPlaylistOwner = serviceHandler(
+	async (playlistMeta, userMeta) =>
+		playlistMeta.owner.toString() === userMeta._id.toString(),
+);
 
 export const createPlaylistService = serviceHandler(
 	async (name, description, userMeta) => {

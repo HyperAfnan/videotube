@@ -52,7 +52,7 @@ export const updateTweet = serviceHandler(async (content, title, tweetId) => {
 		{ content, title },
 		{ new: true },
 	);
-   return tweet;
+	return tweet;
 });
 
 export const deleteTweet = serviceHandler(async (tweetId) => {

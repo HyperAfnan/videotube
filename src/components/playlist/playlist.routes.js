@@ -190,22 +190,14 @@ router.route("/").post(createPlaylistValidator, validator, createPlaylist);
  */
 router
 	.route("/:playlistId")
-	.get(
-		getPlaylistByIdValidator,
-		validator,
-		getPlaylistById,
-	)
+	.get(getPlaylistByIdValidator, validator, getPlaylistById)
 	.patch(
 		upload.single("thumbnail"),
 		updatePlaylistValidator,
 		validator,
 		updatePlaylist,
 	)
-	.delete(
-		deletePlaylistValidator,
-		validator,
-		deletePlaylist,
-	);
+	.delete(deletePlaylistValidator, validator, deletePlaylist);
 
 /**
  * @swagger
@@ -241,11 +233,7 @@ router
  */
 router
 	.route("/add/:videoId/:playlistId")
-	.patch(
-		addVideoToPlaylistValidator,
-		validator,
-		addVideoToPlaylist,
-	);
+	.patch(addVideoToPlaylistValidator, validator, addVideoToPlaylist);
 
 /**
  * @swagger
@@ -281,11 +269,7 @@ router
  */
 router
 	.route("/remove/:videoId/:playlistId")
-	.patch(
-		removeVideoFromPlaylistValidator,
-		validator,
-		removeVideoFromPlaylist,
-	);
+	.patch(removeVideoFromPlaylistValidator, validator, removeVideoFromPlaylist);
 
 /**
  * @swagger

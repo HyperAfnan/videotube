@@ -101,16 +101,8 @@ router.use(verifyAccessToken); // Apply verifyJWT middleware to all routes in th
  */
 router
 	.route("/c/:channelId")
-	.get(
-		getUserChannelSubscribersValidator,
-		validator,
-		getUserChannelSubscribers,
-	)
-	.post(
-		toggleSubscriptionValidator,
-		validator,
-		toggleSubscription,
-	);
+	.get(getUserChannelSubscribersValidator, validator, getUserChannelSubscribers)
+	.post(toggleSubscriptionValidator, validator, toggleSubscription);
 
 /**
  * @swagger
@@ -138,10 +130,6 @@ router
  */
 router
 	.route("/u/:subscriberId")
-	.get(
-		getSubscribedChannelsValidator,
-		validator,
-		getSubscribedChannels,
-	);
+	.get(getSubscribedChannelsValidator, validator, getSubscribedChannels);
 
 export default router;

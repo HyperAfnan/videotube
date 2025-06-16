@@ -37,19 +37,19 @@ export const getTweetCommentsValidator = [
 ];
 
 export const addVideoCommentValidator = [
-    param("id")
-        .notEmpty()
-        .withMessage("Video id is required")
-        .isString()
-        .withMessage("video id must be string")
-        .isMongoId()
-        .withMessage("invalid video id"),
-    body("content")
-        .notEmpty()
-        .withMessage("content is required")
-        .isString()
-        .withMessage("content must be string")
-        .trim(),
+	param("id")
+		.notEmpty()
+		.withMessage("Video id is required")
+		.isString()
+		.withMessage("video id must be string")
+		.isMongoId()
+		.withMessage("invalid video id"),
+	body("content")
+		.notEmpty()
+		.withMessage("content is required")
+		.isString()
+		.withMessage("content must be string")
+		.trim(),
 ];
 
 export const addTweetCommentValidator = [

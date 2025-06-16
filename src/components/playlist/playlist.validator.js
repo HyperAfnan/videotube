@@ -36,7 +36,7 @@ export const getPlaylistByIdValidator = [
 
 export const getUserPlaylistsValidator = [
 	query("userId")
-      .optional()
+		.optional()
 		.notEmpty()
 		.withMessage("User ID is required")
 		.isMongoId()

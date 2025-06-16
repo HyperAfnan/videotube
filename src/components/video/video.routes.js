@@ -278,11 +278,7 @@ router
 router
 	.route("/:videoId")
 	.get(getVideoByIdValidator, validator, getVideoById)
-	.delete(
-		deleteVideoValidator,
-		validator,
-		deleteVideo,
-	)
+	.delete(deleteVideoValidator, validator, deleteVideo)
 	.patch(
 		upload.single("thumbnail"),
 		updateVideoValidator,
@@ -318,12 +314,7 @@ router
  */
 router
 	.route("/toggle/publish/:videoId")
-	.patch(
-		togglePublishStatusValidator,
-		validator,
-		togglePublishStatus,
-	);
-
+	.patch(togglePublishStatusValidator, validator, togglePublishStatus);
 
 /**
  * @swagger

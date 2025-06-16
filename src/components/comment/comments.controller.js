@@ -5,12 +5,17 @@ import * as CommentService from "./comment.service.js";
 
 const getVideoComments = asyncHandler(async (req, res) => {
 	const { page = 1, limit = 10 } = req.query;
-   const { id } = req.params;
+	const { id } = req.params;
 
-   const video = await CommentService.getVideoById(id)
-   if (!video) throw new ApiError(404, "Video not found")
+	const video = await CommentService.getVideoById(id);
+	if (!video) throw new ApiError(404, "Video not found");
 
-	const data = await CommentService.getVideoComments(page, limit, video, req.user);
+	const data = await CommentService.getVideoComments(
+		page,
+		limit,
+		video,
+		req.user,
+	);
 	return res
 		.status(200)
 		.json(new ApiResponse(200, data, "successfully got all comments"));
@@ -18,12 +23,17 @@ const getVideoComments = asyncHandler(async (req, res) => {
 
 const getTweetComments = asyncHandler(async (req, res) => {
 	const { page = 1, limit = 10 } = req.query;
-   const { id } = req.params;
+	const { id } = req.params;
 
-   const tweet = await CommentService.getTweetById(id)
-   if (!tweet) throw new ApiError(404, "Tweet not found")
+	const tweet = await CommentService.getTweetById(id);
+	if (!tweet) throw new ApiError(404, "Tweet not found");
 
-	const data = await CommentService.getTweetComments(page, limit, tweet, req.user);
+	const data = await CommentService.getTweetComments(
+		page,
+		limit,
+		tweet,
+		req.user,
+	);
 	return res
 		.status(200)
 		.json(new ApiResponse(200, data, "successfully got all comments"));
@@ -31,10 +41,10 @@ const getTweetComments = asyncHandler(async (req, res) => {
 
 const addVideoComment = asyncHandler(async (req, res) => {
 	const { content } = req.body;
-   const { id } = req.params;
+	const { id } = req.params;
 
-   const video = await CommentService.getVideoById(id)
-   if (!video) throw new ApiError(404, "Video not found")
+	const video = await CommentService.getVideoById(id);
+	if (!video) throw new ApiError(404, "Video not found");
 
 	const comment = await CommentService.addVideoComment(
 		video,
@@ -48,10 +58,10 @@ const addVideoComment = asyncHandler(async (req, res) => {
 
 const addTweetComment = asyncHandler(async (req, res) => {
 	const { content } = req.body;
-   const { id } = req.params;
+	const { id } = req.params;
 
-   const tweet = await CommentService.getTweetById(id)
-   if (!tweet) throw new ApiError(404, "Tweet not found")
+	const tweet = await CommentService.getTweetById(id);
+	if (!tweet) throw new ApiError(404, "Tweet not found");
 
 	const comment = await CommentService.addTweetComment(
 		tweet,
@@ -65,13 +75,14 @@ const addTweetComment = asyncHandler(async (req, res) => {
 
 const updateComment = asyncHandler(async (req, res) => {
 	const { content } = req.body;
-   const { commentId } = req.params;
+	const { commentId } = req.params;
 
-   const comment = await CommentService.getCommentById(commentId);
-   if (!comment) throw new ApiError(404, "Comment not found")
+	const comment = await CommentService.getCommentById(commentId);
+	if (!comment) throw new ApiError(404, "Comment not found");
 
-   const isCommentUser = await CommentService.isCommentUser(comment, req.user)
-   if (!isCommentUser) throw new ApiError(403, "Not authorized to perform this operation")
+	const isCommentUser = await CommentService.isCommentUser(comment, req.user);
+	if (!isCommentUser)
+		throw new ApiError(403, "Not authorized to perform this operation");
 
 	const updatedComment = await CommentService.updateComment(comment, content);
 	return res
@@ -80,13 +91,14 @@ const updateComment = asyncHandler(async (req, res) => {
 });
 
 const deleteComment = asyncHandler(async (req, res) => {
-   const { commentId } = req.params;
+	const { commentId } = req.params;
 
-   const comment = await CommentService.getCommentById(commentId);
-   if (!comment) throw new ApiError(404, "Comment not found")
+	const comment = await CommentService.getCommentById(commentId);
+	if (!comment) throw new ApiError(404, "Comment not found");
 
-   const isCommentUser = await CommentService.isCommentUser(comment, req.user)
-   if (!isCommentUser) throw new ApiError(403, "Not authorized to perform this operation")
+	const isCommentUser = await CommentService.isCommentUser(comment, req.user);
+	if (!isCommentUser)
+		throw new ApiError(403, "Not authorized to perform this operation");
 
 	await CommentService.deleteComment(comment);
 	return res.status(204).end();
