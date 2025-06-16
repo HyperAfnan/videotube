@@ -53,7 +53,7 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
    if (!video) throw new ApiError(404, "Video not found");
 
    const isOwner = await PlaylistService.isPlaylistOwner(playlist, req.user);
-   if (!isOwner) throw new ApiError(403, "You are not authorized to delete this playlist");
+   if (!isOwner) throw new ApiError(403, "You are not authorized to add video to this playlist");
 
 	const updatedPlaylist = await PlaylistService.addVideoToPlaylistService(playlist, video);
 
@@ -79,7 +79,7 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
    if (!video) throw new ApiError(404, "Video not found");
 
    const isOwner = await PlaylistService.isPlaylistOwner(playlist, req.user);
-   if (!isOwner) throw new ApiError(403, "You are not authorized to delete this playlist");
+   if (!isOwner) throw new ApiError(403, "You are not authorized to remove video from this playlist");
 
 	const updatedPlaylist = await PlaylistService.removeVideoFromPlaylistService(
 		playlist,

@@ -68,7 +68,7 @@ const updateComment = asyncHandler(async (req, res) => {
    const { commentId } = req.params;
 
    const comment = await CommentService.getCommentById(commentId);
-   if (!comment) throw new ApiError(404, "Video not found")
+   if (!comment) throw new ApiError(404, "Comment not found")
 
    const isCommentUser = await CommentService.isCommentUser(comment, req.user)
    if (!isCommentUser) throw new ApiError(403, "Not authorized to perform this operation")
@@ -83,7 +83,7 @@ const deleteComment = asyncHandler(async (req, res) => {
    const { commentId } = req.params;
 
    const comment = await CommentService.getCommentById(commentId);
-   if (!comment) throw new ApiError(404, "Video not found")
+   if (!comment) throw new ApiError(404, "Comment not found")
 
    const isCommentUser = await CommentService.isCommentUser(comment, req.user)
    if (!isCommentUser) throw new ApiError(403, "Not authorized to perform this operation")
