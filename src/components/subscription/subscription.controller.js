@@ -5,6 +5,7 @@ import * as SubscriptionService from "./subscription.service.js";
 import debug from "debug";
 const log = debug("app:subscription:controller:log")
 
+// TODO: check if user is verfied or not
 const toggleSubscription = asyncHandler(async (req, res) => {
 	const { channelId } = req.params;
 

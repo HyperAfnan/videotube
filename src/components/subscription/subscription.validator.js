@@ -2,7 +2,7 @@ import { param } from "express-validator";
 
 export const toggleSubscriptionValidator = [
 	param("channelId")
-		.isEmpty()
+		.notEmpty()
 		.withMessage("channelId is required")
 		.isString()
 		.withMessage("channelId must be string")
@@ -12,7 +12,7 @@ export const toggleSubscriptionValidator = [
 
 export const getUserChannelSubscribersValidator = [
 	param("channelId")
-		.isEmpty()
+		.notEmpty()
 		.withMessage("channelId is required")
 		.isString()
 		.withMessage("channelId must be string")
@@ -22,7 +22,7 @@ export const getUserChannelSubscribersValidator = [
 
 export const getSubscribedChannelsValidator = [
 	param("subscriberId")
-		.isEmpty()
+		.notEmpty()
 		.withMessage("subscriberId is required")
 		.isString()
 		.withMessage("subscriberId must be string")

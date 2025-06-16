@@ -66,7 +66,7 @@ const deleteVideoOnCloudinary = async (videoUrl) => {
 	try {
 		if (!videoUrl) return null;
 
-		const publicId = URL.parse(imageUrl)
+		const publicId = URL.parse(videoUrl)
 			.pathname.split("/")
 			.at(-1)
 			.split(".")

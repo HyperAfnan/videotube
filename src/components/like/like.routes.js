@@ -8,14 +8,10 @@ import {
 import { verifyAccessToken } from "../../middlewares/auth.middleware.js";
 import { validator } from "../../middlewares/validator.middleware.js";
 import {
-	commentIdValidator,
 	getLikedVideosValidator,
 	toggleCommentLikeValidator,
 	toggleTweetLikeValidator,
 	toggleVideoLikeValidator,
-	tweetIdValidator,
-	userIdValidator,
-	videoIdValidator,
 } from "./like.validator.js";
 import { defaultRateLimiter } from "../../middlewares/rateLimiter.js";
 
@@ -87,7 +83,7 @@ router.use(verifyAccessToken); // Apply verifyJWT middleware to all routes in th
  */
 router
 	.route("/toggle/v/:videoId")
-	.post(toggleVideoLikeValidator, validator, videoIdValidator, toggleVideoLike);
+	.post(toggleVideoLikeValidator, validator, toggleVideoLike);
 
 /**
  * @swagger
@@ -118,7 +114,6 @@ router
 	.post(
 		toggleCommentLikeValidator,
 		validator,
-		commentIdValidator,
 		toggleCommentLike,
 	);
 
@@ -148,17 +143,24 @@ router
  */
 router
 	.route("/toggle/t/:tweetId")
-	.post(toggleTweetLikeValidator, validator, tweetIdValidator, toggleTweetLike);
+	.post(toggleTweetLikeValidator, validator, toggleTweetLike);
 
 /**
  * @swagger
- * /likes/videos:
+ * /likes/videos/{userId}:
  *   get:
- *     summary: Get liked videos
+ *     summary: Get liked videos for a user
  *     tags: [Likes]
- *     description: Retrieve all videos liked by the current user
+ *     description: Retrieve all videos liked by the specified user
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the user whose liked videos are being retrieved
  *     responses:
  *       200:
  *         description: Liked videos retrieved successfully
@@ -167,6 +169,6 @@ router
  */
 router
 	.route("/videos/:userId")
-	.get(getLikedVideosValidator, validator, userIdValidator, getLikedVideos);
+	.get(getLikedVideosValidator, validator, getLikedVideos);
 
 export default router;

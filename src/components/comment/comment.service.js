@@ -3,11 +3,29 @@ import { ApiError } from "../../utils/apiErrors.js";
 import { serviceHandler } from "../../utils/handlers.js";
 import { Tweet } from "../tweet/tweet.models.js";
 import { Video } from "../video/video.models.js";
+import { Comment } from "./comments.models.js";
 import debug from "debug";
-const commentDebug = debug("app:commentService");
+const commentDebug = debug("app:comment:service");
+
+export const getVideoById = serviceHandler(async (videoId) => {
+   const video = await Video.findById(videoId);
+   return video;
+})
+
+export const getCommentById = serviceHandler(async (commentId) => {
+   const comment = await Comment.findById(commentId);
+   return comment;
+})
+
+export const getTweetById = serviceHandler(async (tweetId) => {
+   const tweet = await Tweet.findById(tweetId);
+   return tweet;
+})
+
+export const isCommentUser = serviceHandler(async (comment, user) => comment.user.toString() === user._id.toString());
 
 export const getVideoComments = serviceHandler(
-	async (page, limit, videoMeta) => {
+	async (page, limit, videoMeta, userMeta) => {
 		const customLabels = {
 			totalDocs: "totalComments",
 			docs: "video",
@@ -16,8 +34,12 @@ export const getVideoComments = serviceHandler(
 
 		const options = { page, limit, customLabels };
 
+      // checks if a user is trying to access a private video comments
+      if (!videoMeta.isPublished && videoMeta.owner.toString() !== userMeta._id.toString()) 
+         throw new ApiError(403, "You are not allowed to view this video comments");
+
 		const pipeline = [
-			{ $match: { _id: new mongoose.Types.ObjectId(videoMeta._id) } },
+			{ $match: { _id: new mongoose.Types.ObjectId(String(videoMeta._id)) } },
 			{
 				$lookup: {
 					from: "comments",
@@ -31,12 +53,13 @@ export const getVideoComments = serviceHandler(
 
 		const aggregation = Video.aggregate(pipeline);
 
-		await Video.aggregatePaginate(aggregation, options)
-			.then((data) => data)
+		const data = await Video.aggregatePaginate(aggregation, options)
 			.catch((err) => {
 				commentDebug(`Error in getVideoComments ${err}`);
 				throw new ApiError(500, "Internal server error");
 			});
+
+      return data;
 	},
 );
 
@@ -50,7 +73,7 @@ export const getTweetComments = serviceHandler(
 		const options = { page, limit, customLabels };
 
 		const pipeline = [
-			{ $match: { _id: new mongoose.Types.ObjectId(tweetMeta._id) } },
+			{ $match: { _id: new mongoose.Types.ObjectId(String(tweetMeta._id)) } },
 			{
 				$lookup: {
 					from: "comments",
@@ -64,17 +87,22 @@ export const getTweetComments = serviceHandler(
 
 		const aggregation = Tweet.aggregate(pipeline);
 
-		await Tweet.aggregatePaginate(aggregation, options)
-			.then((data) => data)
+		const data = await Tweet.aggregatePaginate(aggregation, options)
 			.catch((err) => {
 				commentDebug(`Error in getTweetComments ${err}`);
 				throw new ApiError(500, "Internal server error");
 			});
+
+      return data;
 	},
 );
 
 export const addVideoComment = serviceHandler(
 	async (videoMeta, userMeta, content) => {
+
+      if (!videoMeta.isPublished && videoMeta.owner.toString() !== userMeta._id.toString()) 
+         throw new ApiError(403, "You are not allowed to comment on this video");
+
 		const comment = await Comment.create({
 			video: videoMeta._id,
 			user: userMeta._id,
@@ -109,6 +137,7 @@ export const updateComment = serviceHandler(async (commentMeta, content) => {
 	return comment;
 });
 
+// TODO:delete corresponding likes too
 export const deleteComment = serviceHandler(async (commentMeta) => {
 	await Comment.findByIdAndDelete(commentMeta);
 });

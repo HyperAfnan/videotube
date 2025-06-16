@@ -1,11 +1,16 @@
+import { ApiError } from "../../utils/apiErrors.js";
 import { ApiResponse } from "../../utils/apiResponse.js";
 import { asyncHandler } from "../../utils/handlers.js";
 import * as CommentService from "./comment.service.js";
 
 const getVideoComments = asyncHandler(async (req, res) => {
 	const { page = 1, limit = 10 } = req.query;
+   const { id } = req.params;
 
-	const data = await CommentService.getVideoComments(page, limit, req.video);
+   const video = await CommentService.getVideoById(id)
+   if (!video) throw new ApiError(404, "Video not found")
+
+	const data = await CommentService.getVideoComments(page, limit, video);
 	return res
 		.status(200)
 		.json(new ApiResponse(200, data, "successfully got all comments"));
@@ -13,7 +18,12 @@ const getVideoComments = asyncHandler(async (req, res) => {
 
 const getTweetComments = asyncHandler(async (req, res) => {
 	const { page = 1, limit = 10 } = req.query;
-	const data = await CommentService.getTweetComments(page, limit, req.tweet);
+   const { id } = req.params;
+
+   const tweet = await CommentService.getTweetById(id)
+   if (!tweet) throw new ApiError(404, "Tweet not found")
+
+	const data = await CommentService.getTweetComments(page, limit, tweet, req.user);
 	return res
 		.status(200)
 		.json(new ApiResponse(200, data, "successfully got all comments"));
@@ -21,8 +31,13 @@ const getTweetComments = asyncHandler(async (req, res) => {
 
 const addVideoComment = asyncHandler(async (req, res) => {
 	const { content } = req.body;
+   const { id } = req.params;
+
+   const video = await CommentService.getVideoById(id)
+   if (!video) throw new ApiError(404, "Video not found")
+
 	const comment = await CommentService.addVideoComment(
-		req.video,
+		video,
 		req.user,
 		content,
 	);
@@ -33,8 +48,13 @@ const addVideoComment = asyncHandler(async (req, res) => {
 
 const addTweetComment = asyncHandler(async (req, res) => {
 	const { content } = req.body;
+   const { id } = req.params;
+
+   const tweet = await CommentService.getTweetById(id)
+   if (!tweet) throw new ApiError(404, "Tweet not found")
+
 	const comment = await CommentService.addTweetComment(
-		req.tweet,
+		tweet,
 		req.user,
 		content,
 	);
@@ -45,14 +65,30 @@ const addTweetComment = asyncHandler(async (req, res) => {
 
 const updateComment = asyncHandler(async (req, res) => {
 	const { content } = req.body;
-	const comment = await CommentService.updateComment(req.comment, content);
+   const { commentId } = req.params;
+
+   const comment = await CommentService.getCommentById(commentId);
+   if (!comment) throw new ApiError(404, "Video not found")
+
+   const isCommentUser = await CommentService.isCommentUser(comment, req.user)
+   if (!isCommentUser) throw new ApiError(403, "Not authorized to perform this operation")
+
+	const updatedComment = await CommentService.updateComment(comment, content);
 	return res
 		.status(200)
-		.json(new ApiResponse(200, comment, "Successfully updated comment"));
+		.json(new ApiResponse(200, updatedComment, "Successfully updated comment"));
 });
 
 const deleteComment = asyncHandler(async (req, res) => {
-	await CommentService.deleteComment(req.comment);
+   const { commentId } = req.params;
+
+   const comment = await CommentService.getCommentById(commentId);
+   if (!comment) throw new ApiError(404, "Video not found")
+
+   const isCommentUser = await CommentService.isCommentUser(comment, req.user)
+   if (!isCommentUser) throw new ApiError(403, "Not authorized to perform this operation")
+
+	await CommentService.deleteComment(comment);
 	return res.status(204).end();
 });
 

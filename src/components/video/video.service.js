@@ -20,6 +20,8 @@ export const findVideoById = serviceHandler(async (videoId) => {
    return video;
 })
 
+export const isVideoOwner = serviceHandler(async (video, user) => video.owner.toString() === user._id.toString());
+
 export const getAllVideos = serviceHandler(
 	async (page, limit, q, sortBy, sortType, userId) => {
 		if (sortType === "asc") sortType = 1;
@@ -41,17 +43,17 @@ export const getAllVideos = serviceHandler(
 		};
 		const options = { page, limit, customLabels: myCustomLabels };
 
-		await Video.aggregatePaginate(aggregate, options)
-			.then((data) => data)
+		const data = await Video.aggregatePaginate(aggregate, options)
 			.catch((err) => {
 				console.log(err);
 				throw new ApiError(500, "Internal Server error");
 			});
+      return data
 	},
 );
 
 export const publishVideo = serviceHandler(
-	async (title, description, videoFileLocalPath, thumbnailLocalPath) => {
+	async (title, description, user, videoFileLocalPath, thumbnailLocalPath) => {
 		const videoFile = await uploadVideoOnCloudinary(videoFileLocalPath).catch(
 			(e) => {
 				console.log(e);
@@ -64,7 +66,16 @@ export const publishVideo = serviceHandler(
 				throw new ApiError(500, "failed to upload video thumbnail");
 			},
 		);
-		const duration = Math.floor(videoFileLocalPath.duration);
+		const duration = Math.floor(videoFile.duration);
+      console.log("uploading video with data", {
+			videoFile: videoFile.secure_url,
+			thumbnail: thumbnail.secure_url,
+			title,
+			description,
+			duration,
+			owner: user._id,
+			isPublished: true,
+      })
 
 		const video = await Video.create({
 			videoFile: videoFile.secure_url,
@@ -72,16 +83,17 @@ export const publishVideo = serviceHandler(
 			title,
 			description,
 			duration,
-			owner: req.user._id,
+			owner: user._id,
 			isPublished: true,
 		});
+      if (!video) throw new ApiError(500, "Internal server error");
 
 		return video;
 	},
 );
 
 export const getUserVideoById = serviceHandler(
-	async (videoId, videoMeta, userMeta) => {
+	async (videoId, videoMeta, userId) => {
 		const video = await Video.findByIdAndUpdate(
 			videoId,
 			{ views: videoMeta.views + 1 },
@@ -89,7 +101,7 @@ export const getUserVideoById = serviceHandler(
 		);
 
 		await User.updateOne(
-			{ _id: userMeta._id },
+			{ _id: userId},
 			{ $push: { watchHistory: new mongoose.Types.ObjectId(String(videoId)) } },
 		);
 
@@ -98,10 +110,10 @@ export const getUserVideoById = serviceHandler(
 );
 
 export const updateVideo = serviceHandler(
-	async (title, description, videoId, thumbnailLocalPath) => {
+	async (title, description, videoMeta, videoId, thumbnailLocalPath) => {
 		let thumbnail;
 		if (thumbnailLocalPath) {
-			await deleteImageOnCloudinary(videoData.thumbnail).catch((e) => {
+			await deleteImageOnCloudinary(videoMeta.thumbnail).catch((e) => {
 				console.log(`Failed to delete thumbnail \n${e}`);
 				throw new ApiError(500, "Failed to delete thumbnail");
 			});

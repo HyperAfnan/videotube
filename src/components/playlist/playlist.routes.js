@@ -15,11 +15,8 @@ import {
 	deletePlaylistValidator,
 	getPlaylistByIdValidator,
 	getUserPlaylistsValidator,
-	playlistIdValidator,
 	removeVideoFromPlaylistValidator,
 	updatePlaylistValidator,
-	userIdValidator,
-	videoIdValidator,
 } from "./playlist.validator.js";
 import { validator } from "../../middlewares/validator.middleware.js";
 import { defaultRateLimiter } from "../../middlewares/rateLimiter.js";
@@ -74,7 +71,7 @@ router.use(verifyAccessToken); // Apply verifyJWT middleware to all routes in th
 
 /**
  * @swagger
- * /playlists:
+ * /playlist:
  *   post:
  *     summary: Create a new playlist
  *     tags: [Playlists]
@@ -108,7 +105,7 @@ router.route("/").post(createPlaylistValidator, validator, createPlaylist);
 
 /**
  * @swagger
- * /playlists/{playlistId}:
+ * /playlist/{playlistId}:
  *   get:
  *     summary: Get a playlist by ID
  *     tags: [Playlists]
@@ -196,26 +193,23 @@ router
 	.get(
 		getPlaylistByIdValidator,
 		validator,
-		playlistIdValidator,
 		getPlaylistById,
 	)
 	.patch(
 		upload.single("thumbnail"),
 		updatePlaylistValidator,
 		validator,
-		playlistIdValidator,
 		updatePlaylist,
 	)
 	.delete(
 		deletePlaylistValidator,
 		validator,
-		playlistIdValidator,
 		deletePlaylist,
 	);
 
 /**
  * @swagger
- * /playlists/add/{videoId}/{playlistId}:
+ * /playlist/add/{videoId}/{playlistId}:
  *   patch:
  *     summary: Add video to playlist
  *     tags: [Playlists]
@@ -250,14 +244,12 @@ router
 	.patch(
 		addVideoToPlaylistValidator,
 		validator,
-		videoIdValidator,
-		playlistIdValidator,
 		addVideoToPlaylist,
 	);
 
 /**
  * @swagger
- * /playlists/remove/{videoId}/{playlistId}:
+ * /playlist/remove/{videoId}/{playlistId}:
  *   patch:
  *     summary: Remove video from playlist
  *     tags: [Playlists]
@@ -292,14 +284,12 @@ router
 	.patch(
 		removeVideoFromPlaylistValidator,
 		validator,
-		videoIdValidator,
-		playlistIdValidator,
 		removeVideoFromPlaylist,
 	);
 
 /**
  * @swagger
- * /playlists/user/{userId}:
+ * /playlist/user/{userId}:
  *   get:
  *     summary: Get user's playlists
  *     tags: [Playlists]
@@ -323,6 +313,6 @@ router
  */
 router
 	.route("/user/:userId")
-	.get(getUserPlaylistsValidator, validator, userIdValidator, getUserPlaylists);
+	.get((req, _, next) => { console.log(req.params); next() },getUserPlaylistsValidator, validator, getUserPlaylists);
 
 export default router;
