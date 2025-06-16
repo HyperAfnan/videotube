@@ -12,15 +12,10 @@ import { validator } from "../../middlewares/validator.middleware.js";
 import {
 	addTweetCommentValidator,
 	addVideoCommentValidator,
-	commentIdValidatorAndPermsCheck,
 	deleteCommentValidator,
 	getTweetCommentsValidator,
 	getVideoCommentsValidator,
-	tweetidValidator,
-	tweetPermsChecker,
 	updateCommentValidator,
-	videoIdValidator,
-	videoPermsChecker,
 } from "./comment.validator.js";
 import { defaultRateLimiter } from "../../middlewares/rateLimiter.js";
 
@@ -129,13 +124,8 @@ router.use(verifyAccessToken); // Apply verifyJWT middleware to all routes in th
  */
 router
 	.route("/v/:id")
-	.get(getVideoCommentsValidator, validator, videoIdValidator, getVideoComments)
-	.post(
-		addVideoCommentValidator,
-		validator,
-		videoPermsChecker,
-		addVideoComment,
-	);
+	.get(getVideoCommentsValidator, validator, getVideoComments)
+	.post( addVideoCommentValidator, validator, addVideoComment);
 
 /**
  * @swagger
@@ -198,13 +188,8 @@ router
  */
 router
 	.route("/t/:id")
-	.get(getTweetCommentsValidator, validator, tweetidValidator, getTweetComments)
-	.post(
-		addTweetCommentValidator,
-		validator,
-		tweetPermsChecker,
-		addTweetComment,
-	);
+	.get(getTweetCommentsValidator, validator, getTweetComments)
+	.post( addTweetCommentValidator, validator, addTweetComment);
 
 /**
  * @swagger
@@ -271,17 +256,7 @@ router
  */
 router
 	.route("/c/:commentId")
-	.delete(
-		deleteCommentValidator,
-		validator,
-		commentIdValidatorAndPermsCheck,
-		deleteComment,
-	)
-	.patch(
-		updateCommentValidator,
-		validator,
-		commentIdValidatorAndPermsCheck,
-		updateComment,
-	);
+	.delete( deleteCommentValidator, validator, deleteComment)
+	.patch( updateCommentValidator, validator, updateComment);
 
 export default router;

@@ -12,14 +12,13 @@ import { verifyAccessToken } from "../../middlewares/auth.middleware.js";
 import { upload } from "../../middlewares/multer.middlewares.js";
 import {
 	deleteVideoValidator,
+	downloadVideoValidator,
 	getAllVideosValidator,
 	getVideoByIdValidator,
-	permsAndVideoIdValidator,
 	publishVideoFilesValidator,
 	publishVideoValidator,
 	togglePublishStatusValidator,
 	updateVideoValidator,
-	videoIdValidator,
 } from "./video.validator.js";
 import { validator } from "../../middlewares/validator.middleware.js";
 import { defaultRateLimiter } from "../../middlewares/rateLimiter.js";
@@ -107,7 +106,7 @@ router.use(verifyAccessToken); // Apply verifyJWT middleware to all routes in th
  *           minimum: 1
  *         description: Number of videos per page
  *       - in: query
- *         name: query
+ *         name: q
  *         schema:
  *           type: string
  *         description: Search term for video title or description
@@ -123,6 +122,11 @@ router.use(verifyAccessToken); // Apply verifyJWT middleware to all routes in th
  *           type: string
  *           enum: [asc, desc]
  *         description: Sort order (ascending or descending)
+ *       - in: query
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         description: User ID to filter videos by owner
  *     responses:
  *       200:
  *         description: List of videos retrieved successfully
@@ -273,18 +277,16 @@ router
  */
 router
 	.route("/:videoId")
-	.get(getVideoByIdValidator, validator, videoIdValidator, getVideoById)
+	.get(getVideoByIdValidator, validator, getVideoById)
 	.delete(
 		deleteVideoValidator,
 		validator,
-		permsAndVideoIdValidator,
 		deleteVideo,
 	)
 	.patch(
 		upload.single("thumbnail"),
 		updateVideoValidator,
 		validator,
-		permsAndVideoIdValidator,
 		updateVideo,
 	);
 
@@ -317,15 +319,45 @@ router
 router
 	.route("/toggle/publish/:videoId")
 	.patch(
-		permsAndVideoIdValidator,
 		togglePublishStatusValidator,
 		validator,
-		permsAndVideoIdValidator,
 		togglePublishStatus,
 	);
 
+
+/**
+ * @swagger
+ * /videos/download/{videoId}:
+ *   get:
+ *     summary: Redirect to the video file URL
+ *     tags: [Videos]
+ *     description: Redirects the client to the direct URL of the video file associated with the specified video ID.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: videoId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID of the video to download
+ *     responses:
+ *       302:
+ *         description: Redirect to the video file URL
+ *         headers:
+ *           Location:
+ *             description: The URL of the video file
+ *             schema:
+ *               type: string
+ *               format: uri
+ *       404:
+ *         description: Video not found
+ *       401:
+ *         description: Unauthorized
+ */
+
 router
 	.route("/download/:videoId")
-	.get(videoIdValidator, validator, downloadVideo);
+	.get(downloadVideoValidator, validator, downloadVideo);
 
 export default router;

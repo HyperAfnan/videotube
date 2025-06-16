@@ -1,6 +1,57 @@
+import mongoose from "mongoose";
+import { Comment } from "../comment/comments.models.js";
+import { Video } from "../video/video.models.js";
+import { Tweet } from "../tweet/tweet.models.js";
 import { User } from "../user/user.models.js";
 import { Like } from "./like.models.js";
 import { serviceHandler } from "../../utils/handlers.js";
+
+export const findUserById = serviceHandler(async (userId) => {
+	const user = await User.findById(userId);
+	return user;
+});
+
+export const findTweetById = serviceHandler(async (tweetId) => {
+	const tweet = await Tweet.findById(tweetId);
+	return tweet;
+});
+
+export const findVideoById = serviceHandler(async (videoId) => {
+	const video = await Video.findById(videoId);
+	return video;
+});
+
+export const findCommentById = serviceHandler(async (commentId) => {
+	const comment = await Comment.findById(commentId);
+	return comment;
+});
+
+export const isLikedVideo = serviceHandler(async (videoMeta, userMeta) => {
+	const isLiked = await Like.find({
+		video: videoMeta._id,
+		likedBy: userMeta._id,
+	});
+
+   return isLiked;
+})
+
+export const isLikedComment = serviceHandler(async (commentMeta, userMeta) => {
+   const isLiked = await Like.find({
+      comment: commentMeta._id,
+      likedBy: userMeta._id,
+   });
+
+   return isLiked;
+})
+
+export const isLikedTweet = serviceHandler(async (tweetMeta, userMeta) => {
+   const isLiked = await Like.find({
+      tweet: tweetMeta._id,
+      likedBy: userMeta._id,
+   });
+
+   return isLiked;
+})
 
 export const likeVideo = serviceHandler(async (videoMeta, userMeta) => {
 	const like = await Like.create({
@@ -43,7 +94,7 @@ export const unlikeTweet = serviceHandler(async (tweetMeta, userMeta) => {
 
 export const getLikedVideos = serviceHandler(async (userId) => {
 	const likedVideos = await User.aggregate([
-		{ $match: { _id: new mongoose.Types.ObjectId(userId) } },
+		{ $match: { _id: new mongoose.Types.ObjectId(String(userId)) } },
 		{
 			$lookup: {
 				from: "likes",

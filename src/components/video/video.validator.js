@@ -1,18 +1,5 @@
 import { body, param, query } from "express-validator";
-import { User } from "../user/user.models.js";
-import { Video } from "./video.models.js";
 import { ApiError } from "../../utils/apiErrors.js";
-
-export const permsAndVideoIdValidator = async function (req, _, next) {
-	const { videoId } = req.params;
-	const video = await Video.findById(videoId);
-	if (!video) throw new ApiError(404, "Video not found");
-	if (video.owner._id.toString() !== req.user._id.toString()) {
-		throw new ApiError(402, "Unauthorized to perform this operation");
-	}
-	req.video = video;
-	next();
-};
 
 export const getAllVideosValidator = [
 	query("page").optional().isNumeric().withMessage("Page must be number"),
@@ -23,7 +10,7 @@ export const getAllVideosValidator = [
 		.isString()
 		.withMessage("sortType must be string"),
 	query("q")
-		.isEmpty()
+		.notEmpty()
 		.withMessage("Query q is required")
 		.isString()
 		.withMessage("Query q must be string")
@@ -34,11 +21,6 @@ export const getAllVideosValidator = [
 		.withMessage("userId must be string")
 		.isMongoId()
 		.withMessage("invalid userId")
-		.custom(async (userId) => {
-			const user = await User.findById(userId);
-			if (!user) throw new ApiError(404, "user not found");
-			return true;
-		}),
 ];
 
 export const publishVideoValidator = [
@@ -64,7 +46,7 @@ export const publishVideoFilesValidator = function (req, _, next) {
 
 export const getVideoByIdValidator = [
 	param("videoId")
-		.isEmpty()
+		.notEmpty()
 		.withMessage("videoId is required")
 		.isString()
 		.withMessage("videoId must be string")
@@ -72,21 +54,9 @@ export const getVideoByIdValidator = [
 		.withMessage("invalid videoId"),
 ];
 
-export const videoIdValidator = async function (req, _, next) {
-	const { videoId } = req.params;
-	const video = await Video.findById(videoId);
-	if (!video) throw new ApiError(404, "Video not found");
-	if (video.owner._id.toString() !== req.user._id.toString()) {
-		if (video.isPublished === false)
-			res.status(403).json(new ApiResponse(403, {}, "Video is not published"));
-	}
-	req.video = video;
-	next();
-};
-
 export const updateVideoValidator = [
 	param("videoId")
-		.isEmpty()
+		.notEmpty()
 		.withMessage("videoId is required")
 		.isString()
 		.withMessage("videoId must be string")
@@ -106,7 +76,7 @@ export const updateVideoValidator = [
 
 export const deleteVideoValidator = [
 	param("videoId")
-		.isEmpty()
+		.notEmpty()
 		.withMessage("videoId is required")
 		.isString()
 		.withMessage("videoId must be string")
@@ -116,7 +86,17 @@ export const deleteVideoValidator = [
 
 export const togglePublishStatusValidator = [
 	param("videoId")
-		.isEmpty()
+		.notEmpty()
+		.withMessage("videoId is required")
+		.isString()
+		.withMessage("videoId must be string")
+		.isMongoId()
+		.withMessage("invalid videoId"),
+];
+
+export const downloadVideoValidator = [
+	param("videoId")
+		.notEmpty()
 		.withMessage("videoId is required")
 		.isString()
 		.withMessage("videoId must be string")

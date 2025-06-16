@@ -2,9 +2,10 @@ import { User } from "../user/user.models.js";
 import { serviceHandler } from "../../utils/handlers.js";
 import mongoose from "mongoose";
 
+// BUG: showing total likes to 1, while video likes array is empty
 export const getChannelStats = serviceHandler(async (userMeta) => {
 	const stats = await User.aggregate([
-		{ $match: { _id: new mongoose.Types.ObjectId(userMeta._id) } },
+		{ $match: { _id: new mongoose.Types.ObjectId(String(userMeta._id)) } },
 		{
 			$lookup: {
 				from: "subscriptions",
@@ -77,13 +78,12 @@ export const getChannelStats = serviceHandler(async (userMeta) => {
 			},
 		},
 	]);
-
 	return stats;
 });
 
 export const getChannelVideos = serviceHandler(async (userMeta) => {
-	const channelVideos = await User.aggregaate([
-		{ $match: { _id: new mongoose.Types.ObjectId(userMeta._id) } },
+	const channelVideos = await User.aggregate([
+		{ $match: { _id: new mongoose.Types.ObjectId(String(userMeta._id)) } },
 		{
 			$lookup: {
 				from: "videos",
@@ -95,6 +95,5 @@ export const getChannelVideos = serviceHandler(async (userMeta) => {
 		{ $addFields: { totalVideos: { $size: "$videos" } } },
 		{ $project: { videos: 1, username: 1, totalVideos: 1, _id: 0 } },
 	]);
-
 	return channelVideos;
 });
