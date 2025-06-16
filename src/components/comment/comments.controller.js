@@ -10,7 +10,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
    const video = await CommentService.getVideoById(id)
    if (!video) throw new ApiError(404, "Video not found")
 
-	const data = await CommentService.getVideoComments(page, limit, video);
+	const data = await CommentService.getVideoComments(page, limit, video, req.user);
 	return res
 		.status(200)
 		.json(new ApiResponse(200, data, "successfully got all comments"));

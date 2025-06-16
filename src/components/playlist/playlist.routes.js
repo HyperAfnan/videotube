@@ -313,6 +313,6 @@ router
  */
 router
 	.route("/user/:userId")
-	.get((req, _, next) => { console.log(req.params); next() },getUserPlaylistsValidator, validator, getUserPlaylists);
+	.get(getUserPlaylistsValidator, validator, getUserPlaylists);
 
 export default router;

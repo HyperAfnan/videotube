@@ -22,7 +22,7 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
 
    if (userId) {
       const playlistUser = await PlaylistService.findUserById(userId);
-      if (!playlistUser) throw new ApiError(404, "Playlist not found") 
+      if (!playlistUser) throw new ApiError(404, "User not found") 
    }
 
 	const user = userId || req.user._id;
@@ -117,7 +117,7 @@ const updatePlaylist = asyncHandler(async (req, res) => {
    if (!playlist) throw new ApiError(404, "Playlist not found");
 
    const isOwner = await PlaylistService.isPlaylistOwner(playlist, req.user);
-   if (!isOwner) throw new ApiError(403, "You are not authorized to delete this playlist");
+   if (!isOwner) throw new ApiError(403, "You are not authorized to update this playlist");
 
 	const updatedPlaylist = await PlaylistService.updatePlaylistService(
 		playlist,
