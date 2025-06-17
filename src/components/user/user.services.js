@@ -158,6 +158,14 @@ export const confirmEmail = serviceHandler(async (userMeta) => {
 	const { accessToken, refreshToken } = await generateTokens(user);
 
 	log("Account verified for user: ", userMeta.username);
+
+	const { subject, html } = templates.welcome(userMeta.username);
+	await emailQueue.add(
+		"welcome",
+		{ to: userMeta.email, html, subject },
+		{ removeOnComplete: true, removeOnFail: true },
+	);
+
 	return { accessToken, refreshToken };
 });
 
