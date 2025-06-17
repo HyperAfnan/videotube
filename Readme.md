@@ -123,6 +123,8 @@ REFRESH_TOKEN_SECRET="your refresh token secret"
 REFRESH_TOKEN_EXPIRY=10d
 CONFIRMATION_TOKEN_SECRET="your confirmation token secret"
 CONFIRMATION_TOKEN_EXPIRY=2h
+FORGET_PASSWORD_TOKEN_SECRET="your forget password token secret"
+FORGET_PASSWORD_TOKEN_EXPIRY=2h
 
 CLOUDINARY_CLOUD_NAME=your cloudinary cloud name
 CLOUDINARY_API_SECRET=your cloudinary api secret
@@ -130,6 +132,16 @@ CLOUDINARY_API_KEY=your cloudinary api key
 
 NODE_ENV=development
 
+REDIS_HOST=your redis host
+REDIS_USERNAME=your redis username
+REDIS_PASSWORD=your redis password
+REDIS_PORT=your redis port
+
+BREVO_SERVER_URL=smtp-relay.brevo.com
+EMAIL_USER=your email user
+BREVO_PORT=587
+BREVO_USERNAME=your brevo username
+BREVO_PASSWORD=your brevo password
 ```
 
 > Add any other variables as required by your database or third-party services.
