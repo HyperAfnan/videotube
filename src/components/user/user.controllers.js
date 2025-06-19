@@ -53,7 +53,7 @@ const confirmEmail = asyncHandler(async (req, res) => {
 	userLogger.info("Token is valid", { userId: isTokenValid.userMeta._id });
 
 	const confirmEmail = await userService.confirmEmail(isTokenValid.userMeta);
-	userLogger.info("Email confirmed", { userId: confirmEmail.user._id });
+	userLogger.info("Email confirmed", { userId: confirmEmail.userMeta._id });
 
 	return res
 		.status(200)

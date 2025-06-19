@@ -15,6 +15,7 @@ import { ObjectId } from "mongodb";
 import emailQueue from "../../jobs/queues/email/email.normal.js";
 import userQueue from "../../jobs/queues/user/user.normal.js";
 import { templates } from "../../microservices/email/email.templates.js";
+import ENV  from "../../config/env.js";
 import jwt from "jsonwebtoken";
 import { logger } from "../../utils/logger/index.js";
 const userServiceLogger = logger.child({ module: "user.services" });

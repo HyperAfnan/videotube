@@ -8,7 +8,6 @@ const serviceHandler =
 		try {
 			return await fn(...args);
 		} catch (err) {
-			console.error("Service Error:", err);
 			throw err;
 		}
 	};
