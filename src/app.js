@@ -21,9 +21,6 @@ if (ENV.NODE_ENV === "development") {
    logger.info("Development mode enabled");
 	import("./config/bullboard.js")
 		.then(({ setupBullBoard }) => setupBullBoard(app))
-
-	import("morgan")
-		.then((morganModule) => app.use(morganModule.default("dev")))
 }
 
 import userRoutes from "./components/user/user.routes.js";
