@@ -18,12 +18,16 @@ export const sendEmail = serviceHandler(async (to, subject, html) => {
 		html,
 	};
 
-	logger.info( `Sending email to ${to} with subject ${subject}`);
+	logger.info(`Sending email to ${to} with subject ${subject}`);
 
 	await transporter
 		.sendMail(mailOptions)
-      .then(() => logger.info(`Emmail sent successfully to ${to}`))
-		.catch((err) => 
-         logger.error(`Error sending email: ${err.message} `, { error: err, to: to, subject: subject })
-   );
+		.then(() => logger.info(`Emmail sent successfully to ${to}`))
+		.catch((err) =>
+			logger.error(`Error sending email: ${err.message} `, {
+				error: err,
+				to: to,
+				subject: subject,
+			}),
+		);
 });

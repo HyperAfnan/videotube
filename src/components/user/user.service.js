@@ -15,7 +15,7 @@ import { ObjectId } from "mongodb";
 import emailQueue from "../../jobs/queues/email/email.normal.js";
 import userQueue from "../../jobs/queues/user/user.normal.js";
 import { templates } from "../../microservices/email/email.templates.js";
-import ENV  from "../../config/env.js";
+import ENV from "../../config/env.js";
 import jwt from "jsonwebtoken";
 import { logger } from "../../utils/logger/index.js";
 const userServiceLogger = logger.child({ module: "user.services" });
@@ -125,7 +125,10 @@ export const registerUser = serviceHandler(
 			throw new ApiError(500, `User creation failed in DB `, { email });
 		}
 
-		userServiceLogger.info("User created in DB", { userId: user._id, email: user.email });
+		userServiceLogger.info("User created in DB", {
+			userId: user._id,
+			email: user.email,
+		});
 
 		const { confirmationToken } = await generateConfirmationToken(user);
 
@@ -158,7 +161,10 @@ export const confirmEmail = serviceHandler(async (userMeta) => {
 	);
 	const { accessToken, refreshToken } = await generateTokens(user);
 
-	userServiceLogger.info("Account verified", { userId: userMeta._id, username: userMeta.username });
+	userServiceLogger.info("Account verified", {
+		userId: userMeta._id,
+		username: userMeta.username,
+	});
 
 	const { subject, html } = templates.welcome(userMeta.username);
 	await emailQueue.add(
@@ -209,7 +215,10 @@ export const loginUser = serviceHandler(async (email, password) => {
 		"-password -refreshToken",
 	);
 
-	userServiceLogger.info("User logged in", { userId: loggedInUser._id, username: loggedInUser.username });
+	userServiceLogger.info("User logged in", {
+		userId: loggedInUser._id,
+		username: loggedInUser.username,
+	});
 
 	return { user: loggedInUser, accessToken, refreshToken };
 });
@@ -239,7 +248,10 @@ export const deleteUser = serviceHandler(async (userId) => {
 export const refreshAccessToken = serviceHandler(async (userId) => {
 	const user = await User.findById(userId);
 	const { refreshToken, accessToken } = await generateTokens(user);
-	userServiceLogger.info("Access token refreshed", { userId: user._id, username: user.username });
+	userServiceLogger.info("Access token refreshed", {
+		userId: user._id,
+		username: user.username,
+	});
 	return { refreshToken, accessToken };
 });
 
@@ -256,7 +268,10 @@ export const resetPassword = serviceHandler(async (token, newPassword) => {
 	user.forgotPasswordToken = null;
 	await user.save({ validateBeforeSave: false });
 
-	userServiceLogger.info("Password reset", { userId: user._id, username: user.username });
+	userServiceLogger.info("Password reset", {
+		userId: user._id,
+		username: user.username,
+	});
 });
 
 export const changePassword = serviceHandler(
@@ -270,7 +285,10 @@ export const changePassword = serviceHandler(
 		user.password = newPassword;
 		await user.save({ validateBeforeSave: false });
 
-		userServiceLogger.info("Password changed", { userId: user._id, username: user.username });
+		userServiceLogger.info("Password changed", {
+			userId: user._id,
+			username: user.username,
+		});
 	},
 );
 
@@ -282,7 +300,11 @@ export const updateAccountDetails = serviceHandler(
 			{ new: true },
 		).select("-password -refreshToken");
 
-		userServiceLogger.info("Account details updated", { userId, username, fullName });
+		userServiceLogger.info("Account details updated", {
+			userId,
+			username,
+			fullName,
+		});
 		return user;
 	},
 );
@@ -301,7 +323,12 @@ export const updateUserAvatar = serviceHandler(
 			{ new: true },
 		).select("-password -refreshToken");
 
-		userServiceLogger.info("Avatar updated", { userId: user._id, username: user.username, oldAvatar: user.avatar, newAvatar: updatedUser.avatar });
+		userServiceLogger.info("Avatar updated", {
+			userId: user._id,
+			username: user.username,
+			oldAvatar: user.avatar,
+			newAvatar: updatedUser.avatar,
+		});
 		return updatedUser;
 	},
 );
@@ -318,7 +345,12 @@ export const updateCoverAvatar = serviceHandler(
 			{ new: true },
 		).select("-password -refreshToken");
 
-		userServiceLogger.info("Cover image updated", { userId: user._id, username: user.username, oldCover: user.coverImage, newCover: updatedUser.coverImage });
+		userServiceLogger.info("Cover image updated", {
+			userId: user._id,
+			username: user.username,
+			oldCover: user.coverImage,
+			newCover: updatedUser.coverImage,
+		});
 		return updatedUser;
 	},
 );
@@ -373,7 +405,10 @@ export const getUserChannelProfile = serviceHandler(async (userMeta) => {
 		},
 	]);
 
-	userServiceLogger.info("Fetched user channel profile", { userId: userMeta._id, username: userMeta.username });
+	userServiceLogger.info("Fetched user channel profile", {
+		userId: userMeta._id,
+		username: userMeta.username,
+	});
 	return user[0];
 });
 

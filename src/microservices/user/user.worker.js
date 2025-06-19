@@ -8,11 +8,13 @@ const removeUnverfiedUserWorker = new Worker(
 	"userQueue",
 	async (job) => {
 		try {
-			userWorkerLogger.info(`Processing user cleaning job ${job.id} with data: ${job.data}`);
+			userWorkerLogger.info(
+				`Processing user cleaning job ${job.id} with data: ${job.data}`,
+			);
 			return await deleteUnVerifiedUsers();
 		} catch (err) {
-         err.jobId = job.id;
-         err.jobData = job.data;
+			err.jobId = job.id;
+			err.jobData = job.data;
 			throw err;
 		}
 	},
@@ -27,9 +29,14 @@ removeUnverfiedUserWorker.on("completed", (job) => {
 });
 
 removeUnverfiedUserWorker.on("failed", (job, err) => {
-   userWorkerLogger.error(`User cleaning worker encountered an error: ${err.message}`, { error: err, jobId: job.id, jobData: job.data });
+	userWorkerLogger.error(
+		`User cleaning worker encountered an error: ${err.message}`,
+		{ error: err, jobId: job.id, jobData: job.data },
+	);
 });
 
 removeUnverfiedUserWorker.on("error", (err) => {
-	userWorkerLogger.error(`User cleaning worker encountered an error: ${err.message}`);
+	userWorkerLogger.error(
+		`User cleaning worker encountered an error: ${err.message}`,
+	);
 });

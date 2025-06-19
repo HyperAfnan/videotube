@@ -6,7 +6,9 @@ const dashboardLogger = logger.child({ module: "dashboard.service" });
 
 // BUG: showing total likes to 1, while video likes array is empty
 export const getChannelStats = serviceHandler(async (userMeta) => {
-	dashboardLogger.info("Fetching channel stats (aggregate)", { userId: userMeta._id });
+	dashboardLogger.info("Fetching channel stats (aggregate)", {
+		userId: userMeta._id,
+	});
 
 	const stats = await User.aggregate([
 		{ $match: { _id: new mongoose.Types.ObjectId(String(userMeta._id)) } },
@@ -91,7 +93,9 @@ export const getChannelStats = serviceHandler(async (userMeta) => {
 });
 
 export const getChannelVideos = serviceHandler(async (userMeta) => {
-	dashboardLogger.info("Fetching channel videos (aggregate)", { userId: userMeta._id });
+	dashboardLogger.info("Fetching channel videos (aggregate)", {
+		userId: userMeta._id,
+	});
 
 	const channelVideos = await User.aggregate([
 		{ $match: { _id: new mongoose.Types.ObjectId(String(userMeta._id)) } },
@@ -108,8 +112,13 @@ export const getChannelVideos = serviceHandler(async (userMeta) => {
 	]);
 	dashboardLogger.info("Fetched channel videos (aggregate)", {
 		userId: userMeta._id,
-		videoBatchCount: Array.isArray(channelVideos) ? channelVideos.length : undefined,
-		totalVideos: Array.isArray(channelVideos) && channelVideos[0] ? channelVideos[0].totalVideos : undefined,
+		videoBatchCount: Array.isArray(channelVideos)
+			? channelVideos.length
+			: undefined,
+		totalVideos:
+			Array.isArray(channelVideos) && channelVideos[0]
+				? channelVideos[0].totalVideos
+				: undefined,
 	});
 	return channelVideos;
 });

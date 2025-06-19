@@ -1,8 +1,10 @@
 import { Worker } from "bullmq";
 import { redisWorkerConnection as connection } from "../../config/redis.js";
 import { sendEmail } from "./email.processor.js";
-import { logger } from "../../utils/logger/index.js"
-const emailDeadLetterLogger = logger.child({ module: "email.deadletter.worker" });
+import { logger } from "../../utils/logger/index.js";
+const emailDeadLetterLogger = logger.child({
+	module: "email.deadletter.worker",
+});
 
 const emailDeadLetterWorker = new Worker(
 	"emailDeadLetterQueue",
@@ -15,8 +17,8 @@ const emailDeadLetterWorker = new Worker(
 		try {
 			await sendEmail(to, subject, html);
 		} catch (err) {
-         err.jobId = job.id;
-         err.jobData = job.data;
+			err.jobId = job.id;
+			err.jobData = job.data;
 			throw err;
 		}
 	},
@@ -35,9 +37,15 @@ emailDeadLetterWorker.on("completed", (job) => {
 });
 
 emailDeadLetterWorker.on("error", (err) => {
-	emailDeadLetterLogger.error(`Dead letter worker encountered an error: ${err.message}`, { error: err });
+	emailDeadLetterLogger.error(
+		`Dead letter worker encountered an error: ${err.message}`,
+		{ error: err },
+	);
 });
 
 emailDeadLetterWorker.on("failed", (job, err) => {
-	emailDeadLetterLogger.error(`Dead letter job ${job.id} failed: ${err.message}`, { jobId: job.id, error: err, jobData: job.data  });
+	emailDeadLetterLogger.error(
+		`Dead letter job ${job.id} failed: ${err.message}`,
+		{ jobId: job.id, error: err, jobData: job.data },
+	);
 });

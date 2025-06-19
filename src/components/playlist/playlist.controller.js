@@ -16,7 +16,10 @@ const createPlaylist = asyncHandler(async (req, res) => {
 		req.user,
 	);
 
-	playlistLogger.info("Playlist created successfully", { userId: req.user._id, playlistId: playlist._id });
+	playlistLogger.info("Playlist created successfully", {
+		userId: req.user._id,
+		playlistId: playlist._id,
+	});
 
 	return res
 		.status(201)
@@ -27,10 +30,12 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
 	const { userId } = req.params;
 
 	if (userId) {
-		playlistLogger.info("Fetching playlists for user by param", { requestedUserId: userId });
+		playlistLogger.info("Fetching playlists for user by param", {
+			requestedUserId: userId,
+		});
 		const playlistUser = await PlaylistService.findUserById(userId);
-		if (!playlistUser) 
-         throw new ApiError(404, "User not found", { requestedUserId: userId});
+		if (!playlistUser)
+			throw new ApiError(404, "User not found", { requestedUserId: userId });
 	}
 
 	const user = userId || req.user._id;
@@ -53,7 +58,10 @@ const getPlaylistById = asyncHandler(async (req, res) => {
 		throw new ApiError(404, "Playlist not found", { playlistId });
 	}
 
-	playlistLogger.info("Fetched playlist by ID", { playlistId, ownerId: playlist.owner });
+	playlistLogger.info("Fetched playlist by ID", {
+		playlistId,
+		ownerId: playlist.owner,
+	});
 
 	res
 		.status(200)
@@ -63,11 +71,15 @@ const getPlaylistById = asyncHandler(async (req, res) => {
 const addVideoToPlaylist = asyncHandler(async (req, res) => {
 	const { playlistId, videoId } = req.params;
 
-	playlistLogger.info("Adding video to playlist", { playlistId, videoId, userId: req.user._id });
+	playlistLogger.info("Adding video to playlist", {
+		playlistId,
+		videoId,
+		userId: req.user._id,
+	});
 
 	const playlist = await PlaylistService.findPlaylistById(playlistId);
 	if (!playlist) {
-		throw new ApiError(404, "Playlist not found", { playlistId , videoId });
+		throw new ApiError(404, "Playlist not found", { playlistId, videoId });
 	}
 
 	const video = await PlaylistService.findVideoById(videoId);
@@ -80,7 +92,7 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 		throw new ApiError(
 			403,
 			"You are not authorized to add video to this playlist",
-         { playlistId, videoId }
+			{ playlistId, videoId },
 		);
 	}
 
@@ -90,7 +102,12 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 	);
 
 	if (updatedPlaylist.message) {
-		playlistLogger.info("Video in playlist already or message returned", { playlistId, videoId, userId: req.user._id, message: updatedPlaylist.message });
+		playlistLogger.info("Video in playlist already or message returned", {
+			playlistId,
+			videoId,
+			userId: req.user._id,
+			message: updatedPlaylist.message,
+		});
 		return res
 			.status(200)
 			.json(
@@ -98,7 +115,11 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 			);
 	}
 
-	playlistLogger.info("Video added to playlist", { playlistId, videoId, userId: req.user._id });
+	playlistLogger.info("Video added to playlist", {
+		playlistId,
+		videoId,
+		userId: req.user._id,
+	});
 
 	return res
 		.status(200)
@@ -114,7 +135,11 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 	const { playlistId, videoId } = req.params;
 
-	playlistLogger.info("Removing video from playlist", { playlistId, videoId, userId: req.user._id });
+	playlistLogger.info("Removing video from playlist", {
+		playlistId,
+		videoId,
+		userId: req.user._id,
+	});
 
 	const playlist = await PlaylistService.findPlaylistById(playlistId);
 	if (!playlist) {
@@ -131,7 +156,7 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 		throw new ApiError(
 			403,
 			"You are not authorized to remove video from this playlist",
-         { playlistId , videoId }
+			{ playlistId, videoId },
 		);
 	}
 
@@ -140,7 +165,11 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 		video,
 	);
 
-	playlistLogger.info("Video removed from playlist", { playlistId, videoId, userId: req.user._id });
+	playlistLogger.info("Video removed from playlist", {
+		playlistId,
+		videoId,
+		userId: req.user._id,
+	});
 
 	return res
 		.status(200)
@@ -156,7 +185,10 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 const deletePlaylist = asyncHandler(async (req, res) => {
 	const { playlistId } = req.params;
 
-	playlistLogger.info("Deleting playlist", { playlistId, userId: req.user._id });
+	playlistLogger.info("Deleting playlist", {
+		playlistId,
+		userId: req.user._id,
+	});
 
 	const playlist = await PlaylistService.findPlaylistById(playlistId);
 	if (!playlist) {
@@ -165,7 +197,9 @@ const deletePlaylist = asyncHandler(async (req, res) => {
 
 	const isOwner = await PlaylistService.isPlaylistOwner(playlist, req.user);
 	if (!isOwner) {
-		throw new ApiError(403, "You are not authorized to delete this playlist", { playlistId });
+		throw new ApiError(403, "You are not authorized to delete this playlist", {
+			playlistId,
+		});
 	}
 
 	await PlaylistService.deletePlaylistService(playlist);
@@ -179,7 +213,10 @@ const updatePlaylist = asyncHandler(async (req, res) => {
 	const { name, description } = req.body;
 	const { playlistId } = req.params;
 
-	playlistLogger.info("Updating playlist", { playlistId, userId: req.user._id });
+	playlistLogger.info("Updating playlist", {
+		playlistId,
+		userId: req.user._id,
+	});
 
 	const playlist = await PlaylistService.findPlaylistById(playlistId);
 	if (!playlist) {
@@ -188,7 +225,9 @@ const updatePlaylist = asyncHandler(async (req, res) => {
 
 	const isOwner = await PlaylistService.isPlaylistOwner(playlist, req.user);
 	if (!isOwner) {
-		throw new ApiError(403, "You are not authorized to update this playlist", { playlistId });
+		throw new ApiError(403, "You are not authorized to update this playlist", {
+			playlistId,
+		});
 	}
 
 	const updatedPlaylist = await PlaylistService.updatePlaylistService(
@@ -198,7 +237,10 @@ const updatePlaylist = asyncHandler(async (req, res) => {
 		req?.file?.path,
 	);
 
-	playlistLogger.info("Playlist updated successfully", { playlistId, userId: req.user._id });
+	playlistLogger.info("Playlist updated successfully", {
+		playlistId,
+		userId: req.user._id,
+	});
 
 	return res
 		.status(200)

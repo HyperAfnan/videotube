@@ -18,8 +18,8 @@ const emailWorker = new Worker(
 		try {
 			await sendEmail(to, subject, html);
 		} catch (err) {
-         err.jobId = job.id;
-         err.jobData = job.data;
+			err.jobId = job.id;
+			err.jobData = job.data;
 			throw err;
 		}
 	},
@@ -38,11 +38,17 @@ emailWorker.on("completed", async (job) => {
 });
 
 emailWorker.on("error", (err) => {
-	emailWorkerLogger.error(`Email worker encountered an error: ${err.message}`, { error: err });
+	emailWorkerLogger.error(`Email worker encountered an error: ${err.message}`, {
+		error: err,
+	});
 });
 
 emailWorker.on("failed", async (job, err) => {
-	emailWorkerLogger.error(`Job ${job.id} failed with message: ${err.message}`, { jobId: job.id, error: err, jobData: job.data });
+	emailWorkerLogger.error(`Job ${job.id} failed with message: ${err.message}`, {
+		jobId: job.id,
+		error: err,
+		jobData: job.data,
+	});
 	emailWorkerLogger.info(`Moving Job ${job.id} To Dead Letter Queue`);
 
 	try {
@@ -52,8 +58,8 @@ emailWorker.on("failed", async (job, err) => {
 			{ removeOnComplete: true, removeOnFail: true },
 		);
 	} catch (err) {
-         err.jobId = job.id;
-         err.jobData = job.data;
-			throw err;
+		err.jobId = job.id;
+		err.jobData = job.data;
+		throw err;
 	}
 });

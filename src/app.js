@@ -16,12 +16,13 @@ app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
-app.use(requestLogger)
+app.use(requestLogger);
 
 if (ENV.NODE_ENV === "development") {
-   logger.info("Development mode enabled");
-	import("./config/bullboard.js")
-		.then(({ setupBullBoard }) => setupBullBoard(app))
+	logger.info("Development mode enabled");
+	import("./config/bullboard.js").then(({ setupBullBoard }) =>
+		setupBullBoard(app),
+	);
 }
 
 import userRoutes from "./components/user/user.route.js";
@@ -49,6 +50,6 @@ app.use("/api/v1/likes", likeRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-app.use(errorHandler)
+app.use(errorHandler);
 
 export { app };

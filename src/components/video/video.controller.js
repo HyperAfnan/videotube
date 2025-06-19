@@ -8,7 +8,14 @@ const videoLogger = logger.child({ module: "video.controllers" });
 const getAllVideos = asyncHandler(async (req, res) => {
 	const { page = 1, limit = 10, q, sortBy, sortType, userId } = req.query;
 
-	videoLogger.info("Fetching all videos", { page, limit, q, sortBy, sortType, userId: userId || req.user._id });
+	videoLogger.info("Fetching all videos", {
+		page,
+		limit,
+		q,
+		sortBy,
+		sortType,
+		userId: userId || req.user._id,
+	});
 
 	if (userId) {
 		const user = await VideoService.findUserById(userId);
@@ -28,7 +35,10 @@ const getAllVideos = asyncHandler(async (req, res) => {
 		user,
 	);
 
-	videoLogger.info("Fetched videos successfully", { count: allVideos.length, user });
+	videoLogger.info("Fetched videos successfully", {
+		count: allVideos.length,
+		user,
+	});
 
 	return res
 		.status(200)
@@ -50,7 +60,10 @@ const publishAVideo = asyncHandler(async (req, res) => {
 		thumbnailLocalPath,
 	);
 
-	videoLogger.info("Video published successfully", { videoId: video._id, userId: req.user._id });
+	videoLogger.info("Video published successfully", {
+		videoId: video._id,
+		userId: req.user._id,
+	});
 
 	return res
 		.status(201)
@@ -93,7 +106,9 @@ const updateVideo = asyncHandler(async (req, res) => {
 
 	const isOwner = VideoService.isVideoOwner(video, req.user);
 	if (!isOwner) {
-		throw new ApiError(403, "Not authorized to perform this operation", { videoId });
+		throw new ApiError(403, "Not authorized to perform this operation", {
+			videoId,
+		});
 	}
 
 	const updatedVideo = await VideoService.updateVideo(
@@ -123,7 +138,9 @@ const deleteVideo = asyncHandler(async (req, res) => {
 
 	const isOwner = VideoService.isVideoOwner(video, req.user);
 	if (!isOwner) {
-		throw new ApiError(403, "Not authorized to perform this operation", { videoId });
+		throw new ApiError(403, "Not authorized to perform this operation", {
+			videoId,
+		});
 	}
 
 	await VideoService.deleteVideo(video);
@@ -142,7 +159,10 @@ const downloadVideo = asyncHandler(async (req, res) => {
 		throw new ApiError(404, "Video not found", { videoId });
 	}
 
-	videoLogger.info("Redirecting to video file", { videoId, videoFile: video.videoFile });
+	videoLogger.info("Redirecting to video file", {
+		videoId,
+		videoFile: video.videoFile,
+	});
 
 	res.redirect(video.videoFile);
 });
@@ -150,7 +170,10 @@ const downloadVideo = asyncHandler(async (req, res) => {
 const togglePublishStatus = asyncHandler(async (req, res) => {
 	const { videoId } = req.params;
 
-	videoLogger.info("Toggling publish status", { videoId, userId: req.user._id });
+	videoLogger.info("Toggling publish status", {
+		videoId,
+		userId: req.user._id,
+	});
 
 	const video = await VideoService.findVideoById(videoId);
 	if (!video) {
@@ -159,12 +182,17 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
 
 	const isOwner = VideoService.isVideoOwner(video, req.user);
 	if (!isOwner) {
-		throw new ApiError(403, "Not authorized to perform this operation", {videoId });
+		throw new ApiError(403, "Not authorized to perform this operation", {
+			videoId,
+		});
 	}
 
 	const updateVideo = await VideoService.togglePublishStatus(video);
 
-	videoLogger.info("Publish status toggled successfully", { videoId, isPublished: updateVideo.isPublished });
+	videoLogger.info("Publish status toggled successfully", {
+		videoId,
+		isPublished: updateVideo.isPublished,
+	});
 
 	return res
 		.status(200)

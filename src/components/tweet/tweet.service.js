@@ -9,7 +9,7 @@ const tweetServiceLogger = logger.child({ module: "tweet.services" });
 
 export const isTweetOwner = serviceHandler(async (tweetId, userId) => {
 	const tweet = await Tweet.findById(tweetId);
-   return tweet.owner.toString() === userId.toString();
+	return tweet.owner.toString() === userId.toString();
 });
 
 export const findUserById = serviceHandler(async (userId) => {
@@ -28,9 +28,15 @@ export const createTweet = serviceHandler(
 		if (contentImageLocalPath) {
 			try {
 				contentImage = await uploadImageOnCloudinary(contentImageLocalPath);
-				tweetServiceLogger.info("Uploaded tweet image", { ownerId, hasImage: true });
+				tweetServiceLogger.info("Uploaded tweet image", {
+					ownerId,
+					hasImage: true,
+				});
 			} catch (error) {
-				tweetServiceLogger.error("Image upload failed for tweet", { ownerId, error: error.message });
+				tweetServiceLogger.error("Image upload failed for tweet", {
+					ownerId,
+					error: error.message,
+				});
 				throw new ApiError(
 					500,
 					"Something went wrong while uploading image",
@@ -77,6 +83,9 @@ export const getUserTweets = serviceHandler(async (userId) => {
 		},
 		{ $project: { tweets: 1, username: 1, _id: 0 } },
 	]);
-	tweetServiceLogger.info("Fetched user tweets", { userId, tweetCount: tweets[0]?.tweets?.length ?? 0 });
+	tweetServiceLogger.info("Fetched user tweets", {
+		userId,
+		tweetCount: tweets[0]?.tweets?.length ?? 0,
+	});
 	return tweets;
 });

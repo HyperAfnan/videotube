@@ -7,6 +7,6 @@ export const deleteUnVerifiedUsers = serviceHandler(async () => {
 
 	const result = await User.deleteMany({ isEmailConfirmed: false });
 
-	if (!result.acknowledged) 
-      logger.error("Failed to delete unerified users", { result: result });
+	if (!result.acknowledged)
+		logger.error("Failed to delete unerified users", { result: result });
 });

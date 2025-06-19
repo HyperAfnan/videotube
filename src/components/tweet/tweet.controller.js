@@ -9,7 +9,11 @@ const createTweet = asyncHandler(async (req, res) => {
 	const { content, title } = req.body;
 	const contentImage = req?.file?.path || null;
 
-	tweetLogger.info("Creating tweet", { userId: req.user._id, title, hasImage: !!contentImage });
+	tweetLogger.info("Creating tweet", {
+		userId: req.user._id,
+		title,
+		hasImage: !!contentImage,
+	});
 
 	const tweet = await tweetService.createTweet(
 		content,
@@ -18,7 +22,10 @@ const createTweet = asyncHandler(async (req, res) => {
 		contentImage,
 	);
 
-	tweetLogger.info("Tweet created successfully", { tweetId: tweet._id, userId: req.user._id });
+	tweetLogger.info("Tweet created successfully", {
+		tweetId: tweet._id,
+		userId: req.user._id,
+	});
 
 	return res
 		.status(201)
@@ -43,7 +50,10 @@ const updateTweet = asyncHandler(async (req, res) => {
 
 	const updatedTweet = await tweetService.updateTweet(content, title, tweetId);
 
-	tweetLogger.info("Tweet updated successfully", { tweetId, userId: req.user._id });
+	tweetLogger.info("Tweet updated successfully", {
+		tweetId,
+		userId: req.user._id,
+	});
 
 	return res
 		.status(200)
@@ -67,7 +77,10 @@ const deleteTweet = asyncHandler(async (req, res) => {
 
 	await tweetService.deleteTweet(tweetId);
 
-	tweetLogger.info("Tweet deleted successfully", { tweetId, userId: req.user._id });
+	tweetLogger.info("Tweet deleted successfully", {
+		tweetId,
+		userId: req.user._id,
+	});
 
 	return res.status(204).end();
 });
@@ -83,7 +96,10 @@ const getUserTweets = asyncHandler(async (req, res) => {
 
 	const tweets = await tweetService.getUserTweets(user._id);
 
-	tweetLogger.info("Fetched user tweets successfully", { userId, tweetCount: tweets.length });
+	tweetLogger.info("Fetched user tweets successfully", {
+		userId,
+		tweetCount: tweets.length,
+	});
 
 	return res
 		.status(200)

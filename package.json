@@ -16,7 +16,7 @@
 		"lint:fix": "npm run lint -- --fix",
 		"prettier": "npx prettier --write . ",
 		"format": "npm run prettier:fix && npm run lint:fix",
-      "unlog": "rm -rf logs/"
+		"unlog": "rm -rf logs/"
 	},
 	"repository": {
 		"type": "git",

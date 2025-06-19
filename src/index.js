@@ -10,11 +10,11 @@ import "./microservices/user/user.worker.js";
 
 const PORT = ENV.PORT || 5000;
 
-logger.info("Connecting to database ...")
+logger.info("Connecting to database ...");
 connectDB()
 	.then(() =>
 		logger.debug(
-			`Database connected successfully ${mongoose.connection.host}:${mongoose.connection.port} - State: ${mongoose.connection.readyState}`
+			`Database connected successfully ${mongoose.connection.host}:${mongoose.connection.port} - State: ${mongoose.connection.readyState}`,
 		),
 	)
 	.catch((err) => logger.error("Database connection failed: %O", err));

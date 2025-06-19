@@ -22,12 +22,10 @@ export const getTweetById = serviceHandler(async (tweetId) => {
 	return tweet;
 });
 
-export const isCommentUser = serviceHandler(
-	async (comment, user) => {
-		const isOwner = comment.user.toString() === user._id.toString();
-		return isOwner;
-	}
-);
+export const isCommentUser = serviceHandler(async (comment, user) => {
+	const isOwner = comment.user.toString() === user._id.toString();
+	return isOwner;
+});
 
 export const getVideoComments = serviceHandler(
 	async (page, limit, videoMeta, userMeta) => {
@@ -39,7 +37,12 @@ export const getVideoComments = serviceHandler(
 
 		const options = { page, limit, customLabels };
 
-		commentLogger.info("Fetching comments for video", { videoId: videoMeta._id, userId: userMeta?._id, page, limit });
+		commentLogger.info("Fetching comments for video", {
+			videoId: videoMeta._id,
+			userId: userMeta?._id,
+			page,
+			limit,
+		});
 
 		// checks if a user is trying to access a private video comments
 		if (
@@ -49,7 +52,7 @@ export const getVideoComments = serviceHandler(
 			throw new ApiError(
 				403,
 				"You are not allowed to view this video comments",
-            { videoId: videoMeta._id }
+				{ videoId: videoMeta._id },
 			);
 		}
 
@@ -70,12 +73,20 @@ export const getVideoComments = serviceHandler(
 
 		const data = await Video.aggregatePaginate(aggregation, options).catch(
 			(err) => {
-				commentLogger.error("Error in getVideoComments", { error: err, videoId: videoMeta._id, userId: userMeta._id });
+				commentLogger.error("Error in getVideoComments", {
+					error: err,
+					videoId: videoMeta._id,
+					userId: userMeta._id,
+				});
 				throw new ApiError(500, "Internal server error");
 			},
 		);
 
-		commentLogger.info("Fetched video comments", { videoId: videoMeta._id, userId: userMeta._id, commentCount: data?.video?.length });
+		commentLogger.info("Fetched video comments", {
+			videoId: videoMeta._id,
+			userId: userMeta._id,
+			commentCount: data?.video?.length,
+		});
 		return data;
 	},
 );
@@ -89,7 +100,11 @@ export const getTweetComments = serviceHandler(
 		};
 		const options = { page, limit, customLabels };
 
-		commentLogger.info("Fetching comments for tweet", { tweetId: tweetMeta._id, page, limit });
+		commentLogger.info("Fetching comments for tweet", {
+			tweetId: tweetMeta._id,
+			page,
+			limit,
+		});
 
 		const pipeline = [
 			{ $match: { _id: new mongoose.Types.ObjectId(String(tweetMeta._id)) } },
@@ -108,25 +123,36 @@ export const getTweetComments = serviceHandler(
 
 		const data = await Tweet.aggregatePaginate(aggregation, options).catch(
 			(err) => {
-				commentLogger.error("Error in getTweetComments", { error: err, tweetId: tweetMeta._id });
+				commentLogger.error("Error in getTweetComments", {
+					error: err,
+					tweetId: tweetMeta._id,
+				});
 				throw new ApiError(500, "Internal server error");
 			},
 		);
 
-		commentLogger.info("Fetched tweet comments", { tweetId: tweetMeta._id, commentCount: data?.tweet?.length });
+		commentLogger.info("Fetched tweet comments", {
+			tweetId: tweetMeta._id,
+			commentCount: data?.tweet?.length,
+		});
 		return data;
 	},
 );
 
 export const addVideoComment = serviceHandler(
 	async (videoMeta, userMeta, content) => {
-		commentLogger.info("Adding comment to video", { videoId: videoMeta._id, userId: userMeta._id });
+		commentLogger.info("Adding comment to video", {
+			videoId: videoMeta._id,
+			userId: userMeta._id,
+		});
 
 		if (
 			!videoMeta.isPublished &&
 			videoMeta.owner.toString() !== userMeta._id.toString()
 		) {
-			throw new ApiError(403, "You are not allowed to comment on this video", { videoId: videoMeta._id });
+			throw new ApiError(403, "You are not allowed to comment on this video", {
+				videoId: videoMeta._id,
+			});
 		}
 
 		const comment = await Comment.create({
@@ -136,17 +162,26 @@ export const addVideoComment = serviceHandler(
 		});
 
 		if (!comment) {
-			throw new ApiError(500, "Failed to add comment", { videoId: videoMeta._id });
+			throw new ApiError(500, "Failed to add comment", {
+				videoId: videoMeta._id,
+			});
 		}
 
-		commentLogger.info("Added comment to video", { videoId: videoMeta._id, userId: userMeta._id, commentId: comment._id });
+		commentLogger.info("Added comment to video", {
+			videoId: videoMeta._id,
+			userId: userMeta._id,
+			commentId: comment._id,
+		});
 		return comment;
 	},
 );
 
 export const addTweetComment = serviceHandler(
 	async (tweetMeta, userMeta, content) => {
-		commentLogger.info("Adding comment to tweet", { tweetId: tweetMeta._id, userId: userMeta._id });
+		commentLogger.info("Adding comment to tweet", {
+			tweetId: tweetMeta._id,
+			userId: userMeta._id,
+		});
 
 		const comment = await Comment.create({
 			tweet: tweetMeta._id,
@@ -155,10 +190,16 @@ export const addTweetComment = serviceHandler(
 		});
 
 		if (!comment) {
-			throw new ApiError(500, "Failed to add comment", { tweetId: tweetMeta._id });
+			throw new ApiError(500, "Failed to add comment", {
+				tweetId: tweetMeta._id,
+			});
 		}
 
-		commentLogger.info("Added comment to tweet", { tweetId: tweetMeta._id, userId: userMeta._id, commentId: comment._id });
+		commentLogger.info("Added comment to tweet", {
+			tweetId: tweetMeta._id,
+			userId: userMeta._id,
+			commentId: comment._id,
+		});
 		return comment;
 	},
 );
@@ -169,7 +210,10 @@ export const updateComment = serviceHandler(async (commentMeta, content) => {
 		{ content },
 		{ new: true },
 	);
-	commentLogger.info("Updated comment", { commentId: commentMeta._id, updated: !!comment });
+	commentLogger.info("Updated comment", {
+		commentId: commentMeta._id,
+		updated: !!comment,
+	});
 	return comment;
 });
 

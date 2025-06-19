@@ -11,7 +11,7 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
 
 	const video = await LikeService.findVideoById(videoId);
 	if (!video) {
-		throw new ApiError(404, "Video not found", { videoId});
+		throw new ApiError(404, "Video not found", { videoId });
 	}
 
 	const isLiked = await LikeService.isLikedVideo(video, req.user);
@@ -21,18 +21,25 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
 		return res.status(204).send();
 	} else {
 		const like = await LikeService.likeVideo(video, req.user);
-		likeLogger.info("Video liked", { videoId, userId: req.user._id, likeId: like._id });
+		likeLogger.info("Video liked", {
+			videoId,
+			userId: req.user._id,
+			likeId: like._id,
+		});
 		return res.status(201).json(new ApiResponse(201, like, "Liked video"));
 	}
 });
 
 const toggleCommentLike = asyncHandler(async (req, res) => {
 	const { commentId } = req.params;
-	likeLogger.info("Toggling like for comment", { commentId, userId: req.user._id });
+	likeLogger.info("Toggling like for comment", {
+		commentId,
+		userId: req.user._id,
+	});
 
 	const comment = await LikeService.findCommentById(commentId);
 	if (!comment) {
-		throw new ApiError(404, "Comment not found", { commentId});
+		throw new ApiError(404, "Comment not found", { commentId });
 	}
 
 	const isLiked = await LikeService.isLikedComment(comment, req.user);
@@ -42,7 +49,11 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
 		return res.status(204).end();
 	} else {
 		const like = await LikeService.likeComment(comment, req.user);
-		likeLogger.info("Comment liked", { commentId, userId: req.user._id, likeId: like._id });
+		likeLogger.info("Comment liked", {
+			commentId,
+			userId: req.user._id,
+			likeId: like._id,
+		});
 		return res.status(201).json(new ApiResponse(201, like, "Liked comment"));
 	}
 });
@@ -63,14 +74,21 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
 		return res.status(204).end();
 	} else {
 		const like = await LikeService.likeTweet(tweet, req.user);
-		likeLogger.info("Tweet liked", { tweetId, userId: req.user._id, likeId: like._id });
+		likeLogger.info("Tweet liked", {
+			tweetId,
+			userId: req.user._id,
+			likeId: like._id,
+		});
 		return res.status(201).json(new ApiResponse(201, like, "Liked tweet"));
 	}
 });
 
 const getLikedVideos = asyncHandler(async (req, res) => {
 	const { userId } = req.params;
-	likeLogger.info("Fetching liked videos", { requestedUserId: userId, currentUserId: req.user._id });
+	likeLogger.info("Fetching liked videos", {
+		requestedUserId: userId,
+		currentUserId: req.user._id,
+	});
 
 	if (userId) {
 		const user = await LikeService.findUserById(userId);

@@ -18,7 +18,10 @@ export const selfSubscriptionCheck = serviceHandler(
 
 export const toggleSubscription = serviceHandler(
 	async (channelId, subscriberId) => {
-		subscriptionLogger.info("Toggling subscription", { channelId, subscriberId });
+		subscriptionLogger.info("Toggling subscription", {
+			channelId,
+			subscriberId,
+		});
 
 		const isSubscribed = await Subscription.find({
 			channel: channelId,
@@ -30,14 +33,21 @@ export const toggleSubscription = serviceHandler(
 				channel: channelId,
 				subscriber: subscriberId,
 			});
-			subscriptionLogger.info("Unsubscribed from channel", { channelId, subscriberId });
+			subscriptionLogger.info("Unsubscribed from channel", {
+				channelId,
+				subscriberId,
+			});
 			return { status: "Unsubscribed" };
 		} else {
 			const subscription = await Subscription.create({
 				channel: channelId,
 				subscriber: subscriberId,
 			});
-			subscriptionLogger.info("Subscribed to channel", { channelId, subscriberId, subscriptionId: subscription._id });
+			subscriptionLogger.info("Subscribed to channel", {
+				channelId,
+				subscriberId,
+				subscriptionId: subscription._id,
+			});
 			return { status: "Subscribed", data: subscription };
 		}
 	},
@@ -58,12 +68,17 @@ export const getUserChannelSubscribers = serviceHandler(async (channelId) => {
 		},
 		{ $project: { username: 1, subscribers: 1, _id: 0 } },
 	]);
-	subscriptionLogger.info("Fetched channel subscribers", { channelId, count: Array.isArray(subscribers) ? subscribers.length : undefined });
+	subscriptionLogger.info("Fetched channel subscribers", {
+		channelId,
+		count: Array.isArray(subscribers) ? subscribers.length : undefined,
+	});
 	return subscribers;
 });
 
 export const getSubscriberChannels = serviceHandler(async (subscriberId) => {
-	subscriptionLogger.info("Fetching subscriptions for subscriber", { subscriberId });
+	subscriptionLogger.info("Fetching subscriptions for subscriber", {
+		subscriberId,
+	});
 	const subscriptions = await User.aggregate([
 		{ $match: { _id: new mongoose.Types.ObjectId(String(subscriberId)) } },
 		{
@@ -76,6 +91,9 @@ export const getSubscriberChannels = serviceHandler(async (subscriberId) => {
 		},
 		{ $project: { username: 1, subscriptions: 1, _id: 0 } },
 	]);
-	subscriptionLogger.info("Fetched subscriptions for subscriber", { subscriberId, count: Array.isArray(subscriptions) ? subscriptions.length : undefined });
+	subscriptionLogger.info("Fetched subscriptions for subscriber", {
+		subscriberId,
+		count: Array.isArray(subscriptions) ? subscriptions.length : undefined,
+	});
 	return subscriptions;
 });
