@@ -3,11 +3,12 @@ import { redisWorkerConnection as connection } from "../../config/redis.js";
 import { sendEmail } from "./email.processor.js";
 import emailDeadLetterQueue from "../../jobs/queues/email/email.deadletter.js";
 import { logger } from "../../utils/logger/index.js";
+const emailWorkerLogger = logger.child({ module: "email.worker" });
 
 const emailWorker = new Worker(
 	"emailQueue",
 	async (job) => {
-		logger.info(`Worker started for job ${job.id}`);
+		emailWorkerLogger.info(`Worker started for job ${job.id}`);
 
 		const { to, subject, html } = job.data;
 		if (!to || !subject || !html) {
@@ -33,16 +34,16 @@ const emailWorker = new Worker(
 );
 
 emailWorker.on("completed", async (job) => {
-	logger.info(`Email job ${job.id} completed`);
+	emailWorkerLogger.info(`Email job ${job.id} completed`);
 });
 
 emailWorker.on("error", (err) => {
-	logger.error(`Email worker encountered an error: ${err.message}`, { error: err });
+	emailWorkerLogger.error(`Email worker encountered an error: ${err.message}`, { error: err });
 });
 
 emailWorker.on("failed", async (job, err) => {
-	logger.error(`Job ${job.id} failed with message: ${err.message}`, { jobId: job.id, error: err, jobData: job.data });
-	logger.info(`Moving Job ${job.id} To Dead Letter Queue`);
+	emailWorkerLogger.error(`Job ${job.id} failed with message: ${err.message}`, { jobId: job.id, error: err, jobData: job.data });
+	emailWorkerLogger.info(`Moving Job ${job.id} To Dead Letter Queue`);
 
 	try {
 		await emailDeadLetterQueue.add(

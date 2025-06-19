@@ -46,10 +46,10 @@ export const getVideoComments = serviceHandler(
 			!videoMeta.isPublished &&
 			videoMeta.owner.toString() !== userMeta._id.toString()
 		) {
-			commentLogger.warn("Unauthorized attempt to access private video comments", { videoId: videoMeta._id, userId: userMeta._id });
 			throw new ApiError(
 				403,
 				"You are not allowed to view this video comments",
+            { videoId: videoMeta._id }
 			);
 		}
 
@@ -126,8 +126,7 @@ export const addVideoComment = serviceHandler(
 			!videoMeta.isPublished &&
 			videoMeta.owner.toString() !== userMeta._id.toString()
 		) {
-			commentLogger.warn("Unauthorized attempt to comment on private video", { videoId: videoMeta._id, userId: userMeta._id });
-			throw new ApiError(403, "You are not allowed to comment on this video");
+			throw new ApiError(403, "You are not allowed to comment on this video", { videoId: videoMeta._id });
 		}
 
 		const comment = await Comment.create({
@@ -137,8 +136,7 @@ export const addVideoComment = serviceHandler(
 		});
 
 		if (!comment) {
-			commentLogger.error("Failed to add comment to video", { videoId: videoMeta._id, userId: userMeta._id });
-			throw new ApiError(500, "Failed to add comment");
+			throw new ApiError(500, "Failed to add comment", { videoId: videoMeta._id });
 		}
 
 		commentLogger.info("Added comment to video", { videoId: videoMeta._id, userId: userMeta._id, commentId: comment._id });
@@ -157,8 +155,7 @@ export const addTweetComment = serviceHandler(
 		});
 
 		if (!comment) {
-			commentLogger.error("Failed to add comment to tweet", { tweetId: tweetMeta._id, userId: userMeta._id });
-			throw new ApiError(500, "Failed to add comment");
+			throw new ApiError(500, "Failed to add comment", { tweetId: tweetMeta._id });
 		}
 
 		commentLogger.info("Added comment to tweet", { tweetId: tweetMeta._id, userId: userMeta._id, commentId: comment._id });

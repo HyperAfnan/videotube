@@ -94,8 +94,7 @@ export const removeVideoFromPlaylistService = serviceHandler(
 	async (playlistMeta, videoMeta) => {
 		playlistLogger.info("Removing video from playlist", { playlistId: playlistMeta._id, videoId: videoMeta._id });
 		if (!playlistMeta.videos.includes(videoMeta._id.toString())) {
-			playlistLogger.warn("Video not found in playlist", { playlistId: playlistMeta._id, videoId: videoMeta._id });
-			throw new ApiError(422, "Video not found in playlist");
+			throw new ApiError(422, "Video not found in playlist", { playlistId: playlistMeta._id, videoId: videoMeta._id });
 		}
 
 		const updatedPlaylist = await Playlist.findByIdAndUpdate(

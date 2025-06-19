@@ -12,19 +12,15 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 	subscriptionLogger.info("Toggling subscription", { userId: req.user._id, channelId });
 
 	const channel = await SubscriptionService.findChannelById(channelId);
-	if (!channel) {
-		subscriptionLogger.warn("Channel not found when toggling subscription", { channelId, userId: req.user._id });
-		throw new ApiError(404, "Channel not found");
-	}
+	if (!channel) 
+      throw new ApiError(404, "Channel not found when toggling subscription", { channelId });
 
 	const selfSubscription = await SubscriptionService.selfSubscriptionCheck(
 		req.user._id,
 		channelId,
 	);
-	if (selfSubscription) {
-		subscriptionLogger.warn("User attempted to subscribe to self", { channelId, userId: req.user._id });
-		throw new ApiError(400, "You can not subscribe to yourself");
-	}
+	if (selfSubscription) 
+      throw new ApiError(400, "You can not subscribe to yourself", { channelId });
 
 	const subscription = await SubscriptionService.toggleSubscription(
 		channelId,
@@ -55,8 +51,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 
 	const isValidChannel = await SubscriptionService.findChannelById(channelId);
 	if (!isValidChannel) {
-		subscriptionLogger.warn("Channel not found when fetching subscribers", { channelId, userId: req.user._id });
-		throw new ApiError(404, "Channel not found");
+		throw new ApiError(404, "Channel not found when fetching subscribers", { channelId });
 	}
 
 	const channel = channelId || req.user._id;
@@ -79,10 +74,8 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
 
 	const isValidSubscriber =
 		await SubscriptionService.findChannelById(subscriberId);
-	if (!isValidSubscriber) {
-		subscriptionLogger.warn("Subscriber not found when fetching subscriptions", { subscriberId, userId: req.user._id });
-		throw new ApiError(404, "Subscriber not found");
-	}
+	if (!isValidSubscriber) 
+      throw new ApiError(404, "Subscriber not found when fetching subscriptions", { subscriberId });
 
 	const subscriber = subscriberId || req.user._id;
 	const subscriptions =

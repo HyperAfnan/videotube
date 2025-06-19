@@ -13,8 +13,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
 
 	const video = await CommentService.getVideoById(id);
 	if (!video) {
-		commentLogger.warn("Video not found while fetching comments", { videoId: id });
-		throw new ApiError(404, "Video not found");
+		throw new ApiError(404, "Video not found", { videoId: id });
 	}
 
 	const data = await CommentService.getVideoComments(page, limit, video, req.user);
@@ -33,8 +32,7 @@ const getTweetComments = asyncHandler(async (req, res) => {
 
 	const tweet = await CommentService.getTweetById(id);
 	if (!tweet) {
-		commentLogger.warn("Tweet not found while fetching comments", { tweetId: id });
-		throw new ApiError(404, "Tweet not found");
+		throw new ApiError(404, "Tweet not found", { tweetId: id });
 	}
 
 	const data = await CommentService.getTweetComments(page, limit, tweet, req.user);
@@ -53,8 +51,7 @@ const addVideoComment = asyncHandler(async (req, res) => {
 
 	const video = await CommentService.getVideoById(id);
 	if (!video) {
-		commentLogger.warn("Video not found while adding comment", { videoId: id });
-		throw new ApiError(404, "Video not found");
+		throw new ApiError(404, "Video not found", { videoId: id });
 	}
 
 	const comment = await CommentService.addVideoComment(video, req.user, content);
@@ -73,8 +70,7 @@ const addTweetComment = asyncHandler(async (req, res) => {
 
 	const tweet = await CommentService.getTweetById(id);
 	if (!tweet) {
-		commentLogger.warn("Tweet not found while adding comment", { tweetId: id });
-		throw new ApiError(404, "Tweet not found");
+		throw new ApiError(404, "Tweet not found", { tweetId: id });
 	}
 
 	const comment = await CommentService.addTweetComment(tweet, req.user, content);
@@ -93,14 +89,12 @@ const updateComment = asyncHandler(async (req, res) => {
 
 	const comment = await CommentService.getCommentById(commentId);
 	if (!comment) {
-		commentLogger.warn("Comment not found while updating", { commentId });
-		throw new ApiError(404, "Comment not found");
+		throw new ApiError(404, "Comment not found", { commentId });
 	}
 
 	const isCommentUser = await CommentService.isCommentUser(comment, req.user);
 	if (!isCommentUser) {
-		commentLogger.warn("Unauthorized comment update attempt", { commentId, userId: req.user?._id });
-		throw new ApiError(403, "Not authorized to perform this operation");
+		throw new ApiError(403, "Not authorized to perform this operation", { commentId });
 	}
 
 	const updatedComment = await CommentService.updateComment(comment, content);
@@ -118,14 +112,12 @@ const deleteComment = asyncHandler(async (req, res) => {
 
 	const comment = await CommentService.getCommentById(commentId);
 	if (!comment) {
-		commentLogger.warn("Comment not found while deleting", { commentId });
-		throw new ApiError(404, "Comment not found");
+		throw new ApiError(404, "Comment not found", { commentId });
 	}
 
 	const isCommentUser = await CommentService.isCommentUser(comment, req.user);
 	if (!isCommentUser) {
-		commentLogger.warn("Unauthorized comment delete attempt", { commentId, userId: req.user?._id });
-		throw new ApiError(403, "Not authorized to perform this operation");
+		throw new ApiError(403, "Not authorized to perform this operation", { commentId });
 	}
 
 	await CommentService.deleteComment(comment);

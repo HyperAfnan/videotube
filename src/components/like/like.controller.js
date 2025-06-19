@@ -11,8 +11,7 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
 
 	const video = await LikeService.findVideoById(videoId);
 	if (!video) {
-		likeLogger.warn("Video not found for like toggle", { videoId });
-		throw new ApiError(404, "Video not found");
+		throw new ApiError(404, "Video not found", { videoId});
 	}
 
 	const isLiked = await LikeService.isLikedVideo(video, req.user);
@@ -33,8 +32,7 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
 
 	const comment = await LikeService.findCommentById(commentId);
 	if (!comment) {
-		likeLogger.warn("Comment not found for like toggle", { commentId });
-		throw new ApiError(404, "Comment not found");
+		throw new ApiError(404, "Comment not found", { commentId});
 	}
 
 	const isLiked = await LikeService.isLikedComment(comment, req.user);
@@ -55,8 +53,7 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
 
 	const tweet = await LikeService.findTweetById(tweetId);
 	if (!tweet) {
-		likeLogger.warn("Tweet not found for like toggle", { tweetId });
-		throw new ApiError(404, "Tweet not found");
+		throw new ApiError(404, "Tweet not found", { tweetId });
 	}
 
 	const isLiked = await LikeService.isLikedTweet(tweet, req.user);
@@ -78,7 +75,6 @@ const getLikedVideos = asyncHandler(async (req, res) => {
 	if (userId) {
 		const user = await LikeService.findUserById(userId);
 		if (!user) {
-			likeLogger.warn("User not found when fetching liked videos", { userId });
 			throw new ApiError(404, "User not found");
 		}
 	}

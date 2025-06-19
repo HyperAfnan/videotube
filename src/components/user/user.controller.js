@@ -16,14 +16,12 @@ const registerUser = asyncHandler(async (req, res) => {
 
 	const isEmailExists = await userService.findUserByEmail(email);
 	if (isEmailExists) {
-		userLogger.warn("Registration failed: email already exists", { email });
-		throw new ApiError(400, "A user already exists with this e-mail address");
+		throw new ApiError(400, "A user already exists with this e-mail address", { email });
 	}
 
 	const isUsernameExists = await userService.findUserByUsername(username);
 	if (isUsernameExists) {
-		userLogger.warn("Registration failed: username already exists", { username });
-		throw new ApiError(400, "A user already exists with this username");
+		throw new ApiError(400, "A user already exists with this username", { username });
 	}
 
 	const user = await userService.registerUser(
@@ -47,13 +45,12 @@ const confirmEmail = asyncHandler(async (req, res) => {
 
 	const isTokenValid = await userService.isConfirmationTokenValid(confirmationToken);
 	if (!isTokenValid.status) {
-		userLogger.warn("Invalid confirmation token", { confirmationToken });
-		throw new ApiError(400, isTokenValid.message);
+		throw new ApiError(400, isTokenValid.message, { confirmationToken });
 	}
 	userLogger.info("Token is valid", { userId: isTokenValid.userMeta._id });
 
 	const confirmEmail = await userService.confirmEmail(isTokenValid.userMeta);
-	userLogger.info("Email confirmed", { userId: confirmEmail.userMeta._id });
+	userLogger.info("Email confirmed", { userId: isTokenValid.userMeta._id });
 
 	return res
 		.status(200)
@@ -111,8 +108,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 	const isTokenValid = await userService.isRefreshTokenValid(token);
 	if (!isTokenValid.status) {
-		userLogger.warn("Invalid refresh token", { token });
-		throw new ApiError(400, isTokenValid.message);
+		throw new ApiError(400, isTokenValid.message, { token });
 	}
 	userLogger.info("Refresh token is valid", { userId: isTokenValid.userMeta._id });
 
@@ -167,8 +163,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
 	const isUserExistsWithUsername = await userService.findUserByUsername(username);
 	if (isUserExistsWithUsername) {
-		userLogger.warn("Username already exists", { username });
-		throw new ApiError(400, "User already exists with this username");
+		throw new ApiError(400, "User already exists with this username", { username });
 	}
 
 	const user = await userService.updateAccountDetails(

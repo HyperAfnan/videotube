@@ -33,14 +33,12 @@ const updateTweet = asyncHandler(async (req, res) => {
 
 	const tweet = await tweetService.findTweetById(tweetId);
 	if (!tweet) {
-		tweetLogger.warn("Tweet not found for update", { tweetId });
-		throw new ApiError(404, "Tweet not found");
+		throw new ApiError(404, "Tweet not found", { tweetId });
 	}
 
 	const isOwner = await tweetService.isTweetOwner(tweetId, req.user._id);
 	if (!isOwner) {
-		tweetLogger.warn("Unauthorized tweet update attempt", { tweetId, userId: req.user._id });
-		throw new ApiError(402, "Unauthorized to perform this task");
+		throw new ApiError(402, "Unauthorized to perform this task", { tweetId });
 	}
 
 	const updatedTweet = await tweetService.updateTweet(content, title, tweetId);
@@ -59,14 +57,12 @@ const deleteTweet = asyncHandler(async (req, res) => {
 
 	const tweet = await tweetService.findTweetById(tweetId);
 	if (!tweet) {
-		tweetLogger.warn("Tweet not found for deletion", { tweetId });
-		throw new ApiError(404, "Tweet not found");
+		throw new ApiError(404, "Tweet not found", { tweetId });
 	}
 
 	const isOwner = await tweetService.isTweetOwner(tweetId, req.user._id);
 	if (!isOwner) {
-		tweetLogger.warn("Unauthorized tweet delete attempt", { tweetId, userId: req.user._id });
-		throw new ApiError(402, "Unauthorized to perform this task");
+		throw new ApiError(402, "Unauthorized to perform this task", { tweetId });
 	}
 
 	await tweetService.deleteTweet(tweetId);
@@ -82,7 +78,6 @@ const getUserTweets = asyncHandler(async (req, res) => {
 
 	const user = await tweetService.findUserById(userId);
 	if (!user) {
-		tweetLogger.warn("User not found for tweet fetch", { userId });
 		throw new ApiError(404, "User not found");
 	}
 

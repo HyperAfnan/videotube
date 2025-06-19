@@ -13,7 +13,6 @@ const getAllVideos = asyncHandler(async (req, res) => {
 	if (userId) {
 		const user = await VideoService.findUserById(userId);
 		if (!user) {
-			videoLogger.warn("User not found when fetching videos", { userId });
 			throw new ApiError(404, "User not found");
 		}
 	}
@@ -65,8 +64,7 @@ const getVideoById = asyncHandler(async (req, res) => {
 
 	const video = await VideoService.findVideoById(videoId);
 	if (!video) {
-		videoLogger.warn("Video not found", { videoId });
-		throw new ApiError(404, "Video not found");
+		throw new ApiError(404, "Video not found", { videoId });
 	}
 
 	const userVideo = await VideoService.getUserVideoById(
@@ -90,14 +88,12 @@ const updateVideo = asyncHandler(async (req, res) => {
 
 	const video = await VideoService.findVideoById(videoId);
 	if (!video) {
-		videoLogger.warn("Video not found for update", { videoId });
-		throw new ApiError(404, "Video not found");
+		throw new ApiError(404, "Video not found", { videoId });
 	}
 
 	const isOwner = VideoService.isVideoOwner(video, req.user);
 	if (!isOwner) {
-		videoLogger.warn("Not authorized to update video", { videoId, userId: req.user._id });
-		throw new ApiError(403, "Not authorized to perform this operation");
+		throw new ApiError(403, "Not authorized to perform this operation", { videoId });
 	}
 
 	const updatedVideo = await VideoService.updateVideo(
@@ -122,14 +118,12 @@ const deleteVideo = asyncHandler(async (req, res) => {
 
 	const video = await VideoService.findVideoById(videoId);
 	if (!video) {
-		videoLogger.warn("Video not found for deletion", { videoId });
-		throw new ApiError(404, "Video not found");
+		throw new ApiError(404, "Video not found", { videoId });
 	}
 
 	const isOwner = VideoService.isVideoOwner(video, req.user);
 	if (!isOwner) {
-		videoLogger.warn("Not authorized to delete video", { videoId, userId: req.user._id });
-		throw new ApiError(403, "Not authorized to perform this operation");
+		throw new ApiError(403, "Not authorized to perform this operation", { videoId });
 	}
 
 	await VideoService.deleteVideo(video);
@@ -145,8 +139,7 @@ const downloadVideo = asyncHandler(async (req, res) => {
 
 	const video = await VideoService.findVideoById(videoId);
 	if (!video) {
-		videoLogger.warn("Video not found for download", { videoId });
-		throw new ApiError(404, "Video not found");
+		throw new ApiError(404, "Video not found", { videoId });
 	}
 
 	videoLogger.info("Redirecting to video file", { videoId, videoFile: video.videoFile });
@@ -161,14 +154,12 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
 
 	const video = await VideoService.findVideoById(videoId);
 	if (!video) {
-		videoLogger.warn("Video not found for toggling status", { videoId });
-		throw new ApiError(404, "Video not found");
+		throw new ApiError(404, "Video not found", { videoId });
 	}
 
 	const isOwner = VideoService.isVideoOwner(video, req.user);
 	if (!isOwner) {
-		videoLogger.warn("Not authorized to toggle publish status", { videoId, userId: req.user._id });
-		throw new ApiError(403, "Not authorized to perform this operation");
+		throw new ApiError(403, "Not authorized to perform this operation", {videoId });
 	}
 
 	const updateVideo = await VideoService.togglePublishStatus(video);

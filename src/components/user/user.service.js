@@ -122,8 +122,7 @@ export const registerUser = serviceHandler(
 		);
 
 		if (!createdUser) {
-			userServiceLogger.error("User creation failed in DB", { email });
-			throw new ApiError(500, `User creation failed in DB for ${email}`);
+			throw new ApiError(500, `User creation failed in DB `, { email });
 		}
 
 		userServiceLogger.info("User created in DB", { userId: user._id, email: user.email });
@@ -174,8 +173,7 @@ export const confirmEmail = serviceHandler(async (userMeta) => {
 export const forgotPassword = serviceHandler(async (email) => {
 	const user = await findUserByEmail(email);
 	if (!user) {
-		userServiceLogger.warn("Forgot password: user not found", { email });
-		throw new ApiError(404, "User Not Found");
+		throw new ApiError(404, "User Not Found", { email });
 	}
 
 	const { forgotPasswordToken } = await generateForgotPasswordToken(user);
@@ -193,19 +191,16 @@ export const forgotPassword = serviceHandler(async (email) => {
 export const loginUser = serviceHandler(async (email, password) => {
 	const user = await findUserByEmail(email);
 	if (!user) {
-		userServiceLogger.warn("Login: user not found", { email });
-		throw new ApiError(404, "User not found");
+		throw new ApiError(404, "User not found", { email });
 	}
 
 	if (!user.isEmailConfirmed) {
-		userServiceLogger.warn("Login: email not confirmed", { email });
-		throw new ApiError(401, "Email not confirmed");
+		throw new ApiError(401, "Email not confirmed", { email });
 	}
 
 	const isPasswordCorrect = await user.isPasswordCorrect(password);
 	if (!isPasswordCorrect) {
-		userServiceLogger.warn("Login: invalid credentials", { email });
-		throw new ApiError(401, "Invalid User Credentials");
+		throw new ApiError(401, "Invalid User Credentials", { email });
 	}
 
 	const { accessToken, refreshToken } = await generateTokens(user);
@@ -254,8 +249,7 @@ export const resetPassword = serviceHandler(async (token, newPassword) => {
 	const user = await User.findById(decodedToken?._id);
 
 	if (!user) {
-		userServiceLogger.warn("Reset password: user not found", { userId: decodedToken?._id });
-		throw new ApiError(404, "User not found");
+		throw new ApiError(404, "User not found", { userId: decodedToken?._id });
 	}
 
 	user.password = newPassword;
@@ -270,7 +264,6 @@ export const changePassword = serviceHandler(
 		const user = await User.findById(userId);
 		const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
 		if (!isPasswordCorrect) {
-			userServiceLogger.warn("Change password: invalid old password", { userId });
 			throw new ApiError(400, "Invalid Password");
 		}
 
