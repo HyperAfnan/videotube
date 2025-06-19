@@ -9,6 +9,8 @@ import {
 	uploadImageOnCloudinary,
 	uploadVideoOnCloudinary,
 } from "../../utils/fileHandlers.js";
+import { logger } from "../../utils/logger/index.js";
+const videoServiceLogger = logger.child({ module: "video.services" });
 
 export const findUserById = serviceHandler(async (userId) => {
 	const user = await User.findById(userId);
@@ -21,7 +23,10 @@ export const findVideoById = serviceHandler(async (videoId) => {
 });
 
 export const isVideoOwner = serviceHandler(
-	async (video, user) => video.owner.toString() === user._id.toString(),
+	async (video, user) => {
+		const isOwner = video.owner.toString() === user._id.toString();
+		return isOwner;
+	}
 );
 
 export const getAllVideos = serviceHandler(
@@ -31,6 +36,8 @@ export const getAllVideos = serviceHandler(
 		else sortType = -1;
 
 		if (!sortBy) sortBy = "createdAt";
+
+		videoServiceLogger.info("Getting all videos", { page, limit, q, sortBy, sortType, userId });
 
 		const aggregate = Video.aggregate([
 			{ $match: { owner: new mongoose.Types.ObjectId(String(userId)) } },
@@ -47,30 +54,37 @@ export const getAllVideos = serviceHandler(
 
 		const data = await Video.aggregatePaginate(aggregate, options).catch(
 			(err) => {
-				console.log(err);
+				videoServiceLogger.error("Failed to get all videos", { err: err.message, stack: err.stack, userId });
 				throw new ApiError(500, "Internal Server error");
 			},
 		);
+		videoServiceLogger.info("Fetched videos with pagination", {
+			page,
+			limit,
+			count: data?.videos?.length ?? 0,
+			userId
+		});
 		return data;
 	},
 );
 
 export const publishVideo = serviceHandler(
 	async (title, description, user, videoFileLocalPath, thumbnailLocalPath) => {
-		const videoFile = await uploadVideoOnCloudinary(videoFileLocalPath).catch(
-			(e) => {
-				console.log(e);
-				throw new ApiError(500, "failed to upload video file");
-			},
-		);
-		const thumbnail = await uploadImageOnCloudinary(thumbnailLocalPath).catch(
-			(e) => {
-				console.log(e);
-				throw new ApiError(500, "failed to upload video thumbnail");
-			},
-		);
+		let videoFile, thumbnail;
+		try {
+			videoFile = await uploadVideoOnCloudinary(videoFileLocalPath);
+		} catch (e) {
+			videoServiceLogger.error("Failed to upload video file to Cloudinary", { error: e.message, userId: user._id });
+			throw new ApiError(500, "failed to upload video file");
+		}
+		try {
+			thumbnail = await uploadImageOnCloudinary(thumbnailLocalPath);
+		} catch (e) {
+			videoServiceLogger.error("Failed to upload video thumbnail to Cloudinary", { error: e.message, userId: user._id });
+			throw new ApiError(500, "failed to upload video thumbnail");
+		}
 		const duration = Math.floor(videoFile.duration);
-		console.log("uploading video with data", {
+		videoServiceLogger.info("Uploading video with data", {
 			videoFile: videoFile.secure_url,
 			thumbnail: thumbnail.secure_url,
 			title,
@@ -89,8 +103,11 @@ export const publishVideo = serviceHandler(
 			owner: user._id,
 			isPublished: true,
 		});
-		if (!video) throw new ApiError(500, "Internal server error");
-
+		if (!video) {
+			videoServiceLogger.error("Video creation failed in DB", { userId: user._id });
+			throw new ApiError(500, "Internal server error");
+		}
+		videoServiceLogger.info("Video published successfully", { videoId: video._id, userId: user._id });
 		return video;
 	},
 );
@@ -108,6 +125,7 @@ export const getUserVideoById = serviceHandler(
 			{ $push: { watchHistory: new mongoose.Types.ObjectId(String(videoId)) } },
 		);
 
+		videoServiceLogger.info("Fetched and updated user video by ID", { videoId, userId });
 		return video;
 	},
 );
@@ -116,16 +134,18 @@ export const updateVideo = serviceHandler(
 	async (title, description, videoMeta, videoId, thumbnailLocalPath) => {
 		let thumbnail;
 		if (thumbnailLocalPath) {
-			await deleteImageOnCloudinary(videoMeta.thumbnail).catch((e) => {
-				console.log(`Failed to delete thumbnail \n${e}`);
+			try {
+				await deleteImageOnCloudinary(videoMeta.thumbnail);
+			} catch (e) {
+				videoServiceLogger.error("Failed to delete thumbnail", { videoId, error: e.message });
 				throw new ApiError(500, "Failed to delete thumbnail");
-			});
-			thumbnail = await uploadImageOnCloudinary(thumbnailLocalPath).catch(
-				(e) => {
-					console.log(`Failed to upload thumbnail \n${e}`);
-					throw new ApiError(500, "Failed to upload thumbnail");
-				},
-			);
+			}
+			try {
+				thumbnail = await uploadImageOnCloudinary(thumbnailLocalPath);
+			} catch (e) {
+				videoServiceLogger.error("Failed to upload thumbnail", { videoId, error: e.message });
+				throw new ApiError(500, "Failed to upload thumbnail");
+			}
 		}
 
 		const video = await Video.findByIdAndUpdate(
@@ -134,23 +154,31 @@ export const updateVideo = serviceHandler(
 			{ new: true },
 		);
 
+		videoServiceLogger.info("Video updated successfully", { videoId });
 		return video;
 	},
 );
 
 export const deleteVideo = serviceHandler(async (videoMeta) => {
-	await deleteVideoOnCloudinary(videoMeta.videoFile).catch((e) => {
-		console.log("Failed to delete video  file \n ", e);
+	try {
+		await deleteVideoOnCloudinary(videoMeta.videoFile);
+	} catch (e) {
+		videoServiceLogger.error("Failed to delete video file from Cloudinary", { videoId: videoMeta._id, error: e.message });
 		throw new ApiError(500, "Failed to delete video file");
-	});
-	await deleteImageOnCloudinary(videoMeta.thumbnail).catch((e) => {
-		console.log("Failed to delete video thumbnail \n ", e);
+	}
+	try {
+		await deleteImageOnCloudinary(videoMeta.thumbnail);
+	} catch (e) {
+		videoServiceLogger.error("Failed to delete video thumbnail from Cloudinary", { videoId: videoMeta._id, error: e.message });
 		throw new ApiError(500, "Failed to delete video thumbnail");
-	});
-	await Video.findByIdAndDelete(videoMeta._id).catch((e) => {
-		console.log("Failed to delete video data from db \n ", e);
+	}
+	try {
+		await Video.findByIdAndDelete(videoMeta._id);
+	} catch (e) {
+		videoServiceLogger.error("Failed to delete video data from DB", { videoId: videoMeta._id, error: e.message });
 		throw new ApiError(500, "Failed to delete video data from db");
-	});
+	}
+	videoServiceLogger.info("Video deleted successfully", { videoId: videoMeta._id });
 });
 
 export const togglePublishStatus = serviceHandler(async (videoMeta) => {
@@ -167,6 +195,6 @@ export const togglePublishStatus = serviceHandler(async (videoMeta) => {
 			{ isPublished: false },
 			{ new: true },
 		);
-
+	videoServiceLogger.info("Toggled publish status", { videoId: videoMeta._id, isPublished: video.isPublished });
 	return video;
 });

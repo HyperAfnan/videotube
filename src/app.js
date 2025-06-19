@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import ENV from "./config/env.js";
 import { logger } from "./utils/logger/index.js";
-import { requestLogger } from "./middlewares/logger.js";
+// import { requestLogger } from "./middlewares/logger.js";
 
 const app = express();
 
@@ -15,7 +15,7 @@ app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
-app.use(requestLogger)
+// app.use(requestLogger)
 
 if (ENV.NODE_ENV === "development") {
    logger.info("Development mode enabled");

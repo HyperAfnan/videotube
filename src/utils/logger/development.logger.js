@@ -24,6 +24,10 @@ export const developmentLogger = winston.createLogger({
 			filename: path.join(logDir, "combined.json"),
 			format: combine(errors({ stack: true }), timestamp(), json()),
 		}),
+      new File({ 
+         level: "error", 
+         filename: path.join(logDir, "error.json"),
+         format: combine(errors({ stack: true }), timestamp(), json()) }),
 	],
 	exceptionHandlers: [
 		new Console(),

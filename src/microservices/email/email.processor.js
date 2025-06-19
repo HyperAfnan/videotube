@@ -1,9 +1,7 @@
 import { serviceHandler } from "../../utils/handlers.js";
 import nodemailer from "nodemailer";
 import ENV from "../../config/env.js";
-import debug from "debug";
-const log = debug("app:worker:email:processor:log");
-const error = debug("app:worker:email:processor:error");
+import { logger } from "../../utils/logger/index.js";
 
 const transporter = nodemailer.createTransport({
 	host: ENV.BREVO_SERVER_URL,
@@ -20,11 +18,11 @@ export const sendEmail = serviceHandler(async (to, subject, html) => {
 		html,
 	};
 
-	log(
-		`Sending email to ${to} with subject ${subject} and html content ${html}`,
-	);
+	logger.info( `Sending email to ${to} with subject ${subject}`);
 
 	await transporter
 		.sendMail(mailOptions)
-		.catch((err) => error("Error sending email: ", err));
+		.catch((err) => 
+         logger.error(`Error sending email: ${err.message} `, { error: err, to: to, subject: subject })
+   );
 });
