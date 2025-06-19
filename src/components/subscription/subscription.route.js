@@ -11,7 +11,7 @@ import {
 	toggleSubscriptionValidator,
 } from "./subscription.validator.js";
 import { validator } from "../../middlewares/validator.middleware.js";
-import { defaultRateLimiter } from "../../middlewares/rateLimiter.js";
+import { defaultRateLimiter } from "../../middlewares/rateLimiter.middleware.js";
 
 const router = Router();
 

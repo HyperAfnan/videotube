@@ -15,8 +15,8 @@ import {
 	updateAccountDetails,
 	updateUserAvatar,
 	updateUserCoverImg,
-} from "./user.controllers.js";
-import { upload } from "../../middlewares/multer.middlewares.js";
+} from "./user.controller.js";
+import { upload } from "../../middlewares/multer.middleware.js";
 import { verifyAccessToken as auth } from "../../middlewares/auth.middleware.js";
 import { validator } from "../../middlewares/validator.middleware.js";
 import {
@@ -36,7 +36,7 @@ import {
 import {
 	authRateLimiter,
 	defaultRateLimiter,
-} from "../../middlewares/rateLimiter.js";
+} from "../../middlewares/rateLimiter.middleware.js";
 
 const router = Router();
 

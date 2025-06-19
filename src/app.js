@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import ENV from "./config/env.js";
 import { logger } from "./utils/logger/index.js";
-import { requestLogger } from "./middlewares/logger.js";
+import { requestLogger } from "./middlewares/logger.middleware.js";
 import { errorHandler } from "./middlewares/errorHandler.middleware.js";
 
 const app = express();
@@ -24,15 +24,15 @@ if (ENV.NODE_ENV === "development") {
 		.then(({ setupBullBoard }) => setupBullBoard(app))
 }
 
-import userRoutes from "./components/user/user.routes.js";
-import healthRoutes from "./components/health/health.routes.js";
-import tweetRoutes from "./components/tweet/tweet.routes.js";
-import subscriptionRoutes from "./components/subscription/subscription.routes.js";
-import videoRoutes from "./components/video/video.routes.js";
-import commentRoutes from "./components/comment/comment.routes.js";
-import likeRoutes from "./components/like/like.routes.js";
-import playlistRoutes from "./components/playlist/playlist.routes.js";
-import dashboardRoutes from "./components/dashboard/dashboard.routes.js";
+import userRoutes from "./components/user/user.route.js";
+import healthRoutes from "./components/health/health.route.js";
+import tweetRoutes from "./components/tweet/tweet.route.js";
+import subscriptionRoutes from "./components/subscription/subscription.route.js";
+import videoRoutes from "./components/video/video.route.js";
+import commentRoutes from "./components/comment/comment.route.js";
+import likeRoutes from "./components/like/like.route.js";
+import playlistRoutes from "./components/playlist/playlist.route.js";
+import dashboardRoutes from "./components/dashboard/dashboard.route.js";
 
 import swaggerUi from "swagger-ui-express";
 import { swaggerDocs } from "./utils/swagger.js";

@@ -14,8 +14,8 @@ import {
 	updateTweetValidator,
 } from "./tweet.validator.js";
 import { validator } from "../../middlewares/validator.middleware.js";
-import { defaultRateLimiter } from "../../middlewares/rateLimiter.js";
-import { upload } from "../../middlewares/multer.middlewares.js";
+import { defaultRateLimiter } from "../../middlewares/rateLimiter.middleware.js";
+import { upload } from "../../middlewares/multer.middleware.js";
 
 const router = Router();
 

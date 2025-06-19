@@ -1,4 +1,4 @@
-import { User } from "../../components/user/user.models.js";
+import { User } from "../../components/user/user.model.js";
 import { serviceHandler } from "../../utils/handlers.js";
 import { logger } from "../../utils/logger/index.js";
 

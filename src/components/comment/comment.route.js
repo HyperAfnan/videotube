@@ -17,7 +17,7 @@ import {
 	getVideoCommentsValidator,
 	updateCommentValidator,
 } from "./comment.validator.js";
-import { defaultRateLimiter } from "../../middlewares/rateLimiter.js";
+import { defaultRateLimiter } from "../../middlewares/rateLimiter.middleware.js";
 
 const router = Router();
 

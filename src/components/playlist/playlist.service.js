@@ -1,9 +1,9 @@
-import { Video } from "../video/video.models.js";
+import { Video } from "../video/video.model.js";
 import mongoose from "mongoose";
 import { ApiError } from "../../utils/apiErrors.js";
 import { serviceHandler } from "../../utils/handlers.js";
-import { User } from "../user/user.models.js";
-import { Playlist } from "./playlist.models.js";
+import { User } from "../user/user.model.js";
+import { Playlist } from "./playlist.model.js";
 import {
 	deleteImageOnCloudinary,
 	uploadImageOnCloudinary,

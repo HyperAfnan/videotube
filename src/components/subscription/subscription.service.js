@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { serviceHandler } from "../../utils/handlers.js";
-import { User } from "../user/user.models.js";
-import { Subscription } from "./subscription.models.js";
+import { User } from "../user/user.model.js";
+import { Subscription } from "./subscription.model.js";
 import { logger } from "../../utils/logger/index.js";
 const subscriptionLogger = logger.child({ module: "subscription.service" });
 

@@ -1,7 +1,7 @@
 import { ApiError } from "../../utils/apiErrors.js";
 import { ApiResponse } from "../../utils/apiResponse.js";
 import { asyncHandler } from "../../utils/handlers.js";
-import * as userService from "./user.services.js";
+import * as userService from "./user.service.js";
 import { logger } from "../../utils/logger/index.js";
 const userLogger = logger.child({ module: "user.controllers" });
 

@@ -1,10 +1,10 @@
-import { User } from "./user.models.js";
-import { Comment } from "../comment/comments.models.js";
-import { Subscription } from "../subscription/subscription.models.js";
-import { Like } from "../like/like.models.js";
-import { Playlist } from "../playlist/playlist.models.js";
-import { Video } from "../video/video.models.js";
-import { Tweet } from "../tweet/tweet.models.js";
+import { User } from "./user.model.js";
+import { Comment } from "../comment/comments.model.js";
+import { Subscription } from "../subscription/subscription.model.js";
+import { Like } from "../like/like.model.js";
+import { Playlist } from "../playlist/playlist.model.js";
+import { Video } from "../video/video.model.js";
+import { Tweet } from "../tweet/tweet.model.js";
 import { serviceHandler } from "../../utils/handlers.js";
 import { ApiError } from "../../utils/apiErrors.js";
 import {

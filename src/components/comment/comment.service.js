@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import { ApiError } from "../../utils/apiErrors.js";
 import { serviceHandler } from "../../utils/handlers.js";
-import { Tweet } from "../tweet/tweet.models.js";
-import { Video } from "../video/video.models.js";
-import { Comment } from "./comments.models.js";
+import { Tweet } from "../tweet/tweet.model.js";
+import { Video } from "../video/video.model.js";
+import { Comment } from "./comments.model.js";
 import { logger } from "../../utils/logger/index.js";
 const commentLogger = logger.child({ module: "comment.service" });
 

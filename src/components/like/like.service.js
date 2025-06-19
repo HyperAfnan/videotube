@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
-import { Comment } from "../comment/comments.models.js";
-import { Video } from "../video/video.models.js";
-import { Tweet } from "../tweet/tweet.models.js";
-import { User } from "../user/user.models.js";
-import { Like } from "./like.models.js";
+import { Comment } from "../comment/comments.model.js";
+import { Video } from "../video/video.model.js";
+import { Tweet } from "../tweet/tweet.model.js";
+import { User } from "../user/user.model.js";
+import { Like } from "./like.model.js";
 import { serviceHandler } from "../../utils/handlers.js";
 import { logger } from "../../utils/logger/index.js";
 const likeServiceLogger = logger.child({ module: "like.services" });

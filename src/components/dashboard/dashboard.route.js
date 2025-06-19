@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { getChannelStats, getChannelVideos } from "./dashboard.controller.js";
 import { verifyAccessToken } from "../../middlewares/auth.middleware.js";
-import { defaultRateLimiter } from "../../middlewares/rateLimiter.js";
+import { defaultRateLimiter } from "../../middlewares/rateLimiter.middleware.js";
 
 const router = Router();
 

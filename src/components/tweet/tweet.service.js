@@ -1,7 +1,7 @@
 import { ApiError } from "../../utils/apiErrors.js";
 import { serviceHandler } from "../../utils/handlers.js";
-import { User } from "../user/user.models.js";
-import { Tweet } from "./tweet.models.js";
+import { User } from "../user/user.model.js";
+import { Tweet } from "./tweet.model.js";
 import { uploadImageOnCloudinary } from "../../utils/fileHandlers.js";
 import mongoose from "mongoose";
 import { logger } from "../../utils/logger/index.js";

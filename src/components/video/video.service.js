@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import { ApiError } from "../../utils/apiErrors.js";
 import { serviceHandler } from "../../utils/handlers.js";
-import { User } from "../user/user.models.js";
-import { Video } from "./video.models.js";
+import { User } from "../user/user.model.js";
+import { Video } from "./video.model.js";
 import {
 	deleteImageOnCloudinary,
 	deleteVideoOnCloudinary,

@@ -1,4 +1,4 @@
-import { User } from "../user/user.models.js";
+import { User } from "../user/user.model.js";
 import { serviceHandler } from "../../utils/handlers.js";
 import mongoose from "mongoose";
 import { logger } from "../../utils/logger/index.js";
