@@ -3,6 +3,8 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import ENV from "./config/env.js";
+import { logger } from "./utils/logger/index.js";
+import { requestLogger } from "./middlewares/logger.js";
 
 const app = express();
 
@@ -13,19 +15,15 @@ app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
+app.use(requestLogger)
 
 if (ENV.NODE_ENV === "development") {
+   logger.info("Development mode enabled");
 	import("./config/bullboard.js")
 		.then(({ setupBullBoard }) => setupBullBoard(app))
-		.catch((err) =>
-			console.error("Failed to load Bull Board in development:", err),
-		);
 
 	import("morgan")
 		.then((morganModule) => app.use(morganModule.default("dev")))
-		.catch((err) =>
-			console.error("Failed to load morgan in development:", err),
-		);
 }
 
 import userRoutes from "./components/user/user.routes.js";
