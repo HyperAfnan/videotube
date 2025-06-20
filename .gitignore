@@ -1,8 +1,5 @@
 node_modules/
 package-lock.json
 .env
-practiceModels/
-src/architeture.md
-todo.txt
-user.bugs.txt
 logs/
+requests/
