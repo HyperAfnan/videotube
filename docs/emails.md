@@ -65,7 +65,7 @@ After successful email confirmation:
   - Send a password reset email (via Bull queue).
 
 ### 2. Password Reset Confirmation
-- `POST /api/v1/user/resetPassoword/{token}`
+- `POST /api/v1/user/resetPassword/{token}`
 - Request includes:
   - Password reset token
   - New password
