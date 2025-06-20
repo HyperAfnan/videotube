@@ -16,13 +16,17 @@ const fileRotateTransport = new winston.transports.DailyRotateFile({
   zippedArchive: true,
 });
 
+const customFormat = printf(({ timestamp, level, message, stack}) => {
+  return `${timestamp} [${level}]: ${message} ${stack || "" }`;
+});
+
 export const developmentLogger = winston.createLogger({
 	level: "debug",
 	format: combine(
 		errors({ stack: true }),
 		align(),
 		timestamp({ format: "DD June HH-mm:ss" }),
-		printf((info) => `${info.timestamp} [${info.level}]: ${info.message}`),
+      customFormat
 	),
 	transports: [
 		new Console({ format: colorize({ all: true })}),
