@@ -1,8 +1,0 @@
-{
-	"data": { "email": "afnanmalik2712@gmail.com" },
-	"level": "\u001b[31merror\u001b[39m",
-	"message": "\tUser not found",
-	"stack": "Error: User not found\n    at file:///data/data/com.termux/files/home/dev/chai-code-backend/src/components/user/user.service.js:197:9\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async Module.<anonymous> (file:///data/data/com.termux/files/home/dev/chai-code-backend/src/utils/handlers.js:9:11)\n    at async file:///data/data/com.termux/files/home/dev/chai-code-backend/src/components/user/user.controller.js:69:23",
-	"statusCode": 500,
-	"timestamp": "19 June 22-24:50"
-}

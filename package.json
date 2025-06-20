@@ -49,7 +49,8 @@
 		"nodemailer": "^7.0.3",
 		"swagger-jsdoc": "^6.2.8",
 		"swagger-ui-express": "^5.0.1",
-		"winston": "^3.17.0"
+		"winston": "^3.17.0",
+		"winston-daily-rotate-file": "^5.0.0"
 	},
 	"devDependencies": {
 		"@bull-board/api": "^6.10.1",

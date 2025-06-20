@@ -1,30 +1,32 @@
 import winston from "winston";
 import fs from "fs";
 import path from "path";
-const { colorize, timestamp, printf, combine, errors, json, align } =
-	winston.format;
+const { colorize, timestamp, printf, combine, errors, json, align } = winston.format;
 const { Console, File } = winston.transports;
-
+import "winston-daily-rotate-file";
 const logDir = path.join(process.cwd(), "logs");
+
 fs.mkdirSync(logDir, { recursive: true });
+
+const fileRotateTransport = new winston.transports.DailyRotateFile({
+  filename: path.join(logDir, "application-%DATE%.json"),
+  datePattern: "YYYY-MM-DD",
+  maxFiles: "14d",
+  format: combine(json(), timestamp(), errors({ stack: true })),
+  zippedArchive: true,
+});
 
 export const developmentLogger = winston.createLogger({
 	level: "debug",
 	format: combine(
 		errors({ stack: true }),
-		colorize(),
 		align(),
 		timestamp({ format: "DD June HH-mm:ss" }),
 		printf((info) => `${info.timestamp} [${info.level}]: ${info.message}`),
 	),
 	transports: [
-		new Console(),
-		new File({ filename: path.join(logDir, "combined.log") }),
-		new File({ filename: path.join(logDir, "error.log"), level: "error" }),
-		new File({
-			filename: path.join(logDir, "combined.json"),
-			format: combine(errors({ stack: true }), timestamp(), json()),
-		}),
+		new Console({ format: colorize({ all: true })}),
+      fileRotateTransport,
 		new File({
 			level: "error",
 			filename: path.join(logDir, "error.json"),
