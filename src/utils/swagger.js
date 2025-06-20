@@ -36,7 +36,7 @@ const swaggerOptions = {
 			},
 		},
 	},
-	apis: ["./src/components/**/*.routes.js"],
+	apis: ["./src/components/**/*.route.js"],
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
