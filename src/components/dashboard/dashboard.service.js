@@ -1,9 +1,15 @@
-import { User } from "../user/user.models.js";
+import { User } from "../user/user.model.js";
 import { serviceHandler } from "../../utils/handlers.js";
 import mongoose from "mongoose";
+import { logger } from "../../utils/logger/index.js";
+const dashboardLogger = logger.child({ module: "dashboard.service" });
 
 // BUG: showing total likes to 1, while video likes array is empty
 export const getChannelStats = serviceHandler(async (userMeta) => {
+	dashboardLogger.info("Fetching channel stats (aggregate)", {
+		userId: userMeta._id,
+	});
+
 	const stats = await User.aggregate([
 		{ $match: { _id: new mongoose.Types.ObjectId(String(userMeta._id)) } },
 		{
@@ -78,10 +84,19 @@ export const getChannelStats = serviceHandler(async (userMeta) => {
 			},
 		},
 	]);
+	dashboardLogger.info("Fetched channel stats (aggregate)", {
+		userId: userMeta._id,
+		statsCount: Array.isArray(stats) ? stats.length : undefined,
+		hasStats: Array.isArray(stats) ? stats.length > 0 : false,
+	});
 	return stats;
 });
 
 export const getChannelVideos = serviceHandler(async (userMeta) => {
+	dashboardLogger.info("Fetching channel videos (aggregate)", {
+		userId: userMeta._id,
+	});
+
 	const channelVideos = await User.aggregate([
 		{ $match: { _id: new mongoose.Types.ObjectId(String(userMeta._id)) } },
 		{
@@ -95,5 +110,15 @@ export const getChannelVideos = serviceHandler(async (userMeta) => {
 		{ $addFields: { totalVideos: { $size: "$videos" } } },
 		{ $project: { videos: 1, username: 1, totalVideos: 1, _id: 0 } },
 	]);
+	dashboardLogger.info("Fetched channel videos (aggregate)", {
+		userId: userMeta._id,
+		videoBatchCount: Array.isArray(channelVideos)
+			? channelVideos.length
+			: undefined,
+		totalVideos:
+			Array.isArray(channelVideos) && channelVideos[0]
+				? channelVideos[0].totalVideos
+				: undefined,
+	});
 	return channelVideos;
 });

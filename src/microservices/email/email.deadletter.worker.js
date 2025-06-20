@@ -1,9 +1,10 @@
 import { Worker } from "bullmq";
 import { redisWorkerConnection as connection } from "../../config/redis.js";
 import { sendEmail } from "./email.processor.js";
-import debug from "debug";
-const log = debug("app:worker:emailDeadLetter:log");
-const error = debug("app:worker:emailDeadLetter:error");
+import { logger } from "../../utils/logger/index.js";
+const emailDeadLetterLogger = logger.child({
+	module: "email.deadletter.worker",
+});
 
 const emailDeadLetterWorker = new Worker(
 	"emailDeadLetterQueue",
@@ -12,12 +13,13 @@ const emailDeadLetterWorker = new Worker(
 		if (!to || !subject || !html) {
 			throw new Error("Missing required email fields in job data");
 		}
-		log(`Dead letter worker started for job ${job.id}`);
+		emailDeadLetterLogger.info(`Dead letter worker started for job ${job.id}`);
 		try {
 			await sendEmail(to, subject, html);
 		} catch (err) {
-			error(`Email sending failed for job ${job.id}:`, err.message);
-			throw new Error(`Email sending failed: ${err.message}`);
+			err.jobId = job.id;
+			err.jobData = job.data;
+			throw err;
 		}
 	},
 	{
@@ -31,13 +33,19 @@ const emailDeadLetterWorker = new Worker(
 );
 
 emailDeadLetterWorker.on("completed", (job) => {
-	log(`Dead letter job ${job.id} completed`);
+	emailDeadLetterLogger.info(`Dead letter job ${job.id} completed`);
 });
 
 emailDeadLetterWorker.on("error", (err) => {
-	error("Worker error: ", err);
+	emailDeadLetterLogger.error(
+		`Dead letter worker encountered an error: ${err.message}`,
+		{ error: err },
+	);
 });
 
 emailDeadLetterWorker.on("failed", (job, err) => {
-	error(`Dead letter job ${job.id} failed: ${err.message}`);
+	emailDeadLetterLogger.error(
+		`Dead letter job ${job.id} failed: ${err.message}`,
+		{ jobId: job.id, error: err, jobData: job.data },
+	);
 });

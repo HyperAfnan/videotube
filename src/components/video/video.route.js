@@ -9,7 +9,7 @@ import {
 	updateVideo,
 } from "./video.controller.js";
 import { verifyAccessToken } from "../../middlewares/auth.middleware.js";
-import { upload } from "../../middlewares/multer.middlewares.js";
+import { upload } from "../../middlewares/multer.middleware.js";
 import {
 	deleteVideoValidator,
 	downloadVideoValidator,
@@ -21,7 +21,7 @@ import {
 	updateVideoValidator,
 } from "./video.validator.js";
 import { validator } from "../../middlewares/validator.middleware.js";
-import { defaultRateLimiter } from "../../middlewares/rateLimiter.js";
+import { defaultRateLimiter } from "../../middlewares/rateLimiter.middleware.js";
 
 const router = Router();
 

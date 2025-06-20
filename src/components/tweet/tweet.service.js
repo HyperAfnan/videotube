@@ -1,14 +1,15 @@
 import { ApiError } from "../../utils/apiErrors.js";
 import { serviceHandler } from "../../utils/handlers.js";
-import { User } from "../user/user.models.js";
-import { Tweet } from "./tweet.models.js";
+import { User } from "../user/user.model.js";
+import { Tweet } from "./tweet.model.js";
 import { uploadImageOnCloudinary } from "../../utils/fileHandlers.js";
 import mongoose from "mongoose";
+import { logger } from "../../utils/logger/index.js";
+const tweetServiceLogger = logger.child({ module: "tweet.services" });
 
 export const isTweetOwner = serviceHandler(async (tweetId, userId) => {
 	const tweet = await Tweet.findById(tweetId);
-	if (tweet.owner.toString() !== userId.toString()) return false;
-	return true;
+	return tweet.owner.toString() === userId.toString();
 });
 
 export const findUserById = serviceHandler(async (userId) => {
@@ -25,15 +26,23 @@ export const createTweet = serviceHandler(
 	async (content, title, ownerId, contentImageLocalPath) => {
 		let contentImage;
 		if (contentImageLocalPath) {
-			contentImage = await uploadImageOnCloudinary(contentImageLocalPath).catch(
-				(error) => {
-					throw new ApiError(
-						500,
-						"Something went wrong while uploading image",
-						error,
-					);
-				},
-			);
+			try {
+				contentImage = await uploadImageOnCloudinary(contentImageLocalPath);
+				tweetServiceLogger.info("Uploaded tweet image", {
+					ownerId,
+					hasImage: true,
+				});
+			} catch (error) {
+				tweetServiceLogger.error("Image upload failed for tweet", {
+					ownerId,
+					error: error.message,
+				});
+				throw new ApiError(
+					500,
+					"Something went wrong while uploading image",
+					error,
+				);
+			}
 		}
 		const tweet = await Tweet.create({
 			content,
@@ -41,7 +50,7 @@ export const createTweet = serviceHandler(
 			title,
 			owner: ownerId,
 		});
-
+		tweetServiceLogger.info("Tweet created", { tweetId: tweet._id, ownerId });
 		return tweet;
 	},
 );
@@ -52,11 +61,13 @@ export const updateTweet = serviceHandler(async (content, title, tweetId) => {
 		{ content, title },
 		{ new: true },
 	);
+	tweetServiceLogger.info("Tweet updated", { tweetId });
 	return tweet;
 });
 
 export const deleteTweet = serviceHandler(async (tweetId) => {
 	await Tweet.findByIdAndDelete(tweetId);
+	tweetServiceLogger.info("Tweet deleted", { tweetId });
 });
 
 export const getUserTweets = serviceHandler(async (userId) => {
@@ -72,5 +83,9 @@ export const getUserTweets = serviceHandler(async (userId) => {
 		},
 		{ $project: { tweets: 1, username: 1, _id: 0 } },
 	]);
+	tweetServiceLogger.info("Fetched user tweets", {
+		userId,
+		tweetCount: tweets[0]?.tweets?.length ?? 0,
+	});
 	return tweets;
 });

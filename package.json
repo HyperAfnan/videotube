@@ -5,7 +5,7 @@
 	"main": "src/server.js",
 	"type": "module",
 	"scripts": {
-		"dev": "nodemon src/index.js",
+		"dev": "nodemon --ignore logs/ src/index.js",
 		"dev:worker:user": "nodemon src/microservices/user/user.worker.js",
 		"dev:worker:email": "nodemon src/microservices/email/email.worker.js",
 		"dev:worker:dlemail": "nodemon src/microservices/email/email.deadletter.worker.js",
@@ -15,7 +15,8 @@
 		"lint": "npx eslint src ",
 		"lint:fix": "npm run lint -- --fix",
 		"prettier": "npx prettier --write . ",
-		"format": "npm run prettier:fix && npm run lint:fix"
+		"format": "npm run prettier:fix && npm run lint:fix",
+		"unlog": "rm -rf logs/"
 	},
 	"repository": {
 		"type": "git",
@@ -47,7 +48,9 @@
 		"multer": "^2.0.0",
 		"nodemailer": "^7.0.3",
 		"swagger-jsdoc": "^6.2.8",
-		"swagger-ui-express": "^5.0.1"
+		"swagger-ui-express": "^5.0.1",
+		"winston": "^3.17.0",
+		"winston-daily-rotate-file": "^5.0.0"
 	},
 	"devDependencies": {
 		"@bull-board/api": "^6.10.1",
@@ -57,7 +60,6 @@
 		"eslint-config-prettier": "^10.1.5",
 		"eslint-plugin-prettier": "^5.4.0",
 		"globals": "^16.1.0",
-		"morgan": "^1.10.0",
 		"prettier": "^3.5.3"
 	}
 }

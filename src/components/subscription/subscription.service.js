@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
 import { serviceHandler } from "../../utils/handlers.js";
-import { User } from "../user/user.models.js";
-import { Subscription } from "./subscription.models.js";
+import { User } from "../user/user.model.js";
+import { Subscription } from "./subscription.model.js";
+import { logger } from "../../utils/logger/index.js";
+const subscriptionLogger = logger.child({ module: "subscription.service" });
 
 export const findChannelById = serviceHandler(async (channelId) => {
 	const channel = await User.findById(channelId);
@@ -10,13 +12,17 @@ export const findChannelById = serviceHandler(async (channelId) => {
 
 export const selfSubscriptionCheck = serviceHandler(
 	async (userId, channelId) => {
-		if (channelId === userId.toString()) return true;
-		return false;
+		return channelId === userId.toString();
 	},
 );
 
 export const toggleSubscription = serviceHandler(
 	async (channelId, subscriberId) => {
+		subscriptionLogger.info("Toggling subscription", {
+			channelId,
+			subscriberId,
+		});
+
 		const isSubscribed = await Subscription.find({
 			channel: channelId,
 			subscriber: subscriberId,
@@ -27,11 +33,20 @@ export const toggleSubscription = serviceHandler(
 				channel: channelId,
 				subscriber: subscriberId,
 			});
+			subscriptionLogger.info("Unsubscribed from channel", {
+				channelId,
+				subscriberId,
+			});
 			return { status: "Unsubscribed" };
 		} else {
 			const subscription = await Subscription.create({
 				channel: channelId,
 				subscriber: subscriberId,
+			});
+			subscriptionLogger.info("Subscribed to channel", {
+				channelId,
+				subscriberId,
+				subscriptionId: subscription._id,
 			});
 			return { status: "Subscribed", data: subscription };
 		}
@@ -40,6 +55,7 @@ export const toggleSubscription = serviceHandler(
 
 // TODO: return only array of subscribers rather than full user objects
 export const getUserChannelSubscribers = serviceHandler(async (channelId) => {
+	subscriptionLogger.info("Fetching subscribers for channel", { channelId });
 	const subscribers = await User.aggregate([
 		{ $match: { _id: new mongoose.Types.ObjectId(String(channelId)) } },
 		{
@@ -52,11 +68,17 @@ export const getUserChannelSubscribers = serviceHandler(async (channelId) => {
 		},
 		{ $project: { username: 1, subscribers: 1, _id: 0 } },
 	]);
-
+	subscriptionLogger.info("Fetched channel subscribers", {
+		channelId,
+		count: Array.isArray(subscribers) ? subscribers.length : undefined,
+	});
 	return subscribers;
 });
 
 export const getSubscriberChannels = serviceHandler(async (subscriberId) => {
+	subscriptionLogger.info("Fetching subscriptions for subscriber", {
+		subscriberId,
+	});
 	const subscriptions = await User.aggregate([
 		{ $match: { _id: new mongoose.Types.ObjectId(String(subscriberId)) } },
 		{
@@ -69,6 +91,9 @@ export const getSubscriberChannels = serviceHandler(async (subscriberId) => {
 		},
 		{ $project: { username: 1, subscriptions: 1, _id: 0 } },
 	]);
-
+	subscriptionLogger.info("Fetched subscriptions for subscriber", {
+		subscriberId,
+		count: Array.isArray(subscriptions) ? subscriptions.length : undefined,
+	});
 	return subscriptions;
 });

@@ -2,6 +2,8 @@ import { v2 as cloudinary } from "cloudinary";
 import fs from "fs/promises";
 import { ApiError } from "./apiErrors.js";
 import ENV from "../config/env.js";
+import { logger } from "./logger/index.js";
+const fileLogger = logger.child({ module: "fileHandlers" });
 
 cloudinary.config({
 	cloud_name: ENV.CLOUDINARY_CLOUD_NAME,
@@ -24,7 +26,10 @@ const uploadImageOnCloudinary = async (localFilePath) => {
 		return response;
 	} catch (err) {
 		await fs.unlink(localFilePath);
-		console.log("error uploading file to Cloudinary ", err);
+		fileLogger.error(`Error uploading image to Cloudinary: ${err.message} `, {
+			err: err.message,
+			stack: err.stack,
+		});
 	}
 };
 const uploadVideoOnCloudinary = async (localFilePath) => {
@@ -40,7 +45,10 @@ const uploadVideoOnCloudinary = async (localFilePath) => {
 		return response;
 	} catch (err) {
 		await fs.unlink(localFilePath);
-		console.log("error uploading file to Cloudinary ", err);
+		fileLogger.error(`Error uploading video to Cloudinary: ${err.message} `, {
+			err: err.message,
+			stack: err.stack,
+		});
 	}
 };
 
@@ -58,7 +66,10 @@ const deleteImageOnCloudinary = async (imageUrl) => {
 		});
 		return response;
 	} catch (err) {
-		console.log("error deleting image to Cloudinary ", err);
+		fileLogger.error(`Error deleting image to Cloudinary: ${err.message} `, {
+			err: err.message,
+			stack: err.stack,
+		});
 	}
 };
 
@@ -76,7 +87,10 @@ const deleteVideoOnCloudinary = async (videoUrl) => {
 		});
 		return response;
 	} catch (err) {
-		console.log("error deleting video to Cloudinary ", err);
+		fileLogger.error(`Error deleting video to Cloudinary: ${err.message} `, {
+			err: err.message,
+			stack: err.stack,
+		});
 	}
 };
 
