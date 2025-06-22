@@ -135,15 +135,17 @@ export const getUserVideoById = serviceHandler(
 			{ new: true },
 		);
 
-      const watchHistory = await WatchHistory.create({
-         user: userId,
-         video: videoId,
-         isWatched: false, // will set to true when user watches full video, (will be handled by the video player )
-         watchDates: [{ date: new Date(), duration: 0 }],
-      })
-
-      if (!watchHistory)
-         await WatchHistory.findOneAndUpdate( { user: userId, video: videoId }, { $push: { watchDates: { date: new Date(), duration: 0 } } } );
+		await WatchHistory.create({
+			user: userId,
+			video: videoId,
+			isWatched: false, // will set to true when user watches full video, (will be handled by the video player )
+			watchDates: [{ date: new Date(), duration: 0 }],
+		}).catch(async (_) => {
+			await WatchHistory.findOneAndUpdate(
+				{ user: userId, video: videoId },
+				{ $push: { watchDates: { date: new Date(), duration: 0 } } },
+			);
+         });
 
 		videoServiceLogger.info("Fetched and updated user video by ID", {
 			videoId,

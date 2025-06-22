@@ -415,7 +415,7 @@ export const getUserChannelProfile = serviceHandler(async (userMeta) => {
 
 export const getUserwatchHistory = serviceHandler(async (userId) => {
 	const watchHistory = await WatchHistory.aggregate([
-		{ $match: { _id: new ObjectId(String(userId)) } },
+		{ $match: { user: new ObjectId(String(userId)) } },
 		{
 			$lookup: {
 				from: "videos",

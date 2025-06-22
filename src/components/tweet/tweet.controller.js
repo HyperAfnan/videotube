@@ -6,10 +6,11 @@ import { logger } from "../../utils/logger/index.js";
 const tweetLogger = logger.child({ module: "tweet.controllers" });
 
 const createTweet = asyncHandler(async (req, res) => {
+	const requestId = req.id;
 	const { content, title } = req.body;
 	const contentImage = req?.file?.path || null;
 
-	tweetLogger.info("Creating tweet", {
+	tweetLogger.info(`[Request] ${requestId} Creating tweet`, {
 		userId: req.user._id,
 		title,
 		hasImage: !!contentImage,
@@ -22,7 +23,7 @@ const createTweet = asyncHandler(async (req, res) => {
 		contentImage,
 	);
 
-	tweetLogger.info("Tweet created successfully", {
+	tweetLogger.info(`[Request] ${requestId} Tweet created successfully`, {
 		tweetId: tweet._id,
 		userId: req.user._id,
 	});
@@ -33,10 +34,14 @@ const createTweet = asyncHandler(async (req, res) => {
 });
 
 const updateTweet = asyncHandler(async (req, res) => {
+	const requestId = req.id;
 	const { tweetId } = req.params;
 	const { content, title } = req.body;
 
-	tweetLogger.info("Updating tweet", { tweetId, userId: req.user._id });
+	tweetLogger.info(`[Request] ${requestId} Updating tweet`, {
+		tweetId,
+		userId: req.user._id,
+	});
 
 	const tweet = await tweetService.findTweetById(tweetId);
 	if (!tweet) {
@@ -50,7 +55,7 @@ const updateTweet = asyncHandler(async (req, res) => {
 
 	const updatedTweet = await tweetService.updateTweet(content, title, tweetId);
 
-	tweetLogger.info("Tweet updated successfully", {
+	tweetLogger.info(`[Request] ${requestId} Tweet updated successfully`, {
 		tweetId,
 		userId: req.user._id,
 	});
@@ -61,9 +66,13 @@ const updateTweet = asyncHandler(async (req, res) => {
 });
 
 const deleteTweet = asyncHandler(async (req, res) => {
+	const requestId = req.id;
 	const { tweetId } = req.params;
 
-	tweetLogger.info("Deleting tweet", { tweetId, userId: req.user._id });
+	tweetLogger.info(`[Request] ${requestId} Deleting tweet`, {
+		tweetId,
+		userId: req.user._id,
+	});
 
 	const tweet = await tweetService.findTweetById(tweetId);
 	if (!tweet) {
@@ -77,7 +86,7 @@ const deleteTweet = asyncHandler(async (req, res) => {
 
 	await tweetService.deleteTweet(tweetId);
 
-	tweetLogger.info("Tweet deleted successfully", {
+	tweetLogger.info(`[Request] ${requestId} Tweet deleted successfully`, {
 		tweetId,
 		userId: req.user._id,
 	});
@@ -86,8 +95,10 @@ const deleteTweet = asyncHandler(async (req, res) => {
 });
 
 const getUserTweets = asyncHandler(async (req, res) => {
+	const requestId = req.id;
 	const { userId } = req.params;
-	tweetLogger.info("Fetching tweets for user", { userId });
+
+	tweetLogger.info(`[Request] ${requestId} Fetching tweets for user`, { userId });
 
 	const user = await tweetService.findUserById(userId);
 	if (!user) {
@@ -96,7 +107,7 @@ const getUserTweets = asyncHandler(async (req, res) => {
 
 	const tweets = await tweetService.getUserTweets(user._id);
 
-	tweetLogger.info("Fetched user tweets successfully", {
+	tweetLogger.info(`[Request] ${requestId} Fetched user tweets successfully`, {
 		userId,
 		tweetCount: tweets.length,
 	});

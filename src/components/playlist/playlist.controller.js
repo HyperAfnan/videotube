@@ -7,16 +7,13 @@ const playlistLogger = logger.child({ module: "playlist.controller" });
 
 const createPlaylist = asyncHandler(async (req, res) => {
 	const { name, description } = req.body;
+	const requestId = req.id;
 
-	playlistLogger.info("Creating playlist", { userId: req.user._id, name });
+	playlistLogger.info(`[Request] ${requestId} Creating playlist`, { userId: req.user._id, name });
 
-	const playlist = await PlaylistService.createPlaylistService(
-		name,
-		description,
-		req.user,
-	);
+	const playlist = await PlaylistService.createPlaylistService(name, description, req.user);
 
-	playlistLogger.info("Playlist created successfully", {
+	playlistLogger.info(`[Request] ${requestId} Playlist created successfully`, {
 		userId: req.user._id,
 		playlistId: playlist._id,
 	});
@@ -28,20 +25,21 @@ const createPlaylist = asyncHandler(async (req, res) => {
 
 const getUserPlaylists = asyncHandler(async (req, res) => {
 	const { userId } = req.params;
+	const requestId = req.id;
 
 	if (userId) {
-		playlistLogger.info("Fetching playlists for user by param", {
+		playlistLogger.info(`[Request] ${requestId} Fetching playlists for user by param`, {
 			requestedUserId: userId,
 		});
 		const playlistUser = await PlaylistService.findUserById(userId);
 		if (!playlistUser)
-			throw new ApiError(404, "User not found", { requestedUserId: userId });
+			throw new ApiError(404, "User not found", { requestedUserId: userId, requestId });
 	}
 
 	const user = userId || req.user._id;
 	const playlists = await PlaylistService.getUserPlaylistsService(user);
 
-	playlistLogger.info("Fetched playlists for user", { userId: user });
+	playlistLogger.info(`[Request] ${requestId} Fetched playlists for user`, { userId: user });
 
 	return res
 		.status(200)
@@ -50,15 +48,16 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
 
 const getPlaylistById = asyncHandler(async (req, res) => {
 	const { playlistId } = req.params;
+	const requestId = req.id;
 
-	playlistLogger.info("Fetching playlist by ID", { playlistId });
+	playlistLogger.info(`[Request] ${requestId} Fetching playlist by ID`, { playlistId });
 
 	const playlist = await PlaylistService.findPlaylistById(playlistId);
 	if (!playlist) {
-		throw new ApiError(404, "Playlist not found", { playlistId });
+		throw new ApiError(404, "Playlist not found", { playlistId, requestId });
 	}
 
-	playlistLogger.info("Fetched playlist by ID", {
+	playlistLogger.info(`[Request] ${requestId} Fetched playlist by ID`, {
 		playlistId,
 		ownerId: playlist.owner,
 	});
@@ -70,8 +69,9 @@ const getPlaylistById = asyncHandler(async (req, res) => {
 
 const addVideoToPlaylist = asyncHandler(async (req, res) => {
 	const { playlistId, videoId } = req.params;
+	const requestId = req.id;
 
-	playlistLogger.info("Adding video to playlist", {
+	playlistLogger.info(`[Request] ${requestId} Adding video to playlist`, {
 		playlistId,
 		videoId,
 		userId: req.user._id,
@@ -79,12 +79,12 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 
 	const playlist = await PlaylistService.findPlaylistById(playlistId);
 	if (!playlist) {
-		throw new ApiError(404, "Playlist not found", { playlistId, videoId });
+		throw new ApiError(404, "Playlist not found", { playlistId, videoId, requestId });
 	}
 
 	const video = await PlaylistService.findVideoById(videoId);
 	if (!video) {
-		throw new ApiError(404, "Video not found", { playlistId, videoId });
+		throw new ApiError(404, "Video not found", { playlistId, videoId, requestId });
 	}
 
 	const isOwner = await PlaylistService.isPlaylistOwner(playlist, req.user);
@@ -92,17 +92,14 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 		throw new ApiError(
 			403,
 			"You are not authorized to add video to this playlist",
-			{ playlistId, videoId },
+			{ playlistId, videoId, requestId },
 		);
 	}
 
-	const updatedPlaylist = await PlaylistService.addVideoToPlaylistService(
-		playlist,
-		video,
-	);
+	const updatedPlaylist = await PlaylistService.addVideoToPlaylistService(playlist, video);
 
 	if (updatedPlaylist.message) {
-		playlistLogger.info("Video in playlist already or message returned", {
+		playlistLogger.info(`[Request] ${requestId} Video already in playlist or other message`, {
 			playlistId,
 			videoId,
 			userId: req.user._id,
@@ -110,12 +107,10 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 		});
 		return res
 			.status(200)
-			.json(
-				new ApiResponse(200, updatedPlaylist.playlist, updatedPlaylist.message),
-			);
+			.json(new ApiResponse(200, updatedPlaylist.playlist, updatedPlaylist.message));
 	}
 
-	playlistLogger.info("Video added to playlist", {
+	playlistLogger.info(`[Request] ${requestId} Video added to playlist`, {
 		playlistId,
 		videoId,
 		userId: req.user._id,
@@ -123,19 +118,14 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 
 	return res
 		.status(200)
-		.json(
-			new ApiResponse(
-				200,
-				updatedPlaylist,
-				"Successfully added video to playlist",
-			),
-		);
+		.json(new ApiResponse(200, updatedPlaylist, "Successfully added video to playlist"));
 });
 
 const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 	const { playlistId, videoId } = req.params;
+	const requestId = req.id;
 
-	playlistLogger.info("Removing video from playlist", {
+	playlistLogger.info(`[Request] ${requestId} Removing video from playlist`, {
 		playlistId,
 		videoId,
 		userId: req.user._id,
@@ -143,12 +133,12 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 
 	const playlist = await PlaylistService.findPlaylistById(playlistId);
 	if (!playlist) {
-		throw new ApiError(404, "Playlist not found", { playlistId, videoId });
+		throw new ApiError(404, "Playlist not found", { playlistId, videoId, requestId });
 	}
 
 	const video = await PlaylistService.findVideoById(videoId);
 	if (!video) {
-		throw new ApiError(404, "Video not found", { playlistId, videoId });
+		throw new ApiError(404, "Video not found", { playlistId, videoId, requestId });
 	}
 
 	const isOwner = await PlaylistService.isPlaylistOwner(playlist, req.user);
@@ -156,16 +146,13 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 		throw new ApiError(
 			403,
 			"You are not authorized to remove video from this playlist",
-			{ playlistId, videoId },
+			{ playlistId, videoId, requestId },
 		);
 	}
 
-	const updatedPlaylist = await PlaylistService.removeVideoFromPlaylistService(
-		playlist,
-		video,
-	);
+	const updatedPlaylist = await PlaylistService.removeVideoFromPlaylistService(playlist, video);
 
-	playlistLogger.info("Video removed from playlist", {
+	playlistLogger.info(`[Request] ${requestId} Video removed from playlist`, {
 		playlistId,
 		videoId,
 		userId: req.user._id,
@@ -173,38 +160,37 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 
 	return res
 		.status(200)
-		.json(
-			new ApiResponse(
-				200,
-				updatedPlaylist,
-				"Successfully removed video from playlist",
-			),
-		);
+		.json(new ApiResponse(200, updatedPlaylist, "Successfully removed video from playlist"));
 });
 
 const deletePlaylist = asyncHandler(async (req, res) => {
 	const { playlistId } = req.params;
+	const requestId = req.id;
 
-	playlistLogger.info("Deleting playlist", {
+	playlistLogger.info(`[Request] ${requestId} Deleting playlist`, {
 		playlistId,
 		userId: req.user._id,
 	});
 
 	const playlist = await PlaylistService.findPlaylistById(playlistId);
 	if (!playlist) {
-		throw new ApiError(404, "Playlist not found", { playlistId });
+		throw new ApiError(404, "Playlist not found", { playlistId, requestId });
 	}
 
 	const isOwner = await PlaylistService.isPlaylistOwner(playlist, req.user);
 	if (!isOwner) {
 		throw new ApiError(403, "You are not authorized to delete this playlist", {
 			playlistId,
+			requestId,
 		});
 	}
 
 	await PlaylistService.deletePlaylistService(playlist);
 
-	playlistLogger.info("Playlist deleted", { playlistId, userId: req.user._id });
+	playlistLogger.info(`[Request] ${requestId} Playlist deleted`, {
+		playlistId,
+		userId: req.user._id,
+	});
 
 	return res.status(204).end();
 });
@@ -212,21 +198,23 @@ const deletePlaylist = asyncHandler(async (req, res) => {
 const updatePlaylist = asyncHandler(async (req, res) => {
 	const { name, description } = req.body;
 	const { playlistId } = req.params;
+	const requestId = req.id;
 
-	playlistLogger.info("Updating playlist", {
+	playlistLogger.info(`[Request] ${requestId} Updating playlist`, {
 		playlistId,
 		userId: req.user._id,
 	});
 
 	const playlist = await PlaylistService.findPlaylistById(playlistId);
 	if (!playlist) {
-		throw new ApiError(404, "Playlist not found", { playlistId });
+		throw new ApiError(404, "Playlist not found", { playlistId, requestId });
 	}
 
 	const isOwner = await PlaylistService.isPlaylistOwner(playlist, req.user);
 	if (!isOwner) {
 		throw new ApiError(403, "You are not authorized to update this playlist", {
 			playlistId,
+			requestId,
 		});
 	}
 
@@ -237,16 +225,14 @@ const updatePlaylist = asyncHandler(async (req, res) => {
 		req?.file?.path,
 	);
 
-	playlistLogger.info("Playlist updated successfully", {
+	playlistLogger.info(`[Request] ${requestId} Playlist updated successfully`, {
 		playlistId,
 		userId: req.user._id,
 	});
 
 	return res
 		.status(200)
-		.json(
-			new ApiResponse(200, updatedPlaylist, "Successfully updated playlist"),
-		);
+		.json(new ApiResponse(200, updatedPlaylist, "Successfully updated playlist"));
 });
 
 export {
