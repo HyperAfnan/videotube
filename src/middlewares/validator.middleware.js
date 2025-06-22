@@ -15,7 +15,7 @@ export const validator = (req, _, next) => {
 			validationErrors: errors.array(),
 		});
 	}
-	validatorLogger.info("Validation passed", {
+	validatorLogger.info(`[Request] ${req.id} Validation passed`, {
 		path: req.path,
 		method: req.method,
 	});

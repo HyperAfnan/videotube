@@ -8,7 +8,7 @@ const videoLogger = logger.child({ module: "video.controllers" });
 const getAllVideos = asyncHandler(async (req, res) => {
 	const { page = 1, limit = 10, q, sortBy, sortType, userId } = req.query;
 
-	videoLogger.info("Fetching all videos", {
+	videoLogger.info(`[Request] ${req.id} Fetching all videos`, {
 		page,
 		limit,
 		q,
@@ -20,7 +20,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 	if (userId) {
 		const user = await VideoService.findUserById(userId);
 		if (!user) {
-			throw new ApiError(404, "User not found");
+			throw new ApiError(404, "User not found", { userId, requestId: req.id });
 		}
 	}
 
@@ -35,7 +35,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 		user,
 	);
 
-	videoLogger.info("Fetched videos successfully", {
+	videoLogger.info(`[Request] ${req.id} Fetched videos successfully`, {
 		count: allVideos.length,
 		user,
 	});
@@ -46,11 +46,15 @@ const getAllVideos = asyncHandler(async (req, res) => {
 });
 
 const publishAVideo = asyncHandler(async (req, res) => {
+	const requestId = req.id;
 	const { title, description } = req.body;
 	const videoFileLocalPath = req.files.videoFile[0].path;
 	const thumbnailLocalPath = req.files.thumbnail[0].path;
 
-	videoLogger.info("Publishing a new video", { title, userId: req.user._id });
+	videoLogger.info(`[Request] ${requestId} Publishing a new video`, {
+		title,
+		userId: req.user._id,
+	});
 
 	const video = await VideoService.publishVideo(
 		title,
@@ -60,7 +64,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
 		thumbnailLocalPath,
 	);
 
-	videoLogger.info("Video published successfully", {
+	videoLogger.info(`[Request] ${requestId} Video published successfully`, {
 		videoId: video._id,
 		userId: req.user._id,
 	});
@@ -71,13 +75,17 @@ const publishAVideo = asyncHandler(async (req, res) => {
 });
 
 const getVideoById = asyncHandler(async (req, res) => {
+	const requestId = req.id;
 	const { videoId } = req.params;
 
-	videoLogger.info("Fetching video by ID", { videoId, userId: req.user._id });
+	videoLogger.info(`[Request] ${requestId} Fetching video by ID`, {
+		videoId,
+		userId: req.user._id,
+	});
 
 	const video = await VideoService.findVideoById(videoId);
 	if (!video) {
-		throw new ApiError(404, "Video not found", { videoId });
+		throw new ApiError(404, "Video not found", { videoId, requestId });
 	}
 
 	const userVideo = await VideoService.getUserVideoById(
@@ -86,7 +94,7 @@ const getVideoById = asyncHandler(async (req, res) => {
 		req.user._id,
 	);
 
-	videoLogger.info("Fetched video successfully", { videoId });
+	videoLogger.info(`[Request] ${requestId} Fetched video successfully`, { videoId });
 
 	return res
 		.status(200)
@@ -94,20 +102,25 @@ const getVideoById = asyncHandler(async (req, res) => {
 });
 
 const updateVideo = asyncHandler(async (req, res) => {
+	const requestId = req.id;
 	const { videoId } = req.params;
 	const { description, title } = req.body;
 
-	videoLogger.info("Updating video", { videoId, userId: req.user._id });
+	videoLogger.info(`[Request] ${requestId} Updating video`, {
+		videoId,
+		userId: req.user._id,
+	});
 
 	const video = await VideoService.findVideoById(videoId);
 	if (!video) {
-		throw new ApiError(404, "Video not found", { videoId });
+		throw new ApiError(404, "Video not found", { videoId, requestId });
 	}
 
 	const isOwner = VideoService.isVideoOwner(video, req.user);
 	if (!isOwner) {
 		throw new ApiError(403, "Not authorized to perform this operation", {
 			videoId,
+			requestId,
 		});
 	}
 
@@ -119,7 +132,7 @@ const updateVideo = asyncHandler(async (req, res) => {
 		req?.file?.path,
 	);
 
-	videoLogger.info("Video updated successfully", { videoId });
+	videoLogger.info(`[Request] ${requestId} Video updated successfully`, { videoId });
 
 	return res
 		.status(200)
@@ -127,39 +140,49 @@ const updateVideo = asyncHandler(async (req, res) => {
 });
 
 const deleteVideo = asyncHandler(async (req, res) => {
+	const requestId = req.id;
 	const { videoId } = req.params;
 
-	videoLogger.info("Deleting video", { videoId, userId: req.user._id });
+	videoLogger.info(`[Request] ${requestId} Deleting video`, {
+		videoId,
+		userId: req.user._id,
+	});
 
 	const video = await VideoService.findVideoById(videoId);
 	if (!video) {
-		throw new ApiError(404, "Video not found", { videoId });
+		throw new ApiError(404, "Video not found", { videoId, requestId });
 	}
 
 	const isOwner = VideoService.isVideoOwner(video, req.user);
 	if (!isOwner) {
 		throw new ApiError(403, "Not authorized to perform this operation", {
 			videoId,
+			requestId,
 		});
 	}
 
 	await VideoService.deleteVideo(video);
 
-	videoLogger.info("Video deleted successfully", { videoId });
+	videoLogger.info(`[Request] ${requestId} Video deleted successfully`, { videoId });
 
 	return res.status(204).end();
 });
 
 const downloadVideo = asyncHandler(async (req, res) => {
+	const requestId = req.id;
 	const { videoId } = req.params;
-	videoLogger.info("Downloading video", { videoId, userId: req.user._id });
+
+	videoLogger.info(`[Request] ${requestId} Downloading video`, {
+		videoId,
+		userId: req.user._id,
+	});
 
 	const video = await VideoService.findVideoById(videoId);
 	if (!video) {
-		throw new ApiError(404, "Video not found", { videoId });
+		throw new ApiError(404, "Video not found", { videoId, requestId });
 	}
 
-	videoLogger.info("Redirecting to video file", {
+	videoLogger.info(`[Request] ${requestId} Redirecting to video file`, {
 		videoId,
 		videoFile: video.videoFile,
 	});
@@ -168,37 +191,37 @@ const downloadVideo = asyncHandler(async (req, res) => {
 });
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
+	const requestId = req.id;
 	const { videoId } = req.params;
 
-	videoLogger.info("Toggling publish status", {
+	videoLogger.info(`[Request] ${requestId} Toggling publish status`, {
 		videoId,
 		userId: req.user._id,
 	});
 
 	const video = await VideoService.findVideoById(videoId);
 	if (!video) {
-		throw new ApiError(404, "Video not found", { videoId });
+		throw new ApiError(404, "Video not found", { videoId, requestId });
 	}
 
 	const isOwner = VideoService.isVideoOwner(video, req.user);
 	if (!isOwner) {
 		throw new ApiError(403, "Not authorized to perform this operation", {
 			videoId,
+			requestId,
 		});
 	}
 
 	const updateVideo = await VideoService.togglePublishStatus(video);
 
-	videoLogger.info("Publish status toggled successfully", {
+	videoLogger.info(`[Request] ${requestId} Publish status toggled successfully`, {
 		videoId,
 		isPublished: updateVideo.isPublished,
 	});
 
 	return res
 		.status(200)
-		.json(
-			new ApiResponse(200, updateVideo, "successfully toggled publish status"),
-		);
+		.json(new ApiResponse(200, updateVideo, "successfully toggled publish status"));
 });
 
 export {

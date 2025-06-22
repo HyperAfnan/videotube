@@ -5,11 +5,11 @@ import * as SubscriptionService from "./subscription.service.js";
 import { logger } from "../../utils/logger/index.js";
 const subscriptionLogger = logger.child({ module: "subscription.controller" });
 
-// TODO: check if user is verified or not
 const toggleSubscription = asyncHandler(async (req, res) => {
+	const requestId = req.id;
 	const { channelId } = req.params;
 
-	subscriptionLogger.info("Toggling subscription", {
+	subscriptionLogger.info(`[Request] ${requestId} Toggling subscription`, {
 		userId: req.user._id,
 		channelId,
 	});
@@ -18,6 +18,7 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 	if (!channel)
 		throw new ApiError(404, "Channel not found when toggling subscription", {
 			channelId,
+			requestId,
 		});
 
 	const selfSubscription = await SubscriptionService.selfSubscriptionCheck(
@@ -25,21 +26,24 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 		channelId,
 	);
 	if (selfSubscription)
-		throw new ApiError(400, "You can not subscribe to yourself", { channelId });
+		throw new ApiError(400, "You can not subscribe to yourself", {
+			channelId,
+			requestId,
+		});
 
 	const subscription = await SubscriptionService.toggleSubscription(
 		channelId,
 		req.user._id,
 	);
 
-	subscriptionLogger.info("Subscription toggled", {
+	subscriptionLogger.info(`[Request] ${requestId} Subscription toggled`, {
 		userId: req.user._id,
 		channelId,
 		status: subscription.status,
 	});
 
 	if (subscription.status === "Subscribed") {
-		subscriptionLogger.info("User subscribed to channel", {
+		subscriptionLogger.info(`[Request] ${requestId} User subscribed to channel`, {
 			userId: req.user._id,
 			channelId,
 		});
@@ -47,7 +51,7 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 			.status(201)
 			.json(new ApiResponse(201, subscription.data, "Subscribed!!"));
 	} else {
-		subscriptionLogger.info("User unsubscribed from channel", {
+		subscriptionLogger.info(`[Request] ${requestId} User unsubscribed from channel`, {
 			userId: req.user._id,
 			channelId,
 		});
@@ -56,9 +60,10 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 });
 
 const getUserChannelSubscribers = asyncHandler(async (req, res) => {
+	const requestId = req.id;
 	const { channelId } = req.params;
 
-	subscriptionLogger.info("Fetching subscribers for channel", {
+	subscriptionLogger.info(`[Request] ${requestId} Fetching subscribers for channel`, {
 		channelId,
 		userId: req.user._id,
 	});
@@ -67,6 +72,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 	if (!isValidChannel) {
 		throw new ApiError(404, "Channel not found when fetching subscribers", {
 			channelId,
+			requestId,
 		});
 	}
 
@@ -74,7 +80,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 	const subscribers =
 		await SubscriptionService.getUserChannelSubscribers(channel);
 
-	subscriptionLogger.info("Fetched channel subscribers", {
+	subscriptionLogger.info(`[Request] ${requestId} Fetched channel subscribers`, {
 		channelId,
 		userId: req.user._id,
 		count: Array.isArray(subscribers) ? subscribers.length : undefined,
@@ -88,9 +94,10 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 });
 
 const getSubscribedChannels = asyncHandler(async (req, res) => {
+	const requestId = req.id;
 	const { subscriberId } = req.params;
 
-	subscriptionLogger.info("Fetching subscriptions for subscriber", {
+	subscriptionLogger.info(`[Request] ${requestId} Fetching subscriptions for subscriber`, {
 		subscriberId,
 		userId: req.user._id,
 	});
@@ -101,14 +108,14 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
 		throw new ApiError(
 			404,
 			"Subscriber not found when fetching subscriptions",
-			{ subscriberId },
+			{ subscriberId, requestId },
 		);
 
 	const subscriber = subscriberId || req.user._id;
 	const subscriptions =
 		await SubscriptionService.getSubscriberChannels(subscriber);
 
-	subscriptionLogger.info("Fetched subscriptions for subscriber", {
+	subscriptionLogger.info(`[Request] ${requestId} Fetched subscriptions for subscriber`, {
 		subscriberId: subscriber,
 		userId: req.user._id,
 		count: Array.isArray(subscriptions) ? subscriptions.length : undefined,
