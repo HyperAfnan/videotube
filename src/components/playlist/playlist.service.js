@@ -27,9 +27,8 @@ export const findUserById = serviceHandler(async (userId) => {
 });
 
 export const isPlaylistOwner = serviceHandler(
-	async (playlistMeta, userMeta) => {
-		return playlistMeta.owner.toString() === userMeta._id.toString();
-	},
+	async (playlistMeta, userMeta) =>
+		playlistMeta.owner.toString() === userMeta._id.toString(),
 );
 
 export const createPlaylistService = serviceHandler(

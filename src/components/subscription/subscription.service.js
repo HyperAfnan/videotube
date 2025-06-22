@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import { ObjectId } from "mongodb";
 import { serviceHandler } from "../../utils/handlers.js";
 import { User } from "../user/user.model.js";
 import { Subscription } from "./subscription.model.js";
@@ -11,9 +11,7 @@ export const findChannelById = serviceHandler(async (channelId) => {
 });
 
 export const selfSubscriptionCheck = serviceHandler(
-	async (userId, channelId) => {
-		return channelId === userId.toString();
-	},
+	async (userId, channelId) => channelId === userId.toString(),
 );
 
 export const toggleSubscription = serviceHandler(
@@ -53,47 +51,88 @@ export const toggleSubscription = serviceHandler(
 	},
 );
 
-// TODO: return only array of subscribers rather than full user objects
 export const getUserChannelSubscribers = serviceHandler(async (channelId) => {
 	subscriptionLogger.info("Fetching subscribers for channel", { channelId });
-	const subscribers = await User.aggregate([
-		{ $match: { _id: new mongoose.Types.ObjectId(String(channelId)) } },
+	const subscribers = await Subscription.aggregate([
+		{ $match: { channel: new ObjectId(String(channelId)) } },
 		{
 			$lookup: {
-				from: "subscriptions",
-				localField: "_id",
-				foreignField: "channel",
-				as: "subscribers",
+				from: "users",
+				localField: "subscriber",
+				foreignField: "_id",
+				as: "subscriberInfo",
 			},
 		},
-		{ $project: { username: 1, subscribers: 1, _id: 0 } },
+		{
+			$lookup: {
+				from: "users",
+				localField: "channel",
+				foreignField: "_id",
+				as: "channelInfo",
+				pipeline: [
+					{ $project: { _id: 1, username: 1, avatar: 1, fullName: 1 } },
+				],
+			},
+		},
+		{
+			$project: {
+				_id: 0,
+				channelInfo: { $arrayElemAt: ["$channelInfo", 0] },
+				subscriber: { $arrayElemAt: ["$subscriberInfo", 0] },
+			},
+		},
+		{ $group: { _id: "$channelInfo", subscribers: { $push: "$subscriber" } } },
+		{ $project: { _id: 0, channelInfo: "$_id", subscribers: 1 } },
 	]);
+
 	subscriptionLogger.info("Fetched channel subscribers", {
 		channelId,
-		count: Array.isArray(subscribers) ? subscribers.length : undefined,
+		count: Array.isArray(subscribers) ? subscribers.length : null,
 	});
 	return subscribers;
 });
 
-export const getSubscriberChannels = serviceHandler(async (subscriberId) => {
-	subscriptionLogger.info("Fetching subscriptions for subscriber", {
+export const getSubscribedChannels = serviceHandler(async (subscriberId) => {
+	subscriptionLogger.info("Fetching subscriptions for user", {
 		subscriberId,
 	});
-	const subscriptions = await User.aggregate([
-		{ $match: { _id: new mongoose.Types.ObjectId(String(subscriberId)) } },
+	const subscriptions = await Subscription.aggregate([
+		{ $match: { subscriber: new ObjectId(String(subscriberId)) } },
 		{
 			$lookup: {
-				from: "subscriptions",
-				localField: "_id",
-				foreignField: "subscriber",
-				as: "subscriptions",
+				from: "users",
+				localField: "subscriber",
+				foreignField: "_id",
+				as: "userInfo",
+				pipeline: [
+					{ $project: { _id: 1, username: 1, avatar: 1, fullName: 1 } },
+				],
 			},
 		},
-		{ $project: { username: 1, subscriptions: 1, _id: 0 } },
+		{
+			$lookup: {
+				from: "users",
+				localField: "channel",
+				foreignField: "_id",
+				as: "subscription",
+				pipeline: [
+					{ $project: { _id: 1, username: 1, avatar: 1, fullName: 1 } },
+				],
+			},
+		},
+		{
+			$project: {
+				_id: 0,
+				userInfo: { $arrayElemAt: ["$userInfo", 0] },
+				subscription: { $arrayElemAt: ["$subscription", 0] },
+			},
+		},
+		{ $group: { _id: "$userInfo", subscriptions: { $push: "$subscription" } } },
+		{ $project: { _id: 0, userInfo: "$_id", subscriptions: 1 } },
 	]);
-	subscriptionLogger.info("Fetched subscriptions for subscriber", {
+	subscriptionLogger.info("Fetched subscriptions for user", {
 		subscriberId,
-		count: Array.isArray(subscriptions) ? subscriptions.length : undefined,
+		count: Array.isArray(subscriptions) ? subscriptions.length : null,
 	});
 	return subscriptions;
 });

@@ -94,7 +94,9 @@ const getVideoById = asyncHandler(async (req, res) => {
 		req.user._id,
 	);
 
-	videoLogger.info(`[Request] ${requestId} Fetched video successfully`, { videoId });
+	videoLogger.info(`[Request] ${requestId} Fetched video successfully`, {
+		videoId,
+	});
 
 	return res
 		.status(200)
@@ -132,7 +134,9 @@ const updateVideo = asyncHandler(async (req, res) => {
 		req?.file?.path,
 	);
 
-	videoLogger.info(`[Request] ${requestId} Video updated successfully`, { videoId });
+	videoLogger.info(`[Request] ${requestId} Video updated successfully`, {
+		videoId,
+	});
 
 	return res
 		.status(200)
@@ -163,7 +167,9 @@ const deleteVideo = asyncHandler(async (req, res) => {
 
 	await VideoService.deleteVideo(video);
 
-	videoLogger.info(`[Request] ${requestId} Video deleted successfully`, { videoId });
+	videoLogger.info(`[Request] ${requestId} Video deleted successfully`, {
+		videoId,
+	});
 
 	return res.status(204).end();
 });
@@ -214,14 +220,19 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
 
 	const updateVideo = await VideoService.togglePublishStatus(video);
 
-	videoLogger.info(`[Request] ${requestId} Publish status toggled successfully`, {
-		videoId,
-		isPublished: updateVideo.isPublished,
-	});
+	videoLogger.info(
+		`[Request] ${requestId} Publish status toggled successfully`,
+		{
+			videoId,
+			isPublished: updateVideo.isPublished,
+		},
+	);
 
 	return res
 		.status(200)
-		.json(new ApiResponse(200, updateVideo, "successfully toggled publish status"));
+		.json(
+			new ApiResponse(200, updateVideo, "successfully toggled publish status"),
+		);
 });
 
 export {

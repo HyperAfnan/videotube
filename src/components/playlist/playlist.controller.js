@@ -9,9 +9,16 @@ const createPlaylist = asyncHandler(async (req, res) => {
 	const { name, description } = req.body;
 	const requestId = req.id;
 
-	playlistLogger.info(`[Request] ${requestId} Creating playlist`, { userId: req.user._id, name });
+	playlistLogger.info(`[Request] ${requestId} Creating playlist`, {
+		userId: req.user._id,
+		name,
+	});
 
-	const playlist = await PlaylistService.createPlaylistService(name, description, req.user);
+	const playlist = await PlaylistService.createPlaylistService(
+		name,
+		description,
+		req.user,
+	);
 
 	playlistLogger.info(`[Request] ${requestId} Playlist created successfully`, {
 		userId: req.user._id,
@@ -28,18 +35,26 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
 	const requestId = req.id;
 
 	if (userId) {
-		playlistLogger.info(`[Request] ${requestId} Fetching playlists for user by param`, {
-			requestedUserId: userId,
-		});
+		playlistLogger.info(
+			`[Request] ${requestId} Fetching playlists for user by param`,
+			{
+				requestedUserId: userId,
+			},
+		);
 		const playlistUser = await PlaylistService.findUserById(userId);
 		if (!playlistUser)
-			throw new ApiError(404, "User not found", { requestedUserId: userId, requestId });
+			throw new ApiError(404, "User not found", {
+				requestedUserId: userId,
+				requestId,
+			});
 	}
 
 	const user = userId || req.user._id;
 	const playlists = await PlaylistService.getUserPlaylistsService(user);
 
-	playlistLogger.info(`[Request] ${requestId} Fetched playlists for user`, { userId: user });
+	playlistLogger.info(`[Request] ${requestId} Fetched playlists for user`, {
+		userId: user,
+	});
 
 	return res
 		.status(200)
@@ -50,7 +65,9 @@ const getPlaylistById = asyncHandler(async (req, res) => {
 	const { playlistId } = req.params;
 	const requestId = req.id;
 
-	playlistLogger.info(`[Request] ${requestId} Fetching playlist by ID`, { playlistId });
+	playlistLogger.info(`[Request] ${requestId} Fetching playlist by ID`, {
+		playlistId,
+	});
 
 	const playlist = await PlaylistService.findPlaylistById(playlistId);
 	if (!playlist) {
@@ -79,12 +96,20 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 
 	const playlist = await PlaylistService.findPlaylistById(playlistId);
 	if (!playlist) {
-		throw new ApiError(404, "Playlist not found", { playlistId, videoId, requestId });
+		throw new ApiError(404, "Playlist not found", {
+			playlistId,
+			videoId,
+			requestId,
+		});
 	}
 
 	const video = await PlaylistService.findVideoById(videoId);
 	if (!video) {
-		throw new ApiError(404, "Video not found", { playlistId, videoId, requestId });
+		throw new ApiError(404, "Video not found", {
+			playlistId,
+			videoId,
+			requestId,
+		});
 	}
 
 	const isOwner = await PlaylistService.isPlaylistOwner(playlist, req.user);
@@ -96,18 +121,26 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 		);
 	}
 
-	const updatedPlaylist = await PlaylistService.addVideoToPlaylistService(playlist, video);
+	const updatedPlaylist = await PlaylistService.addVideoToPlaylistService(
+		playlist,
+		video,
+	);
 
 	if (updatedPlaylist.message) {
-		playlistLogger.info(`[Request] ${requestId} Video already in playlist or other message`, {
-			playlistId,
-			videoId,
-			userId: req.user._id,
-			message: updatedPlaylist.message,
-		});
+		playlistLogger.info(
+			`[Request] ${requestId} Video already in playlist or other message`,
+			{
+				playlistId,
+				videoId,
+				userId: req.user._id,
+				message: updatedPlaylist.message,
+			},
+		);
 		return res
 			.status(200)
-			.json(new ApiResponse(200, updatedPlaylist.playlist, updatedPlaylist.message));
+			.json(
+				new ApiResponse(200, updatedPlaylist.playlist, updatedPlaylist.message),
+			);
 	}
 
 	playlistLogger.info(`[Request] ${requestId} Video added to playlist`, {
@@ -118,7 +151,13 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
 
 	return res
 		.status(200)
-		.json(new ApiResponse(200, updatedPlaylist, "Successfully added video to playlist"));
+		.json(
+			new ApiResponse(
+				200,
+				updatedPlaylist,
+				"Successfully added video to playlist",
+			),
+		);
 });
 
 const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
@@ -133,12 +172,20 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 
 	const playlist = await PlaylistService.findPlaylistById(playlistId);
 	if (!playlist) {
-		throw new ApiError(404, "Playlist not found", { playlistId, videoId, requestId });
+		throw new ApiError(404, "Playlist not found", {
+			playlistId,
+			videoId,
+			requestId,
+		});
 	}
 
 	const video = await PlaylistService.findVideoById(videoId);
 	if (!video) {
-		throw new ApiError(404, "Video not found", { playlistId, videoId, requestId });
+		throw new ApiError(404, "Video not found", {
+			playlistId,
+			videoId,
+			requestId,
+		});
 	}
 
 	const isOwner = await PlaylistService.isPlaylistOwner(playlist, req.user);
@@ -150,7 +197,10 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 		);
 	}
 
-	const updatedPlaylist = await PlaylistService.removeVideoFromPlaylistService(playlist, video);
+	const updatedPlaylist = await PlaylistService.removeVideoFromPlaylistService(
+		playlist,
+		video,
+	);
 
 	playlistLogger.info(`[Request] ${requestId} Video removed from playlist`, {
 		playlistId,
@@ -160,7 +210,13 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 
 	return res
 		.status(200)
-		.json(new ApiResponse(200, updatedPlaylist, "Successfully removed video from playlist"));
+		.json(
+			new ApiResponse(
+				200,
+				updatedPlaylist,
+				"Successfully removed video from playlist",
+			),
+		);
 });
 
 const deletePlaylist = asyncHandler(async (req, res) => {
@@ -232,7 +288,9 @@ const updatePlaylist = asyncHandler(async (req, res) => {
 
 	return res
 		.status(200)
-		.json(new ApiResponse(200, updatedPlaylist, "Successfully updated playlist"));
+		.json(
+			new ApiResponse(200, updatedPlaylist, "Successfully updated playlist"),
+		);
 });
 
 export {

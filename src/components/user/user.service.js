@@ -123,7 +123,7 @@ export const registerUser = serviceHandler(
 		);
 
 		if (!createdUser) {
-			throw new ApiError(500, `User creation failed in DB `, { email });
+			throw new ApiError(500, "User creation failed in DB ", { email });
 		}
 
 		userServiceLogger.info("User created in DB", {

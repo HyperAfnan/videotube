@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { ApiError } from "../../utils/apiErrors.js";
 import { serviceHandler } from "../../utils/handlers.js";
 import { Tweet } from "../tweet/tweet.model.js";
+import { Like } from "../like/like.model.js";
 import { Video } from "../video/video.model.js";
 import { Comment } from "./comments.model.js";
 import { logger } from "../../utils/logger/index.js";
@@ -31,7 +32,7 @@ export const getVideoComments = serviceHandler(
 	async (page, limit, videoMeta, userMeta) => {
 		const customLabels = {
 			totalDocs: "totalComments",
-			docs: "video",
+			docs: "comments",
 			page: "currentPage",
 		};
 
@@ -57,28 +58,51 @@ export const getVideoComments = serviceHandler(
 		}
 
 		const pipeline = [
-			{ $match: { _id: new mongoose.Types.ObjectId(String(videoMeta._id)) } },
+			{ $match: { video: new mongoose.Types.ObjectId(String(videoMeta._id)) } },
 			{
 				$lookup: {
-					from: "comments",
-					localField: "_id",
-					foreignField: "video",
-					as: "comments",
+					from: "users",
+					localField: "user",
+					foreignField: "_id",
+					as: "user",
+					pipeline: [
+						{ $project: { username: 1, email: 1, avatar: 1, fullName: 1 } },
+					],
 				},
 			},
-			{ $project: { comments: 1, _id: 0, title: 1, owner: 1 } },
+			{
+				$lookup: {
+					from: "likes",
+					localField: "_id",
+					foreignField: "comment",
+					as: "likes",
+				},
+			},
+			{
+				$project: {
+					user: { $arrayElemAt: ["$user", 0] },
+					content: 1,
+					likes: { $size: "$likes" },
+					_id: 1,
+					createdAt: 1,
+					updatedAt: 1,
+				},
+			},
 		];
 
-		const aggregation = Video.aggregate(pipeline);
+		const aggregation = Comment.aggregate(pipeline);
 
-		const data = await Video.aggregatePaginate(aggregation, options).catch(
+		const data = await Comment.aggregatePaginate(aggregation, options).catch(
 			(err) => {
 				commentLogger.error("Error in getVideoComments", {
 					error: err,
 					videoId: videoMeta._id,
 					userId: userMeta._id,
 				});
-				throw new ApiError(500, "Internal server error");
+				throw new ApiError(500, "Error in getVideoComments", {
+					error: err,
+					videoId: videoMeta._id,
+				});
 			},
 		);
 
@@ -95,7 +119,7 @@ export const getTweetComments = serviceHandler(
 	async (page, limit, tweetMeta) => {
 		const customLabels = {
 			totalDocs: "totalComments",
-			docs: "tweet",
+			docs: "comments",
 			page: "currentPage",
 		};
 		const options = { page, limit, customLabels };
@@ -107,21 +131,41 @@ export const getTweetComments = serviceHandler(
 		});
 
 		const pipeline = [
-			{ $match: { _id: new mongoose.Types.ObjectId(String(tweetMeta._id)) } },
+			{ $match: { tweet: new mongoose.Types.ObjectId(String(tweetMeta._id)) } },
 			{
 				$lookup: {
-					from: "comments",
-					localField: "_id",
-					foreignField: "tweet",
-					as: "comments",
+					from: "users",
+					localField: "user",
+					foreignField: "_id",
+					as: "user",
+					pipeline: [
+						{ $project: { username: 1, email: 1, avatar: 1, fullName: 1 } },
+					],
 				},
 			},
-			{ $project: { comments: 1, _id: 0, title: 1, owner: 1 } },
+			{
+				$lookup: {
+					from: "likes",
+					localField: "_id",
+					foreignField: "comment",
+					as: "likes",
+				},
+			},
+			{
+				$project: {
+					user: { $arrayElemAt: ["$user", 0] },
+					content: 1,
+					likes: { $size: "$likes" },
+					_id: 1,
+					createdAt: 1,
+					updatedAt: 1,
+				},
+			},
 		];
 
-		const aggregation = Tweet.aggregate(pipeline);
+		const aggregation = Comment.aggregate(pipeline);
 
-		const data = await Tweet.aggregatePaginate(aggregation, options).catch(
+		const data = await Comment.aggregatePaginate(aggregation, options).catch(
 			(err) => {
 				commentLogger.error("Error in getTweetComments", {
 					error: err,
@@ -212,13 +256,13 @@ export const updateComment = serviceHandler(async (commentMeta, content) => {
 	);
 	commentLogger.info("Updated comment", {
 		commentId: commentMeta._id,
-		updated: !!comment,
+		updated: Boolean(comment),
 	});
 	return comment;
 });
 
-// TODO:delete corresponding likes too
 export const deleteComment = serviceHandler(async (commentMeta) => {
 	await Comment.findByIdAndDelete(commentMeta._id);
+	await Like.deleteMany({ comment: commentMeta._id });
 	commentLogger.info("Deleted comment", { commentId: commentMeta._id });
 });
