@@ -43,7 +43,10 @@ const registerUser = asyncHandler(async (req, res) => {
 		avatarLocalPath,
 		coverImageLocalPath,
 	);
-	userLogger.info(`[Request] ${requestId} Registration successful`, { email, userId: user._id });
+	userLogger.info(`[Request] ${requestId} Registration successful`, {
+		email,
+		userId: user._id,
+	});
 
 	return res
 		.status(201)
@@ -59,14 +62,22 @@ const confirmEmail = asyncHandler(async (req, res) => {
 		confirmationToken,
 	});
 
-	const isTokenValid = await userService.isConfirmationTokenValid(confirmationToken);
+	const isTokenValid =
+		await userService.isConfirmationTokenValid(confirmationToken);
 	if (!isTokenValid.status) {
-		throw new ApiError(400, isTokenValid.message, { confirmationToken, requestId });
+		throw new ApiError(400, isTokenValid.message, {
+			confirmationToken,
+			requestId,
+		});
 	}
-	userLogger.info(`[Request] ${requestId} Token is valid`, { userId: isTokenValid.userMeta._id });
+	userLogger.info(`[Request] ${requestId} Token is valid`, {
+		userId: isTokenValid.userMeta._id,
+	});
 
 	const confirmEmail = await userService.confirmEmail(isTokenValid.userMeta);
-	userLogger.info(`[Request] ${requestId} Email confirmed`, { userId: isTokenValid.userMeta._id });
+	userLogger.info(`[Request] ${requestId} Email confirmed`, {
+		userId: isTokenValid.userMeta._id,
+	});
 
 	return res
 		.status(200)
@@ -79,10 +90,16 @@ const loginUser = asyncHandler(async (req, res) => {
 	const { email } = req.body;
 	const requestId = req.id;
 
-	userLogger.info(`[Request] ${requestId} Login attempt`, { route: "POST /users/login", email });
+	userLogger.info(`[Request] ${requestId} Login attempt`, {
+		route: "POST /users/login",
+		email,
+	});
 
 	const loginService = await userService.loginUser(email, req.body.password);
-	userLogger.info(`[Request] ${requestId} Login successful`, { email, userId: loginService.user._id });
+	userLogger.info(`[Request] ${requestId} Login successful`, {
+		email,
+		userId: loginService.user._id,
+	});
 
 	return res
 		.status(200)
@@ -100,7 +117,9 @@ const logoutUser = asyncHandler(async (req, res) => {
 	});
 
 	await userService.logoutUser(req.user._id);
-	userLogger.info(`[Request] ${requestId} Logout successful`, { userId: req.user._id });
+	userLogger.info(`[Request] ${requestId} Logout successful`, {
+		userId: req.user._id,
+	});
 
 	return res
 		.status(204)
@@ -118,7 +137,9 @@ const deleteUser = asyncHandler(async (req, res) => {
 	});
 
 	await userService.deleteUser(req.user._id);
-	userLogger.info(`[Request] ${requestId} User deleted successfully`, { userId: req.user._id });
+	userLogger.info(`[Request] ${requestId} User deleted successfully`, {
+		userId: req.user._id,
+	});
 
 	return res
 		.status(204)
@@ -145,7 +166,9 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 		userId: isTokenValid.userMeta._id,
 	});
 
-	const { refreshToken, accessToken } = await userService.refreshAccessToken(isTokenValid.userMeta);
+	const { refreshToken, accessToken } = await userService.refreshAccessToken(
+		isTokenValid.userMeta,
+	);
 	userLogger.info(`[Request] ${requestId} Access token refreshed`, {
 		userId: isTokenValid.userMeta._id,
 	});
@@ -154,7 +177,13 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 		.status(200)
 		.cookie("accessToken", accessToken, cookieOptions)
 		.cookie("refreshToken", refreshToken, cookieOptions)
-		.json(new ApiResponse(200, { accessToken, refreshToken }, "Access Token refreshed"));
+		.json(
+			new ApiResponse(
+				200,
+				{ accessToken, refreshToken },
+				"Access Token refreshed",
+			),
+		);
 });
 
 const forgotPassword = asyncHandler(async (req, res) => {
@@ -167,7 +196,9 @@ const forgotPassword = asyncHandler(async (req, res) => {
 	});
 
 	await userService.forgotPassword(email);
-	userLogger.info(`[Request] ${requestId} Password reset email sent`, { email });
+	userLogger.info(`[Request] ${requestId} Password reset email sent`, {
+		email,
+	});
 
 	return res.status(204).end();
 });
@@ -180,8 +211,14 @@ const changePassword = asyncHandler(async (req, res) => {
 		userId: req.user._id,
 	});
 
-	await userService.changePassword(req.user._id, req.body.oldPassword, req.body.newPassword);
-	userLogger.info(`[Request] ${requestId} Password changed successfully`, { userId: req.user._id });
+	await userService.changePassword(
+		req.user._id,
+		req.body.oldPassword,
+		req.body.newPassword,
+	);
+	userLogger.info(`[Request] ${requestId} Password changed successfully`, {
+		userId: req.user._id,
+	});
 
 	return res.status(204).end();
 });
@@ -196,7 +233,9 @@ const resetPassword = asyncHandler(async (req, res) => {
 	});
 
 	await userService.resetPassword(token, req.body.newPassword);
-	userLogger.info(`[Request] ${requestId} Password reset successfully`, { token });
+	userLogger.info(`[Request] ${requestId} Password reset successfully`, {
+		token,
+	});
 
 	return res.status(204).end();
 });
@@ -212,7 +251,8 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 		username,
 	});
 
-	const isUserExistsWithUsername = await userService.findUserByUsername(username);
+	const isUserExistsWithUsername =
+		await userService.findUserByUsername(username);
 	if (isUserExistsWithUsername) {
 		throw new ApiError(400, "User already exists with this username", {
 			username,
@@ -220,10 +260,18 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 		});
 	}
 
-	const user = await userService.updateAccountDetails(req.user._id, fullName, username);
-	userLogger.info(`[Request] ${requestId} Account details updated`, { userId: req.user._id });
+	const user = await userService.updateAccountDetails(
+		req.user._id,
+		fullName,
+		username,
+	);
+	userLogger.info(`[Request] ${requestId} Account details updated`, {
+		userId: req.user._id,
+	});
 
-	return res.status(200).json(new ApiResponse(200, user, "Account details updated"));
+	return res
+		.status(200)
+		.json(new ApiResponse(200, user, "Account details updated"));
 });
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
@@ -236,10 +284,17 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 		avatarLocalPath,
 	});
 
-	const user = await userService.updateUserAvatar(req.user._id, avatarLocalPath);
-	userLogger.info(`[Request] ${requestId} Avatar updated successfully`, { userId: req.user._id });
+	const user = await userService.updateUserAvatar(
+		req.user._id,
+		avatarLocalPath,
+	);
+	userLogger.info(`[Request] ${requestId} Avatar updated successfully`, {
+		userId: req.user._id,
+	});
 
-	return res.status(200).json(new ApiResponse(200, user, "successfully updated avatar"));
+	return res
+		.status(200)
+		.json(new ApiResponse(200, user, "successfully updated avatar"));
 });
 
 const updateUserCoverImg = asyncHandler(async (req, res) => {
@@ -252,10 +307,17 @@ const updateUserCoverImg = asyncHandler(async (req, res) => {
 		coverLocalPath,
 	});
 
-	const user = await userService.updateCoverAvatar(req.user._id, coverLocalPath);
-	userLogger.info(`[Request] ${requestId} Cover image updated successfully`, { userId: req.user._id });
+	const user = await userService.updateCoverAvatar(
+		req.user._id,
+		coverLocalPath,
+	);
+	userLogger.info(`[Request] ${requestId} Cover image updated successfully`, {
+		userId: req.user._id,
+	});
 
-	return res.status(200).json(new ApiResponse(200, user, "successfully updated cover image"));
+	return res
+		.status(200)
+		.json(new ApiResponse(200, user, "successfully updated cover image"));
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
@@ -266,7 +328,9 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 		userId: req.user._id,
 	});
 
-	return res.status(200).json(new ApiResponse(200, req.user, "Current User Fetched successfully"));
+	return res
+		.status(200)
+		.json(new ApiResponse(200, req.user, "Current User Fetched successfully"));
 });
 
 const getUserChannelProfile = asyncHandler(async (req, res) => {
@@ -282,9 +346,13 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 	const userMeta = isUsernameExists || req.user;
 
 	const channel = await userService.getUserChannelProfile(userMeta);
-	userLogger.info(`[Request] ${requestId} Channel profile fetched`, { userId: userMeta._id });
+	userLogger.info(`[Request] ${requestId} Channel profile fetched`, {
+		userId: userMeta._id,
+	});
 
-	return res.status(200).json(new ApiResponse(200, channel, "Channel fetched successfully"));
+	return res
+		.status(200)
+		.json(new ApiResponse(200, channel, "Channel fetched successfully"));
 });
 
 const getUserWatchHistory = asyncHandler(async (req, res) => {
@@ -296,9 +364,13 @@ const getUserWatchHistory = asyncHandler(async (req, res) => {
 	});
 
 	const user = await userService.getUserwatchHistory(req.user._id);
-	userLogger.info(`[Request] ${requestId} Watch history fetched`, { userId: req.user._id });
+	userLogger.info(`[Request] ${requestId} Watch history fetched`, {
+		userId: req.user._id,
+	});
 
-	return res.status(200).json(new ApiResponse(200, user, "watch history fetched successfully"));
+	return res
+		.status(200)
+		.json(new ApiResponse(200, user, "watch history fetched successfully"));
 });
 
 export {

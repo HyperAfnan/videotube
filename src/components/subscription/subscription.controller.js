@@ -43,18 +43,24 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 	});
 
 	if (subscription.status === "Subscribed") {
-		subscriptionLogger.info(`[Request] ${requestId} User subscribed to channel`, {
-			userId: req.user._id,
-			channelId,
-		});
+		subscriptionLogger.info(
+			`[Request] ${requestId} User subscribed to channel`,
+			{
+				userId: req.user._id,
+				channelId,
+			},
+		);
 		return res
 			.status(201)
 			.json(new ApiResponse(201, subscription.data, "Subscribed!!"));
 	} else {
-		subscriptionLogger.info(`[Request] ${requestId} User unsubscribed from channel`, {
-			userId: req.user._id,
-			channelId,
-		});
+		subscriptionLogger.info(
+			`[Request] ${requestId} User unsubscribed from channel`,
+			{
+				userId: req.user._id,
+				channelId,
+			},
+		);
 		return res.status(204).end();
 	}
 });
@@ -63,10 +69,13 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 	const requestId = req.id;
 	const { channelId } = req.params;
 
-	subscriptionLogger.info(`[Request] ${requestId} Fetching subscribers for channel`, {
-		channelId,
-		userId: req.user._id,
-	});
+	subscriptionLogger.info(
+		`[Request] ${requestId} Fetching subscribers for channel`,
+		{
+			channelId,
+			userId: req.user._id,
+		},
+	);
 
 	const isValidChannel = await SubscriptionService.findChannelById(channelId);
 	if (!isValidChannel) {
@@ -80,11 +89,14 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 	const subscribers =
 		await SubscriptionService.getUserChannelSubscribers(channel);
 
-	subscriptionLogger.info(`[Request] ${requestId} Fetched channel subscribers`, {
-		channelId,
-		userId: req.user._id,
-		count: Array.isArray(subscribers) ? subscribers.length : undefined,
-	});
+	subscriptionLogger.info(
+		`[Request] ${requestId} Fetched channel subscribers`,
+		{
+			channelId,
+			userId: req.user._id,
+			count: Array.isArray(subscribers) ? subscribers.length : null,
+		},
+	);
 
 	return res
 		.status(200)
@@ -97,10 +109,13 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
 	const requestId = req.id;
 	const { subscriberId } = req.params;
 
-	subscriptionLogger.info(`[Request] ${requestId} Fetching subscriptions for subscriber`, {
-		subscriberId,
-		userId: req.user._id,
-	});
+	subscriptionLogger.info(
+		`[Request] ${requestId} Fetching subscriptions for subscriber`,
+		{
+			subscriberId,
+			userId: req.user._id,
+		},
+	);
 
 	const isValidSubscriber =
 		await SubscriptionService.findChannelById(subscriberId);
@@ -113,13 +128,16 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
 
 	const subscriber = subscriberId || req.user._id;
 	const subscriptions =
-		await SubscriptionService.getSubscriberChannels(subscriber);
+		await SubscriptionService.getSubscribedChannels(subscriber);
 
-	subscriptionLogger.info(`[Request] ${requestId} Fetched subscriptions for subscriber`, {
-		subscriberId: subscriber,
-		userId: req.user._id,
-		count: Array.isArray(subscriptions) ? subscriptions.length : undefined,
-	});
+	subscriptionLogger.info(
+		`[Request] ${requestId} Fetched subscriptions for subscriber`,
+		{
+			subscriberId: subscriber,
+			userId: req.user._id,
+			count: Array.isArray(subscriptions) ? subscriptions.length : null,
+		},
+	);
 
 	return res
 		.status(200)

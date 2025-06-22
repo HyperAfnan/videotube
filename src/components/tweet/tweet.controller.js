@@ -13,7 +13,7 @@ const createTweet = asyncHandler(async (req, res) => {
 	tweetLogger.info(`[Request] ${requestId} Creating tweet`, {
 		userId: req.user._id,
 		title,
-		hasImage: !!contentImage,
+		hasImage: Boolean(contentImage),
 	});
 
 	const tweet = await tweetService.createTweet(
@@ -98,7 +98,9 @@ const getUserTweets = asyncHandler(async (req, res) => {
 	const requestId = req.id;
 	const { userId } = req.params;
 
-	tweetLogger.info(`[Request] ${requestId} Fetching tweets for user`, { userId });
+	tweetLogger.info(`[Request] ${requestId} Fetching tweets for user`, {
+		userId,
+	});
 
 	const user = await tweetService.findUserById(userId);
 	if (!user) {

@@ -19,6 +19,7 @@ This project follows a modular, service-oriented architecture, designed for scal
   - **components/**  
     Feature-based modules (e.g., user, video, tweet, comment, playlist, like, subscription, dashboard, health).  
     Each feature typically includes:
+
     - `*.controller.js`: Handles HTTP requests and responses.
     - `*.service.js`: Business logic and orchestration.
     - `*.model.js`: Data models (e.g., Mongoose schemas).
@@ -33,6 +34,7 @@ This project follows a modular, service-oriented architecture, designed for scal
 
   - **microservices/**  
     Contains worker processes for asynchronous tasks, such as:
+
     - Email processing (including templates and dead-letter handling)
     - User-related background processing
 

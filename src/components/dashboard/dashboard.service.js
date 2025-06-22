@@ -4,8 +4,6 @@ import mongoose from "mongoose";
 import { logger } from "../../utils/logger/index.js";
 const dashboardLogger = logger.child({ module: "dashboard.service" });
 
-// BUG: showing total likes to 1, while video likes array is empty
-// NOTE: use $arrayElemAt instead of $unwind to avoid the issue
 export const getChannelStats = serviceHandler(async (userMeta) => {
 	dashboardLogger.info("Fetching channel stats (aggregate)", {
 		userId: userMeta._id,
@@ -87,7 +85,7 @@ export const getChannelStats = serviceHandler(async (userMeta) => {
 	]);
 	dashboardLogger.info("Fetched channel stats (aggregate)", {
 		userId: userMeta._id,
-		statsCount: Array.isArray(stats) ? stats.length : undefined,
+		statsCount: Array.isArray(stats) ? stats.length : null,
 		hasStats: Array.isArray(stats) ? stats.length > 0 : false,
 	});
 	return stats;
@@ -113,13 +111,11 @@ export const getChannelVideos = serviceHandler(async (userMeta) => {
 	]);
 	dashboardLogger.info("Fetched channel videos (aggregate)", {
 		userId: userMeta._id,
-		videoBatchCount: Array.isArray(channelVideos)
-			? channelVideos.length
-			: undefined,
+		videoBatchCount: Array.isArray(channelVideos) ? channelVideos.length : null,
 		totalVideos:
 			Array.isArray(channelVideos) && channelVideos[0]
 				? channelVideos[0].totalVideos
-				: undefined,
+				: null,
 	});
 	return channelVideos;
 });

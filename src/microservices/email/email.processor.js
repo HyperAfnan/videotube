@@ -26,8 +26,8 @@ export const sendEmail = serviceHandler(async (to, subject, html) => {
 		.catch((err) =>
 			logger.error(`Error sending email: ${err.message} `, {
 				error: err,
-				to: to,
-				subject: subject,
+				to,
+				subject,
 			}),
 		);
 });

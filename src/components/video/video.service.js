@@ -140,12 +140,13 @@ export const getUserVideoById = serviceHandler(
 			video: videoId,
 			isWatched: false, // will set to true when user watches full video, (will be handled by the video player )
 			watchDates: [{ date: new Date(), duration: 0 }],
+			// eslint-disable-next-line
 		}).catch(async (_) => {
 			await WatchHistory.findOneAndUpdate(
 				{ user: userId, video: videoId },
 				{ $push: { watchDates: { date: new Date(), duration: 0 } } },
 			);
-         });
+		});
 
 		videoServiceLogger.info("Fetched and updated user video by ID", {
 			videoId,

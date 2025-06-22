@@ -10,12 +10,15 @@ const getVideoComments = asyncHandler(async (req, res) => {
 	const { id } = req.params;
 	const requestId = req.id;
 
-	commentLogger.info(`[Request] ${requestId} GET /comments/video - Fetching comments`, {
-		videoId: id,
-		page,
-		limit,
-		userId: req.user?._id,
-	});
+	commentLogger.info(
+		`[Request] ${requestId} GET /comments/video - Fetching comments`,
+		{
+			videoId: id,
+			page,
+			limit,
+			userId: req.user?._id,
+		},
+	);
 
 	const video = await CommentService.getVideoById(id);
 	if (!video) {
@@ -29,11 +32,14 @@ const getVideoComments = asyncHandler(async (req, res) => {
 		req.user,
 	);
 
-	commentLogger.info(`[Request] ${requestId} Fetched video comments successfully`, {
-		videoId: id,
-		userId: req.user?._id,
-		commentCount: data?.length,
-	});
+	commentLogger.info(
+		`[Request] ${requestId} Fetched video comments successfully`,
+		{
+			videoId: id,
+			userId: req.user?._id,
+			commentCount: data?.length,
+		},
+	);
 
 	return res
 		.status(200)
@@ -45,12 +51,15 @@ const getTweetComments = asyncHandler(async (req, res) => {
 	const { id } = req.params;
 	const requestId = req.id;
 
-	commentLogger.info(`[Request] ${requestId} GET /comments/tweet - Fetching comments`, {
-		tweetId: id,
-		page,
-		limit,
-		userId: req.user?._id,
-	});
+	commentLogger.info(
+		`[Request] ${requestId} GET /comments/tweet - Fetching comments`,
+		{
+			tweetId: id,
+			page,
+			limit,
+			userId: req.user?._id,
+		},
+	);
 
 	const tweet = await CommentService.getTweetById(id);
 	if (!tweet) {
@@ -64,11 +73,14 @@ const getTweetComments = asyncHandler(async (req, res) => {
 		req.user,
 	);
 
-	commentLogger.info(`[Request] ${requestId} Fetched tweet comments successfully`, {
-		tweetId: id,
-		userId: req.user?._id,
-		commentCount: data?.length,
-	});
+	commentLogger.info(
+		`[Request] ${requestId} Fetched tweet comments successfully`,
+		{
+			tweetId: id,
+			userId: req.user?._id,
+			commentCount: data?.length,
+		},
+	);
 
 	return res
 		.status(200)
@@ -80,10 +92,13 @@ const addVideoComment = asyncHandler(async (req, res) => {
 	const { id } = req.params;
 	const requestId = req.id;
 
-	commentLogger.info(`[Request] ${requestId} POST /comments/video - Adding comment`, {
-		videoId: id,
-		userId: req.user?._id,
-	});
+	commentLogger.info(
+		`[Request] ${requestId} POST /comments/video - Adding comment`,
+		{
+			videoId: id,
+			userId: req.user?._id,
+		},
+	);
 
 	const video = await CommentService.getVideoById(id);
 	if (!video) {
@@ -112,10 +127,13 @@ const addTweetComment = asyncHandler(async (req, res) => {
 	const { id } = req.params;
 	const requestId = req.id;
 
-	commentLogger.info(`[Request] ${requestId} POST /comments/tweet - Adding comment`, {
-		tweetId: id,
-		userId: req.user?._id,
-	});
+	commentLogger.info(
+		`[Request] ${requestId} POST /comments/tweet - Adding comment`,
+		{
+			tweetId: id,
+			userId: req.user?._id,
+		},
+	);
 
 	const tweet = await CommentService.getTweetById(id);
 	if (!tweet) {
@@ -144,10 +162,13 @@ const updateComment = asyncHandler(async (req, res) => {
 	const { commentId } = req.params;
 	const requestId = req.id;
 
-	commentLogger.info(`[Request] ${requestId} PATCH /comments/:commentId - Updating comment`, {
-		commentId,
-		userId: req.user?._id,
-	});
+	commentLogger.info(
+		`[Request] ${requestId} PATCH /comments/:commentId - Updating comment`,
+		{
+			commentId,
+			userId: req.user?._id,
+		},
+	);
 
 	const comment = await CommentService.getCommentById(commentId);
 	if (!comment) {
@@ -178,10 +199,13 @@ const deleteComment = asyncHandler(async (req, res) => {
 	const { commentId } = req.params;
 	const requestId = req.id;
 
-	commentLogger.info(`[Request] ${requestId} DELETE /comments/:commentId - Deleting comment`, {
-		commentId,
-		userId: req.user?._id,
-	});
+	commentLogger.info(
+		`[Request] ${requestId} DELETE /comments/:commentId - Deleting comment`,
+		{
+			commentId,
+			userId: req.user?._id,
+		},
+	);
 
 	const comment = await CommentService.getCommentById(commentId);
 	if (!comment) {

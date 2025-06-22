@@ -14,9 +14,12 @@ const getChannelStats = asyncHandler(async (req, res) => {
 
 	const stats = await DashboardService.getChannelStats(req.user._id);
 
-	dashboardLogger.info(`[Request] ${requestId} Fetched channel stats successfully`, {
-		userId: req.user._id,
-	});
+	dashboardLogger.info(
+		`[Request] ${requestId} Fetched channel stats successfully`,
+		{
+			userId: req.user._id,
+		},
+	);
 
 	return res
 		.status(200)
@@ -32,10 +35,13 @@ const getChannelVideos = asyncHandler(async (req, res) => {
 
 	const channelVideos = await DashboardService.getChannelVideos(req.user._id);
 
-	dashboardLogger.info(`[Request] ${requestId} Fetched channel videos successfully`, {
-		userId: req.user._id,
-		videoCount: Array.isArray(channelVideos) ? channelVideos.length : undefined,
-	});
+	dashboardLogger.info(
+		`[Request] ${requestId} Fetched channel videos successfully`,
+		{
+			userId: req.user._id,
+			videoCount: Array.isArray(channelVideos) ? channelVideos.length : null,
+		},
+	);
 
 	return res
 		.status(200)
