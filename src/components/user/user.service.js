@@ -206,9 +206,9 @@ export const loginUser = serviceHandler(async (email, password) => {
 	}
 
 	const isPasswordCorrect = await user.isPasswordCorrect(password);
-	// if (!isPasswordCorrect) {
-	// 	throw new ApiError(401, "Invalid User Credentials", { email });
-	// }
+	if (!isPasswordCorrect) {
+		throw new ApiError(401, "Invalid User Credentials", { email });
+	}
 
 	const { accessToken, refreshToken } = await generateTokens(user);
 
