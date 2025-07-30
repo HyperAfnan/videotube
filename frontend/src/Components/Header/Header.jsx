@@ -1,8 +1,10 @@
 import { Search } from "lucide-react";
 const image = "../../../public/logo.webp";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function Header() {
+   const isAuthenticated = useSelector((state) => state.auth?.status);
    return (
       <div className="border-b-2 border-b-black flex items-center justify-center p-2 font-roboto ">
          <div className="w-[170px]">
@@ -16,7 +18,11 @@ export default function Header() {
                <input name="search" className=" w-xl focus:outline-none " />
             </div>
          </div>
-         <div className="flex items-center justify-center w-2xs space-x-4 text-white text-large ">
+         { isAuthenticated ? ( 
+         <div>
+            <span>User logged in</span>
+         </div>
+         ) : ( <div className="flex items-center justify-center w-2xs space-x-4 text-white text-large ">
             <Link to="/login">
                <button className=" bg-black px-5 py-2 rounded-md border-2 border-gray-200 ">
                   Login
@@ -27,7 +33,7 @@ export default function Header() {
                   Sign Up
                </button>
             </Link>
-         </div>
+         </div> ) }
       </div>
    );
 }
