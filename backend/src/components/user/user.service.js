@@ -96,23 +96,26 @@ export const isConfirmationTokenValid = serviceHandler(
 
 export const registerUser = serviceHandler(
 	async (
-		fullName,
+		fullname,
 		email,
 		username,
 		password,
 		avatarLocalPath,
 		coverImageLocalPath,
 	) => {
-		const avatar = await uploadImageOnCloudinary(avatarLocalPath);
 
 		let coverImage;
 		if (coverImageLocalPath)
 			coverImage = await uploadImageOnCloudinary(coverImageLocalPath);
 
+      let avatarImage;
+      if (avatarLocalPath)
+         avatarImage = await uploadImageOnCloudinary(avatarLocalPath);
+
 		const user = await User.create({
-			fullName,
+			fullname,
 			email,
-			avatar: avatar.secure_url,
+			avatar: avatarImage?.secure_url || "",
 			coverImage: coverImage?.secure_url || "",
 			username,
 			password,
@@ -294,17 +297,17 @@ export const changePassword = serviceHandler(
 );
 
 export const updateAccountDetails = serviceHandler(
-	async (userId, fullName, username) => {
+	async (userId, fullname, username) => {
 		const user = await User.findByIdAndUpdate(
 			userId,
-			{ $set: { fullName, username } },
+			{ $set: { fullname, username } },
 			{ new: true },
 		).select("-password -refreshToken");
 
 		userServiceLogger.info("Account details updated", {
 			userId,
 			username,
-			fullName,
+			fullname,
 		});
 		return user;
 	},
@@ -392,7 +395,7 @@ export const getUserChannelProfile = serviceHandler(async (userMeta) => {
 		},
 		{
 			$project: {
-				fullName: 1,
+				fullname: 1,
 				username: 1,
 				subscribersCount: 1,
 				subscribedToCount: 1,
@@ -432,7 +435,7 @@ export const getUserwatchHistory = serviceHandler(async (userId) => {
 							pipeline: [
 								{
 									$project: {
-										fullName: 1,
+										fullname: 1,
 										username: 1,
 										avatar: 1,
 									},

@@ -14,7 +14,7 @@ const { body, cookie, param } = new ExpressValidator({
 });
 
 export const registerValidator = [
-	body("fullName")
+	body("fullname")
 		.notEmpty()
 		.withMessage("Fulllname is required")
 		.isString()
@@ -62,7 +62,7 @@ export const registerationFilesValidator = (req, _, next) => {
 					`Avatar image must be one of these types: ${supportedImageTypes.join(", ")}`,
 				);
 			}
-		} else throw new ApiError(400, "Avatar image is required");
+		}
 
 		if (req?.files?.coverImage && req?.files?.coverImage?.length > 0) {
 			const coverImageFileExt = path
@@ -166,7 +166,7 @@ export const forgotPasswordValidator = [
 export const updateAccountDetailsValidator = [
 	oneOf(
 		[
-			body("fullName").isString().withMessage("Name must be a string").trim(),
+			body("fullname").isString().withMessage("Name must be a string").trim(),
 			body("username")
 				.isString()
 				.withMessage("Username must be a string")

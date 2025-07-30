@@ -14,14 +14,14 @@ const userSchema = new Schema(
 			index: true,
 		},
 		email: { type: String, required: true, unique: true, trim: true },
-		fullName: {
+		fullname: {
 			type: String,
 			required: true,
 			trim: true,
 			lowercase: true,
 			index: true,
 		},
-		avatar: { type: String, required: true },
+		avatar: { type: String },
 		coverImage: { type: String },
 		password: { type: String, required: true },
 		refreshToken: { type: String },

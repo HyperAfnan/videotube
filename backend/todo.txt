@@ -1,0 +1,1 @@
+- [x] make avatar non required in registration

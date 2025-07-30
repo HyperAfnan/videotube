@@ -70,7 +70,7 @@ export const getUserChannelSubscribers = serviceHandler(async (channelId) => {
 				foreignField: "_id",
 				as: "channelInfo",
 				pipeline: [
-					{ $project: { _id: 1, username: 1, avatar: 1, fullName: 1 } },
+					{ $project: { _id: 1, username: 1, avatar: 1, fullame: 1 } },
 				],
 			},
 		},
@@ -105,7 +105,7 @@ export const getSubscribedChannels = serviceHandler(async (subscriberId) => {
 				foreignField: "_id",
 				as: "userInfo",
 				pipeline: [
-					{ $project: { _id: 1, username: 1, avatar: 1, fullName: 1 } },
+					{ $project: { _id: 1, username: 1, avatar: 1, fullname: 1 } },
 				],
 			},
 		},
@@ -116,7 +116,7 @@ export const getSubscribedChannels = serviceHandler(async (subscriberId) => {
 				foreignField: "_id",
 				as: "subscription",
 				pipeline: [
-					{ $project: { _id: 1, username: 1, avatar: 1, fullName: 1 } },
+					{ $project: { _id: 1, username: 1, avatar: 1, fullname: 1 } },
 				],
 			},
 		},

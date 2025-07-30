@@ -5,6 +5,8 @@ const ENV = {
 	NODE_ENV: process.env.NODE_ENV || "development",
 	PORT: parseInt(process.env.PORT, 10) || 5000,
 
+   CORS_ORIGIN: process.env.CORS_ORIGIN,
+
 	MONGODB_URI: process.env.MONGODB_URI,
 
 	ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
@@ -50,6 +52,7 @@ const requiredKeys = [
 	"REDIS_PORT",
 	"BREVO_USERNAME",
 	"BREVO_PASSWORD",
+   "CORS_ORIGIN",
 ];
 
 for (const key of requiredKeys) {

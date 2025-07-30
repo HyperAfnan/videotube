@@ -73,7 +73,7 @@ export const getChannelStats = serviceHandler(async (userMeta) => {
 		},
 		{
 			$project: {
-				fullName: 1,
+				fullname: 1,
 				username: 1,
 				avatar: 1,
 				videos: 1,

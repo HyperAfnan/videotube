@@ -66,7 +66,7 @@ export const getVideoComments = serviceHandler(
 					foreignField: "_id",
 					as: "user",
 					pipeline: [
-						{ $project: { username: 1, email: 1, avatar: 1, fullName: 1 } },
+						{ $project: { username: 1, email: 1, avatar: 1, fullname: 1 } },
 					],
 				},
 			},
@@ -139,7 +139,7 @@ export const getTweetComments = serviceHandler(
 					foreignField: "_id",
 					as: "user",
 					pipeline: [
-						{ $project: { username: 1, email: 1, avatar: 1, fullName: 1 } },
+						{ $project: { username: 1, email: 1, avatar: 1, fullname: 1 } },
 					],
 				},
 			},

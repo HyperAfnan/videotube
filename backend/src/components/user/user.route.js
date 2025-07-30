@@ -56,7 +56,7 @@ const router = Router();
  *       required:
  *         - username
  *         - email
- *         - fullName
+ *         - fullname
  *         - password
  *       properties:
  *         _id:
@@ -69,7 +69,7 @@ const router = Router();
  *           type: string
  *           format: email
  *           description: User's email address
- *         fullName:
+ *         fullname:
  *           type: string
  *           description: User's full name
  *         avatar:
@@ -112,7 +112,7 @@ const router = Router();
  *               - username
  *               - email
  *               - password
- *               - fullName
+ *               - fullname
  *             properties:
  *               username:
  *                 type: string
@@ -125,7 +125,7 @@ const router = Router();
  *                 type: string
  *                 format: password
  *                 description: User's password
- *               fullName:
+ *               fullname:
  *                 type: string
  *                 description: User's full name
  *               avatar:
@@ -153,7 +153,7 @@ const router = Router();
  *                 email:
  *                   type: string
  *                   description: User's email
- *                 fullName:
+ *                 fullname:
  *                   type: string
  *                   description: User's full name
  *                 avatar:
@@ -257,7 +257,7 @@ router
  *                       type: string
  *                     email:
  *                       type: string
- *                     fullName:
+ *                     fullname:
  *                       type: string
  *                     avatar:
  *                       type: string
@@ -347,7 +347,7 @@ router
  *           schema:
  *             type: object
  *             properties:
- *               fullName:
+ *               fullname:
  *                 type: string
  *                 description: User's new full name
  *               email:
@@ -495,7 +495,7 @@ router
  *                   type: string
  *                 email:
  *                   type: string
- *                 fullName:
+ *                 fullname:
  *                   type: string
  *                 avatar:
  *                   type: string
@@ -684,7 +684,7 @@ router.route("/history").get(defaultRateLimiter, auth, getUserWatchHistory);
  *               properties:
  *                 username:
  *                   type: string
- *                 fullName:
+ *                 fullname:
  *                   type: string
  *                 avatar:
  *                   type: string

@@ -8,7 +8,7 @@ const userLogger = logger.child({ module: "user.controllers" });
 const cookieOptions = { httpOnly: true, secure: true };
 
 const registerUser = asyncHandler(async (req, res) => {
-	const { fullName, email, username, password } = req.body;
+	const { fullname, email, username, password } = req.body;
 	const requestId = req.id;
 
 	userLogger.info(`[Request] ${requestId} registration attempt`, {
@@ -16,7 +16,7 @@ const registerUser = asyncHandler(async (req, res) => {
 		email,
 	});
 
-	const avatarLocalPath = req.files?.avatar?.[0]?.path;
+	const avatarLocalPath = req.files?.avatar?.[0]?.path || null;
 	const coverImageLocalPath = req.files?.coverImage?.[0]?.path || null;
 
 	const isEmailExists = await userService.findUserByEmail(email);
@@ -36,7 +36,7 @@ const registerUser = asyncHandler(async (req, res) => {
 	}
 
 	const user = await userService.registerUser(
-		fullName,
+		fullname,
 		email,
 		username,
 		password,
@@ -242,12 +242,12 @@ const resetPassword = asyncHandler(async (req, res) => {
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
 	const requestId = req.id;
-	const { fullName, username } = req.body;
+	const { fullname, username } = req.body;
 
 	userLogger.info(`[Request] ${requestId} Update account details attempt`, {
 		route: "PATCH /users/updateAccountDetails",
 		userId: req.user._id,
-		fullName,
+		fullname,
 		username,
 	});
 
@@ -262,7 +262,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
 	const user = await userService.updateAccountDetails(
 		req.user._id,
-		fullName,
+		fullname,
 		username,
 	);
 	userLogger.info(`[Request] ${requestId} Account details updated`, {
