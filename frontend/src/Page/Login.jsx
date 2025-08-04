@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 const header = "../../public/logo.webp";
 import { useDispatch } from "react-redux";
-import { login } from "../Store/authSlice.js";
+import { setCredentials } from "../Store/authSlice.js";
 import { useNavigate } from "react-router-dom";
 
 function Input({ name, placeholder, type }) {
@@ -24,18 +24,21 @@ export default function Login() {
    async function onSubmitHandler(e) {
       e.preventDefault();
       const formData = new FormData(e.target);
-      console.log("Form data submitted:", Object.fromEntries(formData.entries()));
-
+      const payload = Object.fromEntries(formData.entries());
       try {
          const res = await fetch("/api/v1/user/login", {
+            headers: { "Content-Type": "application/json", },
             method: "POST",
-            body: formData,
+            credentials: "include", 
+            body: JSON.stringify(payload),
          });
-         const data = await res.json();
-         console.log("Response data:", data);
+         const { data } = await res.json();
 
          if (res.ok) {
-            dispatch(login(data.data));
+            dispatch(setCredentials({ userMeta: data.user, accessToken: data.accessToken }));
+
+            // Store user data in localStorage
+            localStorage.setItem("user", JSON.stringify(data.user));
             navigate("/");
          } else alert(data.message || "Registration failed");
       } catch (err) {

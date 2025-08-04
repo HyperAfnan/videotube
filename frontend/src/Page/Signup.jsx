@@ -1,7 +1,5 @@
 import { Link } from "react-router-dom";
 const header = "../../public/logo.webp";
-import { useDispatch } from "react-redux";
-import { login } from "../Store/authSlice.js";
 import { useNavigate } from "react-router-dom";
 
 function Input({ name, placeholder, type, ...props }) {
@@ -20,7 +18,6 @@ function Input({ name, placeholder, type, ...props }) {
 
 export default function Signup() {
    const navigate = useNavigate();
-   const dispatch = useDispatch();
 
    async function onSubmitHandler(e) {
       e.preventDefault();
@@ -34,7 +31,6 @@ export default function Signup() {
          const data = await res.json();
 
          if (res.ok) {
-            dispatch(login(data.data));
             navigate("/")
 
          } else alert(data.message || "Registration failed");
