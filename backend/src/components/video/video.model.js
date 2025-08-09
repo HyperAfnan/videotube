@@ -10,6 +10,11 @@ const videoSchema = new Schema(
 		duration: { type: Number, required: true },
 		views: { type: Number, default: 0 },
 		isPublished: { type: Boolean, default: true },
+		visibility: {
+			type: String,
+			enum: ["public", "private", "unlisted"],
+			default: "private",
+		},
 		owner: { type: Schema.Types.ObjectId, ref: "user" },
 	},
 	{ timestamps: true },

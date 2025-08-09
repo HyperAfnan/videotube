@@ -94,6 +94,21 @@ export const isConfirmationTokenValid = serviceHandler(
 	},
 );
 
+export const sendEmailToUser = serviceHandler(async (userMeta) => {
+	const { confirmationToken } = await generateConfirmationToken(userMeta);
+
+	const { subject, html } = templates.registration(
+		userMeta.username,
+		confirmationToken,
+	);
+
+	await emailQueue.add(
+		"registrationEmail",
+		{ to: userMeta.email, html, subject },
+		{ removeOnComplete: true, removeOnFail: true },
+	);
+});
+
 export const registerUser = serviceHandler(
 	async (
 		fullname,
@@ -103,19 +118,20 @@ export const registerUser = serviceHandler(
 		avatarLocalPath,
 		coverImageLocalPath,
 	) => {
-
 		let coverImage;
 		if (coverImageLocalPath)
 			coverImage = await uploadImageOnCloudinary(coverImageLocalPath);
 
-      let avatarImage;
-      if (avatarLocalPath)
-         avatarImage = await uploadImageOnCloudinary(avatarLocalPath);
+		const altAvatar =
+			"https://res.cloudinary.com/cloud6969/image/upload/v1753970395/ytncii8p8rojtdkilzko_pmpq7v.webp";
+		let avatarImage;
+		if (avatarLocalPath)
+			avatarImage = await uploadImageOnCloudinary(coverImageLocalPath);
 
 		const user = await User.create({
 			fullname,
 			email,
-			avatar: avatarImage?.secure_url || "",
+			avatar: avatarImage?.secure_url || altAvatar,
 			coverImage: coverImage?.secure_url || "",
 			username,
 			password,
@@ -134,18 +150,7 @@ export const registerUser = serviceHandler(
 			email: user.email,
 		});
 
-		const { confirmationToken } = await generateConfirmationToken(user);
-
-		const { subject, html } = templates.registration(
-			user.username,
-			confirmationToken,
-		);
-
-		await emailQueue.add(
-			"registrationEmail",
-			{ to: user.email, html, subject },
-			{ removeOnComplete: true, removeOnFail: true },
-		);
+		await sendEmailToUser(user);
 
 		await userQueue.add(
 			"removeUnverifiedUser",
@@ -204,10 +209,10 @@ export const loginUser = serviceHandler(async (email, password) => {
 		throw new ApiError(404, "User not found", { email });
 	}
 
-	if (!user.isEmailConfirmed) {
-		throw new ApiError(401, "Email not confirmed", { email });
-	}
-
+	// if (!user.isEmailConfirmed) {
+	// 	throw new ApiError(401, "Email not confirmed", { email });
+	// }
+	//
 	const isPasswordCorrect = await user.isPasswordCorrect(password);
 	if (!isPasswordCorrect) {
 		throw new ApiError(401, "Invalid User Credentials", { email });
@@ -216,7 +221,7 @@ export const loginUser = serviceHandler(async (email, password) => {
 	const { accessToken, refreshToken } = await generateTokens(user);
 
 	const loggedInUser = await User.findById(user._id).select(
-		"-password -refreshToken",
+		"-password -refreshToken -confirmationToken -forgotPasswordToken -__v -updatedAt -isEmailConfirmed",
 	);
 
 	userServiceLogger.info("User logged in", {
@@ -224,7 +229,7 @@ export const loginUser = serviceHandler(async (email, password) => {
 		username: loggedInUser.username,
 	});
 
-	return { user: loggedInUser, accessToken, refreshToken };
+	return { data: { user: loggedInUser, accessToken }, refreshToken };
 });
 
 export const logoutUser = serviceHandler(async (userId) => {

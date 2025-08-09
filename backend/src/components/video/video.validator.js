@@ -10,6 +10,7 @@ export const getAllVideosValidator = [
 		.isString()
 		.withMessage("sortType must be string"),
 	query("q")
+		.optional()
 		.notEmpty()
 		.withMessage("Query q is required")
 		.isString()
@@ -34,13 +35,18 @@ export const publishVideoValidator = [
 		.isString()
 		.withMessage("title must be string")
 		.trim(),
+	body("visibility").optional().isString().trim(),
+	body("isPublished")
+		.optional()
+		.isBoolean()
+		.withMessage("isPublished must be boolean"),
 ];
 
 export const publishVideoFilesValidator = function (req, _, next) {
 	if (!req?.files?.videoFile[0]?.path)
 		throw new ApiError(400, "video file is required");
-	if (!req?.files?.thumbnail[0]?.path)
-		throw new ApiError(400, "thumbnail image is required");
+	// if (!req?.files?.thumbnail[0]?.path)
+	// 	throw new ApiError(400, "thumbnail image is required");
 	next();
 };
 

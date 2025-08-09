@@ -20,7 +20,7 @@ export const verifyAccessToken = asyncHandler(async (req, _, next) => {
 
 		if (!user) throw new ApiError(401, "Invalid Access Token");
 
-		if (!user.isEmailConfirmed) throw new ApiError(401, "Email not confirmed");
+		// if (!user.isEmailConfirmed) throw new ApiError(401, "Email not confirmed");
 
 		req.user = user;
 

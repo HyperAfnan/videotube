@@ -3,10 +3,18 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { Layout, Protected } from "./Components/index.js";
-import { Home, Login, Signup, ConfirmEmail, Dashboard, VideoUpload } from "./Page/index.js";
+import {
+   Home,
+   Login,
+   Signup,
+   ConfirmEmail,
+   Dashboard,
+   VideoUpload,
+} from "./Page/index.js";
 import { Provider } from "react-redux";
 import { store } from "./Store/store.js";
 import AuthInitializer from "./Components/Auth/AuthInit.jsx";
+import { SkeletonTheme } from "react-loading-skeleton";
 
 const router = createBrowserRouter([
    {
@@ -64,10 +72,12 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
    <StrictMode>
-      <Provider store={store}>
-         <AuthInitializer>
-            <RouterProvider router={router} />
-         </AuthInitializer>
-      </Provider>
+      <SkeletonTheme baseColor="#edebeb" highlightColor="#d4d2d2">
+         <Provider store={store}>
+            <AuthInitializer>
+               <RouterProvider router={router} />
+            </AuthInitializer>
+         </Provider>
+      </SkeletonTheme>
    </StrictMode>,
 );

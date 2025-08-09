@@ -1,17 +1,25 @@
 import { Outlet, useLocation } from "react-router-dom";
-import { Header, ConfirmEmailFooter } from "../index.js";
+import { Header, ConfirmEmailFooter, SideBar } from "../index.js";
 import { useSelector } from "react-redux";
 
 export default function Layout() {
    const location = useLocation();
-   const isEmailConfirmed = useSelector((state) => state.auth?.userMeta?.isEmailConfirmed);
+   const isEmailConfirmed = useSelector(
+      (state) => state.auth?.userMeta?.isEmailConfirmed,
+   );
    const isAuthenticated = useSelector((state) => state.auth?.status);
-   const hideHeader = location.pathname === "/login" || location.pathname === "/signup" || location.pathname === "/confirm-email";
+   const hideBars =
+      location.pathname === "/login" ||
+      location.pathname === "/signup" ||
+      location.pathname === "/confirm-email";
    return (
       <div>
-         {!hideHeader && <Header />}
-         <Outlet />
-         { isAuthenticated && !isEmailConfirmed && <ConfirmEmailFooter />}
+         {!hideBars && <Header />}
+         <div className="flex">
+            {!hideBars && <SideBar />}
+            <Outlet />
+         </div>
+         {/* {isAuthenticated && !isEmailConfirmed && <ConfirmEmailFooter />} */}
       </div>
    );
 }

@@ -22,7 +22,7 @@ export const sendEmail = serviceHandler(async (to, subject, html) => {
 
 	await transporter
 		.sendMail(mailOptions)
-		.then(() => logger.info(`Emmail sent successfully to ${to}`))
+		.then(() => logger.info(`Email sent successfully to ${to}`))
 		.catch((err) =>
 			logger.error(`Error sending email: ${err.message} `, {
 				error: err,

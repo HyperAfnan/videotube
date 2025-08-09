@@ -1,6 +1,8 @@
 import { TextInput } from "./Input.jsx";
+import { useFormContext } from "react-hook-form";
 
-const UploadDetails = ({ titleRef }) => {
+const UploadDetails = () => {
+   const { register } = useFormContext();
    return (
       <>
          <h1 className="text-2xl font-medium text-left">Details</h1>
@@ -13,7 +15,7 @@ const UploadDetails = ({ titleRef }) => {
                tooltip="A catchy title can help you to hook viewers..."
                width="w-[500px]"
                height="h-[80px]"
-               onChange={(e) => (titleRef.current.textContent = e.target.value)}
+               {...register("title", { required: "Title is required" })}
             />
             <TextInput
                type="text"
@@ -22,6 +24,7 @@ const UploadDetails = ({ titleRef }) => {
                tooltip="Writing descriptions with keywords..."
                width="w-[500px]"
                height="h-[150px]"
+               {...register("description", { required: "Description is required" })}
             />
          </div>
       </>

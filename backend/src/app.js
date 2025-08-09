@@ -6,17 +6,24 @@ import ENV from "./config/env.js";
 import { logger } from "./utils/logger/index.js";
 import { requestLogger } from "./middlewares/logger.middleware.js";
 import { errorHandler } from "./middlewares/errorHandler.middleware.js";
+import compression from "compression";
 
 const app = express();
 
 app.use(helmet());
-app.set("trust proxy", 1);
-app.use(cors({ credentials: true, }));
+app.set("trust proxy", 1); // required for rate limiter
+app.use(
+	cors({
+		origin: "*",
+		credentials: true,
+	}),
+);
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 app.use(requestLogger);
+app.use(compression());
 
 if (ENV.NODE_ENV === "development") {
 	logger.info("Development mode enabled");

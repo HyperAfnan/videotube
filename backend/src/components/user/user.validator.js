@@ -163,6 +163,15 @@ export const forgotPasswordValidator = [
 		.trim(),
 ];
 
+export const sendConfirmationEmailValidator = [
+	body("email")
+		.notEmpty()
+		.withMessage("Email is required")
+		.isEmail()
+		.withMessage("Invalid email format")
+		.trim(),
+];
+
 export const updateAccountDetailsValidator = [
 	oneOf(
 		[

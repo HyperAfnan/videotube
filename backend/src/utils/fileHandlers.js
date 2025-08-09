@@ -32,11 +32,19 @@ const uploadImageOnCloudinary = async (localFilePath) => {
 		});
 	}
 };
+
+function uploadLargePromise(localFilePath, options) {
+	return new Promise((resolve, reject) => {
+		cloudinary.uploader.upload_large(localFilePath, options, (err, result) => {
+			if (err) reject(err);
+			else resolve(result);
+		});
+	});
+}
 const uploadVideoOnCloudinary = async (localFilePath) => {
 	try {
 		if (!localFilePath) return null;
-
-		const response = await cloudinary.uploader.upload(localFilePath, {
+		const response = await uploadLargePromise(localFilePath, {
 			resource_type: "video",
 		});
 

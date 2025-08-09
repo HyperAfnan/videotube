@@ -179,11 +179,11 @@ router
 	.post(
 		upload.fields([
 			{ name: "videoFile", maxCount: 1 },
-			{ name: "thumbnail", maxCount: 1 },
+			// { name: "thumbnail", maxCount: 1 },
 		]),
 		publishVideoFilesValidator,
 		publishVideoValidator,
-		validator,
+		// validator,
 		publishAVideo,
 	);
 
@@ -275,11 +275,18 @@ router
  *       401:
  *         description: Unauthorized
  */
+
+function logger(req, _, next) {
+	console.log("body", req.body);
+	console.log("file", req.file);
+	next();
+}
 router
 	.route("/:videoId")
 	.get(getVideoByIdValidator, validator, getVideoById)
 	.delete(deleteVideoValidator, validator, deleteVideo)
 	.patch(
+		logger,
 		upload.single("thumbnail"),
 		updateVideoValidator,
 		validator,

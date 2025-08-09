@@ -2,7 +2,6 @@ import ReactPlayer from "react-player";
 import { Copy } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useRef } from "react";
-import UploadHeader from "./UploadHeader.jsx";
 
 export default function VideoPreview({ videoMeta, thumbnail }) {
    const linkRef = useRef(null);

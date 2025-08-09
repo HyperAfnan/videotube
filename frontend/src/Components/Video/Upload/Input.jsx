@@ -9,7 +9,7 @@ function Tooltip({ text, ref }) {
     else tooltipSpanRef.current.classList.add("hidden");
   };
   return (
-    <div className="flex items-center justify-cente">
+    <div className="flex items-center justify-center">
       <CircleQuestionMark
         ref={ref}
         className="inline-block ml-1 text-gray-500 cursor-pointer"
@@ -27,43 +27,49 @@ function Tooltip({ text, ref }) {
   );
 }
 
-export function TextInput({ name, placeholder, width, height, tooltip, ...props }) {
+export function TextInput({
+  name,
+  placeholder,
+  width,
+  height,
+  tooltip,
+  ...props
+}) {
   const inputRef = useRef(null);
   const divRef = useRef(null);
   const spanRef = useRef(null);
   const tooltipIconRef = useRef(null);
 
-  const ChangeClassName = (element, className, action) => {
-    if (action == "add") element.classList.add(className);
-    if (action == "remove") element.classList.remove(className);
+  const divOnClick = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
   };
-
-  const divOnClick = () => inputRef.current.focus();
   const handleChange = (e) => {
     if (e.target.value.length === 0) {
-      ChangeClassName(divRef.current, "border-red-800", "add");
-      ChangeClassName(divRef.current, "border-black", "remove");
+      divRef.current.classList.add("border-red-800", "hover:border-red-800");
+      divRef.current.classList.remove("border-black");
 
-      ChangeClassName(spanRef.current, "text-red-800", "add");
-      ChangeClassName(spanRef.current, "text-gar", "remove");
+      spanRef.current.classList.add("text-red-800");
+      spanRef.current.classList.remove("text-black");
 
-      ChangeClassName(tooltipIconRef.current, "text-red-800", "add");
-      ChangeClassName(tooltipIconRef.current, "text-black", "remove");
+      tooltipIconRef.current.classList.add("text-red-800");
+      tooltipIconRef.current.classList.remove("text-black");
     }
     if (e.target.value.length !== 0) {
-      ChangeClassName(divRef.current, "border-red-800", "remove");
-      ChangeClassName(divRef.current, "border-black", "add");
+      divRef.current.classList.remove("border-red-800", "hover:border-red-800");
+      divRef.current.classList.add("border-black");
 
-      ChangeClassName(spanRef.current, "text-red-800", "remove");
-      ChangeClassName(spanRef.current, "text-black", "add");
+      spanRef.current.classList.remove("text-red-800");
+      spanRef.current.classList.add("text-black");
 
-      ChangeClassName(tooltipIconRef.current, "text-red-800", "remove");
-      ChangeClassName(tooltipIconRef.current, "text-black", "add");
+      tooltipIconRef.current.classList.remove("text-red-800");
+      tooltipIconRef.current.classList.add("text-black");
     }
   };
   return (
     <div
-      className={ `${width} ${height} overflow-hidden p-2 m-2 border-2 border-gray-300 hover:border-black rounded-xl ` }
+      className={`${width} ${height} overflow-hidden p-2 m-2 border-2 border-gray-300 hover:border-black rounded-xl `}
       ref={divRef}
       onClick={divOnClick}
     >
