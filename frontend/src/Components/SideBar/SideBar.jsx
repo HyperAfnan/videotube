@@ -1,4 +1,4 @@
-import { House, UserRound, ListVideo } from "lucide-react";
+import { House, UserRound, ListVideo, Clock } from "lucide-react"; 
 import { Link } from "react-router-dom";
 
 const SideBar = () => {
@@ -6,6 +6,7 @@ const SideBar = () => {
     { to: "/", icon: <House className="w-15" /> },
     { to: "/subscriptions", icon: <ListVideo className="w-15" /> },
     { to: "/feed/user", icon: <UserRound className="w-15" /> },
+    { to: "/watchlater", icon: <Clock className="w-15" /> },
   ];
   return (
     <div className="flex flex-col items-center h-full w-[72px] pr-1 pl-1 m-0 sticky top-0">

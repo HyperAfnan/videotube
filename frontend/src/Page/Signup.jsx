@@ -1,3 +1,4 @@
+import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 const header = "../../public/logo.webp";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +11,11 @@ function Input({ name, placeholder, type, ...props }) {
             name={name}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
             placeholder={placeholder}
+            {...(props.error && {
+               "aria-invalid": true,
+               "aria-describedby": `${name}-error`,
+            })}
+            {...(props.error && { "aria-errormessage": `${name}-error` })}
             {...props}
          />
       </div>
@@ -18,21 +24,30 @@ function Input({ name, placeholder, type, ...props }) {
 
 export default function Signup() {
    const navigate = useNavigate();
+   const {
+      register,
+      handleSubmit,
+      formState: { errors },
+   } = useForm({
+      defaultValues: {
+         username: "",
+         fullname: "",
+         email: "",
+         password: "",
+         confirmPassword: "",
+      },
+   });
 
-   async function onSubmitHandler(e) {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-
+   async function onSubmitHandler(formData) {
       try {
          const res = await fetch("/api/v1/user/register", {
             method: "POST",
-            body: formData,
+            body: JSON.stringify(formData),
          });
          const data = await res.json();
 
          if (res.ok) {
-            navigate("/")
-
+            navigate("/");
          } else alert(data.message || "Registration failed");
       } catch (err) {
          alert("Network error");
@@ -56,18 +71,61 @@ export default function Signup() {
                   method="POST"
                   action="/api/v1/users/register"
                   encType="multipart/form-data"
-                  onSubmit={onSubmitHandler}
+                  onSubmit={handleSubmit(onSubmitHandler)}
+                  autoComplete="off"
                >
-                  <Input type="text" name="username" placeholder="username" />
-                  <Input type="text" name="fullname" placeholder="fullname" />
-                  <Input type="email" name="email" placeholder="email" />
-                  <Input type="password" name="password" placeholder="Password" />
+                  <Input
+                     type="text"
+                     name="username"
+                     placeholder="username"
+                     error={errors.username}
+                     {...register("username", { required: true })}
+                  />
+                  <Input
+                     type="text"
+                     name="fullname"
+                     placeholder="fullname"
+                     error={errors.fullname}
+                     {...register("fullname", { required: true })}
+                  />
+                  <Input
+                     type="email"
+                     name="email"
+                     placeholder="email"
+                     error={errors.email}
+                     {...register("email", {
+                        required: "Email is required",
+                        pattern: {
+                           value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                           message: "Invalid email address",
+                        },
+                     })}
+                  />
+                  <Input
+                     type="password"
+                     name="password"
+                     placeholder="Password"
+                     error={errors.password}
+                     {...register("password", {
+                        required: "Password is required",
+                        minLength: {
+                           value: 6,
+                           message: "Password must be at least 6 characters",
+                        },
+                     })}
+                  />
 
                   <div className="sm:col-span-2">
                      <Input
                         type="password"
                         name="confirmPassword"
+                        error={errors.confirmPassword}
                         placeholder="Confirm Password"
+                        {...register("confirmPassword", {
+                           required: "Confirm Password is required",
+                           validate: (value) =>
+                              value === watch("password") || "Passwords do not match",
+                        })}
                      />
                   </div>
 

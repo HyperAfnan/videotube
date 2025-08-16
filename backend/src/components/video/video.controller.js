@@ -4,6 +4,7 @@ import { asyncHandler } from "../../utils/handlers.js";
 import * as VideoService from "./video.service.js";
 import { logger } from "../../utils/logger/index.js";
 const videoLogger = logger.child({ module: "video.controllers" });
+import fetch from "node-fetch";
 
 const getAllVideos = asyncHandler(async (req, res) => {
    const { page = 1, limit = 10, q = "", sortBy, sortType, userId } = req.query;
@@ -192,12 +193,20 @@ const downloadVideo = asyncHandler(async (req, res) => {
       throw new ApiError(404, "Video not found", { videoId, requestId });
    }
 
-   videoLogger.info(`[Request] ${requestId} Redirecting to video file`, {
+   videoLogger.info(`[Request] ${requestId} Streaming video for download`, {
       videoId,
       videoFile: video.videoFile,
    });
 
-   res.redirect(video.videoFile);
+   const cloudinaryRes = await fetch(video.videoFile);
+   if (!cloudinaryRes.ok) {
+      throw new ApiError(500, "Failed to fetch video from Cloudinary");
+   }
+
+   res.setHeader("Content-Disposition", `attachment; filename="${videoId}.mp4"`);
+   res.setHeader("Content-Type", "video/mp4");
+
+   cloudinaryRes.body.pipe(res);
 });
 
 const togglePublishStatus = asyncHandler(async (req, res) => {

@@ -1,46 +1,50 @@
 import { Router } from "express";
 import {
-   changePassword,
-   confirmEmail,
-   deleteUser,
-   forgotPassword,
-   getUser,
-   getUserChannelProfile,
-   getUserWatchHistory,
-   loginUser,
-   logoutUser,
-   refreshAccessToken,
-   registerUser,
-   resetPassword,
-   sendConfirmationEmail,
-   updateAccountDetails,
-   updateUserAvatar,
-   updateUserCoverImg,
+	changePassword,
+	confirmEmail,
+	deleteUser,
+	forgotPassword,
+	getUser,
+	getUserChannelProfile,
+	getUserWatchHistory,
+	loginUser,
+	logoutUser,
+	refreshAccessToken,
+	registerUser,
+	resetPassword,
+	sendConfirmationEmail,
+	updateAccountDetails,
+	updateUserAvatar,
+	updateUserCoverImg,
 } from "./user.controller.js";
 import { upload } from "../../middlewares/multer.middleware.js";
-import { verifyAccessToken as auth } from "../../middlewares/auth.middleware.js";
+import { verifyAccessToken as auth} from "../../middlewares/auth.middleware.js";
+import watchLaterRoutes from "../watchLater/watchLater.router.js";
 import { validator } from "../../middlewares/validator.middleware.js";
 import {
-   avatarFileValidator,
-   changePasswordValidator,
-   confirmEmailValidator,
-   coverImageFileValidator,
-   forgotPasswordValidator,
-   getUserChannelProfileValidator,
-   loginValidator,
-   refreshAccessTokenValidator,
-   registerationFilesValidator,
-   registerValidator,
-   resetPasswordValidator,
-   sendConfirmationEmailValidator,
-   updateAccountDetailsValidator,
+	avatarFileValidator,
+	changePasswordValidator,
+	confirmEmailValidator,
+	coverImageFileValidator,
+	forgotPasswordValidator,
+	getUserChannelProfileValidator,
+	loginValidator,
+	refreshAccessTokenValidator,
+	registerationFilesValidator,
+	registerValidator,
+	resetPasswordValidator,
+	sendConfirmationEmailValidator,
+	updateAccountDetailsValidator,
 } from "./user.validator.js";
 import {
-   authRateLimiter,
-   defaultRateLimiter,
+	authRateLimiter,
+	defaultRateLimiter,
 } from "../../middlewares/rateLimiter.middleware.js";
 
 const router = Router();
+
+router.use(defaultRateLimiter);
+router.use("/watchlater", watchLaterRoutes);
 
 /**
  * @swagger
@@ -168,20 +172,20 @@ const router = Router();
  *         description: Invalid input or username/email already exists
  */
 router.route("/register").post(
-   authRateLimiter,
-   upload.fields([
-      { name: "avatar", maxCount: 1 },
-      { name: "coverImage", maxCount: 1 },
-   ]),
-   registerationFilesValidator,
-   registerValidator,
-   validator,
-   registerUser,
+	authRateLimiter,
+	upload.fields([
+		{ name: "avatar", maxCount: 1 },
+		{ name: "coverImage", maxCount: 1 },
+	]),
+	registerationFilesValidator,
+	registerValidator,
+	validator,
+	registerUser,
 );
 
 router
-   .route("/sendConfirmEmail")
-   .post(sendConfirmationEmailValidator, validator, sendConfirmationEmail);
+	.route("/sendConfirmEmail")
+	.post(sendConfirmationEmailValidator, validator, sendConfirmationEmail);
 
 /**
  * @swagger
@@ -212,8 +216,8 @@ router
  *         description: Invalid or expired confirmation token
  */
 router
-   .route("/confirmEmail/:confirmationToken")
-   .get(authRateLimiter, confirmEmailValidator, validator, confirmEmail);
+	.route("/confirmEmail/:confirmationToken")
+	.get(authRateLimiter, confirmEmailValidator, validator, confirmEmail);
 
 /**
  * @swagger
@@ -271,8 +275,8 @@ router
  *         description: Invalid credentials
  */
 router
-   .route("/login")
-   .post(authRateLimiter, loginValidator, validator, loginUser);
+	.route("/login")
+	.post(authRateLimiter, loginValidator, validator, loginUser);
 
 /**
  * @swagger
@@ -328,14 +332,14 @@ router.route("/logout").post(authRateLimiter, auth, logoutUser);
  *         description: Invalid refresh token
  */
 router
-   .route("/refreshToken")
-   .post(
-      authRateLimiter,
-      auth,
-      refreshAccessTokenValidator,
-      validator,
-      refreshAccessToken,
-   );
+	.route("/refreshToken")
+	.post(
+		authRateLimiter,
+		auth,
+		refreshAccessTokenValidator,
+		validator,
+		refreshAccessToken,
+	);
 
 /**
  * @swagger
@@ -373,14 +377,14 @@ router
  *         description: Unauthorized
  */
 router
-   .route("/updateDetails")
-   .patch(
-      defaultRateLimiter,
-      auth,
-      updateAccountDetailsValidator,
-      validator,
-      updateAccountDetails,
-   );
+	.route("/updateDetails")
+	.patch(
+		defaultRateLimiter,
+		auth,
+		updateAccountDetailsValidator,
+		validator,
+		updateAccountDetails,
+	);
 
 /**
  * @swagger
@@ -421,14 +425,14 @@ router
  *         description: Unauthorized
  */
 router
-   .route("/updateAvatar")
-   .patch(
-      defaultRateLimiter,
-      auth,
-      upload.single("avatar"),
-      avatarFileValidator,
-      updateUserAvatar,
-   );
+	.route("/updateAvatar")
+	.patch(
+		defaultRateLimiter,
+		auth,
+		upload.single("avatar"),
+		avatarFileValidator,
+		updateUserAvatar,
+	);
 
 /**
  * @swagger
@@ -469,14 +473,14 @@ router
  *         description: Unauthorized
  */
 router
-   .route("/updateCoverImage")
-   .patch(
-      defaultRateLimiter,
-      auth,
-      upload.single("coverImage"),
-      coverImageFileValidator,
-      updateUserCoverImg,
-   );
+	.route("/updateCoverImage")
+	.patch(
+		defaultRateLimiter,
+		auth,
+		upload.single("coverImage"),
+		coverImageFileValidator,
+		updateUserCoverImg,
+	);
 
 /**
  * @swagger
@@ -547,8 +551,8 @@ router.route("/:userId").get(defaultRateLimiter, auth, getUser);
  *         description: Invalid email or user not found
  */
 router
-   .route("/forgotPassword")
-   .post(authRateLimiter, forgotPasswordValidator, validator, forgotPassword);
+	.route("/forgotPassword")
+	.post(authRateLimiter, forgotPasswordValidator, validator, forgotPassword);
 
 /**
  * @swagger
@@ -592,8 +596,8 @@ router
  *         description: Invalid or expired token, or invalid password
  */
 router
-   .route("/resetPassword/:token")
-   .patch(authRateLimiter, resetPasswordValidator, validator, resetPassword);
+	.route("/resetPassword/:token")
+	.patch(authRateLimiter, resetPasswordValidator, validator, resetPassword);
 
 /**
  * @swagger
@@ -632,14 +636,14 @@ router
  */
 
 router
-   .route("/changePassword")
-   .patch(
-      defaultRateLimiter,
-      auth,
-      changePasswordValidator,
-      validator,
-      changePassword,
-   );
+	.route("/changePassword")
+	.patch(
+		defaultRateLimiter,
+		auth,
+		changePasswordValidator,
+		validator,
+		changePassword,
+	);
 
 /**
  * @swagger
@@ -706,14 +710,14 @@ router.route("/history").get(defaultRateLimiter, auth, getUserWatchHistory);
  *         description: Unauthorized
  */
 router
-   .route("/ch/:username")
-   .get(
-      defaultRateLimiter,
-      auth,
-      getUserChannelProfileValidator,
-      validator,
-      getUserChannelProfile,
-   );
+	.route("/ch/:username")
+	.get(
+		defaultRateLimiter,
+		auth,
+		getUserChannelProfileValidator,
+		validator,
+		getUserChannelProfile,
+	);
 
 /**
  * @swagger

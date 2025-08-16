@@ -209,6 +209,7 @@ export const loginUser = serviceHandler(async (email, password) => {
 		throw new ApiError(404, "User not found", { email });
 	}
 
+   // TODO: remove the comments before full deployment
 	// if (!user.isEmailConfirmed) {
 	// 	throw new ApiError(401, "Email not confirmed", { email });
 	// }

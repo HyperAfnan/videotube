@@ -3,8 +3,9 @@ const header = "../../public/logo.webp";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../Store/authSlice.js";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
-function Input({ name, placeholder, type }) {
+function Input({ name, placeholder, type, error, ...rest }) {
    return (
       <div className="w-full mb-4">
          <input
@@ -12,6 +13,12 @@ function Input({ name, placeholder, type }) {
             name={name}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
             placeholder={placeholder}
+            {...(error && {
+               "aria-invalid": true,
+               "aria-describedby": `${name}-error`,
+            })}
+            {...(error && { "aria-errormessage": `${name}-error` })}
+            {...rest}
          />
       </div>
    );
@@ -20,26 +27,37 @@ function Input({ name, placeholder, type }) {
 export default function Login() {
    const navigate = useNavigate();
    const dispatch = useDispatch();
+   const {
+      register,
+      handleSubmit,
+      formState: { errors },
+   } = useForm({
+      defaultValues: {
+         email: "",
+         password: "",
+      },
+   });
 
-   async function onSubmitHandler(e) {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const payload = Object.fromEntries(formData.entries());
+   async function onSubmitHandler(payload) {
       try {
          const res = await fetch("/api/v1/user/login", {
-            headers: { "Content-Type": "application/json", },
+            headers: { "Content-Type": "application/json" },
             method: "POST",
-            credentials: "include", 
+            credentials: "include",
             body: JSON.stringify(payload),
          });
          const { data } = await res.json();
 
          if (res.ok) {
-            dispatch(setCredentials({ userMeta: data.user, accessToken: data.accessToken }));
+            dispatch(
+               setCredentials({
+                  userMeta: data.user,
+                  accessToken: data.accessToken,
+               }),
+            );
 
-            // Store user data in localStorage
             localStorage.setItem("user", JSON.stringify(data.user));
-            navigate("/");
+            navigate(-1);
          } else alert(data.message || "Registration failed");
       } catch (err) {
          alert("Network error");
@@ -58,12 +76,26 @@ export default function Login() {
                   </h1>
                </div>
 
-               <form
-                  className="space-y-4"
-                  onSubmit={onSubmitHandler}
-               >
-                  <Input type="email" name="email" placeholder="Email" />
-                  <Input type="password" name="password" placeholder="Password" />
+               <form className="space-y-4" onSubmit={handleSubmit(onSubmitHandler)}>
+                  <Input
+                     type="email"
+                     name="email"
+                     placeholder="Email"
+                     error={errors.email}
+                     {...register("email", {
+                        required: "Email is required",
+                        pattern: { value: /^\S+@\S+$/i, message: "Invalid email" },
+                     })}
+                  />
+                  <Input
+                     type="password"
+                     name="password"
+                     placeholder="Password"
+                     error={errors.password}
+                     {...register("password", {
+                        required: "Password is required",
+                     })}
+                  />
                   <button
                      type="submit"
                      className="w-full bg-black text-white py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors font-medium"

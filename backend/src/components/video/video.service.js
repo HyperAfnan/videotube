@@ -76,6 +76,7 @@ export const getAllVideos = serviceHandler(
    },
 );
 
+// TODO: add checks according to the new vidoe model
 export const publishVideo = serviceHandler(
    async (
       title,

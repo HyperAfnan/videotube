@@ -1,35 +1,75 @@
-import { EllipsisVertical } from "lucide-react";
+import {
+  EllipsisVertical,
+  Clock4,
+  ListPlusIcon,
+  DownloadIcon,
+  BookmarkIcon,
+  Share2,
+  MessageSquareWarning,
+} from "lucide-react";
 import { useState } from "react";
+import { AddToPlaylist, MenuButton } from "./Utils.jsx";
+import {
+  addToWatchLaterHandler,
+  downloadHandler,
+  shareHandler,
+} from "./Utils.js";
+import { useDispatch } from "react-redux";
 
-const VideoCardMenu = () => {
+const VideoCardMenu = ({ videoId, videoTitle }) => {
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
+  const [isAddToPlaylistOpen, setAddToPlaylist] = useState(false);
   const toggleMenu = () => {
-    if (open) setOpen(false);
-    else setOpen(true);
+    setOpen((prev) => !prev);
   };
   return (
     <div className="w-full flex justify-end ">
       <EllipsisVertical
-        className="w-5 h-5 text-gray-500"
+        className="w-5 h-5 text-gray-500 cursor-pointer"
         onClick={toggleMenu}
       />
-      <div className="absolute right-0 top-0 bg-white shadow-lg rounded-xl">
-        {open && (
-          <div className="flex flex-col p-2 space-y-2">
-            <button className="text-gray-700 hover:bg-gray-100 px-4 py-2 rounded-lg">
-              Edit
-            </button>
-            <button className="text-gray-700 hover:bg-gray-100 px-4 py-2 rounded-lg">
-              Delete
-            </button>
-            <button className="text-gray-700 hover:bg-gray-100 px-4 py-2 rounded-lg">
+      {open && (
+        <div className="relative ">
+          <div className="flex flex-col w-[220px] h-auto absolute z-80 bg-white shadow-lg rounded-xl">
+            <MenuButton onClick={() => console.log("Add to Queue clicked")}>
+              <ListPlusIcon className="w-4 h-4 inline mr-2" />
+              Add to Queue
+            </MenuButton>
+            <MenuButton
+              onClick={() => addToWatchLaterHandler(videoId, dispatch )}
+            >
+              <Clock4 className="w-4 h-4 inline mr-2" />
+              Save to Watch later
+            </MenuButton>
+            <MenuButton
+              onClick={() => {
+                setAddToPlaylist((prev) => !prev);
+              }}
+            >
+              <BookmarkIcon className="w-4 h-4 inline mr-2" />
+              Add to Playlist
+            </MenuButton>
+
+            {isAddToPlaylistOpen ? (
+              <AddToPlaylist videoId={videoId} menu={setAddToPlaylist} />
+            ) : null}
+            <MenuButton onClick={() => downloadHandler(videoId, videoTitle)}>
+              <DownloadIcon className="w-4 h-4 inline mr-2" />
+              Download
+            </MenuButton>
+            <MenuButton onClick={() => shareHandler(videoId)}>
+              <Share2 className="w-4 h-4 inline mr-2" />
               Share
-            </button>
+            </MenuButton>
+            <MenuButton onClick={() => console.log("Report clicked")}>
+              <MessageSquareWarning className="w-4 h-4 inline mr-2" />
+              Report
+            </MenuButton>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
-
 export default VideoCardMenu;
