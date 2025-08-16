@@ -1,4 +1,4 @@
-import { setCredentials, clearCredentials } from "./authSlice.js";
+import { setCredentials, clearCredentials } from "@Store/slice/authSlice.js";
 
 function safeParse(jsonString) {
   try {

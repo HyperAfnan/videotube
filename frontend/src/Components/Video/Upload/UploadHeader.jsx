@@ -1,17 +1,19 @@
 import { X } from "lucide-react";
-import { Link } from "react-router-dom";
 import { useFormContext, useWatch } from "react-hook-form";
-import { deleteFetch, asyncHandler } from "../../../utils/index.js";
-import { useNavigate } from "react-router-dom";
+import { deleteFetch, asyncHandler } from "@Utils";
 
-const UploadHeader = ({ videoMeta, setVideoMeta, setProgress }) => {
-   const navigate = useNavigate();
+const UploadHeader = ({
+   videoMeta,
+   setVideoMeta,
+   setProgress,
+   setFloating,
+}) => {
    const deleteVideoHandler = asyncHandler(async (videoId) => {
       await deleteFetch(`/api/v1/videos/${videoId}`);
       setVideoMeta(null);
       setProgress(0);
       reset();
-      navigate(-1)
+      setFloating(false);
    });
    const { control, reset } = useFormContext();
    const title = useWatch({ control, name: "title" });
@@ -25,15 +27,21 @@ const UploadHeader = ({ videoMeta, setVideoMeta, setProgress }) => {
                      Saved as Private
                   </span>
                   <button type="button">
-                     <X onClick={() => deleteVideoHandler(videoMeta._id)} />
+                     <X
+                        onClick={() => deleteVideoHandler(videoMeta._id)}
+                        className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                     />
                   </button>
                </div>
             </>
          ) : (
-            <div className="flex items-center justify-end w-full  space-x-2">
-                  <button type="button">
-                     <X onClick={() => navigate(-1)}  />
-                  </button>
+            <div className="flex items-center justify-end w-full space-x-2">
+               <button type="button">
+                  <X
+                     onClick={() => setFloating(false)}
+                     className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
+                  />
+               </button>
             </div>
          )}
       </div>

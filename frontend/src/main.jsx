@@ -2,19 +2,18 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { Layout, Protected } from "./Components/index.js";
+import { Layout, Protected } from "@Components/";
 import {
   Home,
   Login,
   Signup,
   ConfirmEmail,
   Dashboard,
-  VideoUpload,
   WatchLaterPage,
-} from "./Page/index.js";
+} from "@Pages";
 import { Provider } from "react-redux";
-import { store } from "./Store/store.js";
-import AuthInitializer from "./Components/Auth/AuthInit.jsx";
+import { store } from "@Store";
+import AuthInitializer from "@Components/Auth/AuthInit.jsx";
 import { SkeletonTheme } from "react-loading-skeleton";
 
 const router = createBrowserRouter([
@@ -56,14 +55,6 @@ const router = createBrowserRouter([
         element: (
           <Protected auth>
             <Dashboard />
-          </Protected>
-        ),
-      },
-      {
-        path: "/video/upload",
-        element: (
-          <Protected auth>
-            <VideoUpload />
           </Protected>
         ),
       },

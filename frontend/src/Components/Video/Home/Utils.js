@@ -1,8 +1,5 @@
-import { secureFetch, asyncHandler } from "../../../utils/index.js";
-import {
-  addSingleWatchLater,
-  setWatchLater,
-} from "../../../Store/watchLaterSlice.js";
+import { secureFetch, asyncHandler } from "@Utils";
+import { addSingleWatchLater, } from "@Store/slice/watchLaterSlice.js";
 
 export const downloadHandler = asyncHandler(async (videoId, videoTitle) => {
   const res = await fetch(`/api/v1/videos/download/${videoId}`, {

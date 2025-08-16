@@ -1,51 +1,74 @@
+import { UploadComponent } from "@Components";
+import { useFloatingMenu } from "@Hooks/useFloatingMenu.js";
 import { Plus, FilePlay } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
 
 export default function Create() {
-  const [open, setOpen] = useState(false);
-  const menuRef = useRef(null);
+  const {
+    isOpen: menuOpen,
+    setIsOpen: setMenuOpen,
+    refs: menuRefs,
+    floatingStyles: menufloatingStyles,
+    getReferenceProps: getMenuReferenceProps,
+    getFloatingProps: getMenuFloatingProps,
+  } = useFloatingMenu({ placement: "bottom", offset: { mainAxis: 5 } });
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const {
+    isOpen: componentOpen,
+    setIsOpen: setComponentOpen,
+    refs: componentRefs,
+    floatingStyles: componentFloatingStyles,
+    getReferenceProps: getComponentReferenceProps,
+    getFloatingProps: getComponentFloatingProps,
+  } = useFloatingMenu({ placement: "bottom", offset: { mainAxis: 5 } });
+
+  const handleUploadClick = () => {
+    setMenuOpen(false);
+    setComponentOpen(true);
+  };
+
   return (
     <div>
       <button
         type="button"
-        onClick={() => setOpen(!open)}
-        className=" bg-black px-5 w-[120px] py-2 rounded-full hover:border-gray-500 hover:bg-gray-800 border-2 border-black"
+        ref={menuRefs.setReference}
+        {...getMenuReferenceProps()}
+        className="bg-black px-5 w-[120px] py-2 rounded-full hover:border-gray-500 hover:bg-gray-800 border-2 border-black"
+        onClick={() => setMenuOpen((open) => !open)}
       >
         <div className="flex justify-center items-center space-x-1 w-full">
-          <Plus />
-          <span> Create</span>
+          <Plus /> <span> Create</span>
         </div>
       </button>
-      {open && (
-        <div className="absolute right-4 mt-2 w-40 bg-black text-white rounded-xl shadow-lg ">
-          <div className="py-1 flex flex-col ">
+      {menuOpen && (
+        <div
+          className="w-40 bg-black text-white rounded-xl shadow-lg"
+          ref={menuRefs.setFloating}
+          style={{ ...menufloatingStyles }}
+          {...getMenuFloatingProps()}
+        >
+          <div className="flex flex-col">
             <button
-              onClick={() => setOpen(false)}
               type="button"
-              className="flex justify-center items-center flex-col w-full h-full px-4 py-2 rounded-md hover:bg-gray-700"
+              className="flex items-center gap-2 px-4 py-2 rounded-md hover:bg-gray-700"
+              ref={componentRefs.setReference}
+              {...getComponentReferenceProps()}
+              onClick={handleUploadClick}
             >
-              <Link to="/video/upload" className="flex items-center gap-2">
-                <FilePlay className="text-gray-300" />
-                Upload video
-              </Link>
+              <FilePlay className="text-gray-300" />
+              Upload video
             </button>
-            {/* <button className="flex items-center gap-2 px-4 py-2 hover:bg-gray-700"> */}
-            {/*   Create tweet */}
-            {/* </button> */}
           </div>
         </div>
+      )}
+      {componentOpen && (
+        <UploadComponent
+          setOpen={setComponentOpen}
+          ref={componentRefs.setFloating}
+          floatingStyles={componentFloatingStyles}
+          getFloatingProps={getComponentFloatingProps}
+        />
       )}
     </div>
   );
 }
+

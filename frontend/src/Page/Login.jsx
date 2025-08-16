@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 const header = "../../public/logo.webp";
 import { useDispatch } from "react-redux";
-import { setCredentials } from "../Store/authSlice.js";
+import { setCredentials } from "@Store/slice/authSlice.js";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 

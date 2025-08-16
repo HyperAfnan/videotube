@@ -1,10 +1,10 @@
-import Layout from "./Layout/Layout.jsx";
-import Header from "./Header/Header.jsx";
-import ConfirmEmailFooter from "./ConfirmEmailFooter/ConfirmEmailFooter.jsx";
-import Protected from "./Protected/Protected.jsx";
-import UploadComponent from "./Video/Upload/UploadComponent.jsx";
-import VideoCard from "./Video/Home/VideoCard.jsx";
-import SideBar from "./SideBar/SideBar.jsx";
+import Layout from "@Components/Layout/Layout.jsx";
+import Header from "@Components/Header/Header.jsx";
+import ConfirmEmailFooter from "@Components/ConfirmEmailFooter/ConfirmEmailFooter.jsx";
+import Protected from "@Components/Protected/Protected.jsx";
+import UploadComponent from "@Components/Video/Upload/UploadComponent.jsx";
+import VideoCard from "@Components/Video/Home/VideoCard.jsx";
+import SideBar from "@Components/SideBar/SideBar.jsx";
 
 export {
   Layout,

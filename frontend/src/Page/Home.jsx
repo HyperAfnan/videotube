@@ -1,8 +1,8 @@
 import { lazy, useEffect, useState, Suspense } from "react";
-import { secureFetch, asyncHandler } from "../utils/index.js";
-const VideoCard = lazy(() => import("../Components/Video/Home/VideoCard.jsx"));
+import { secureFetch, asyncHandler } from "@Utils";
+const VideoCard = lazy(() => import("@Components/Video/Home/VideoCard.jsx"));
+import SkeletonVideoCard from "@Components/Video/Home/SkeletonVideoCard.jsx";
 import { useSelector } from "react-redux";
-import SkeletonVideoCard from "../Components/Video/Home/SkeletonVideoCard.jsx";
 
 export default function Home() {
   const [page, setPage] = useState(1);
@@ -58,7 +58,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex items-center flex-col md:flex-row justify-center flex-wrap overflow-x-clip">
+    <div className="flex items-center flex-col md:flex-row justify-center flex-wrap overflow-x-clip pt-[60px]">
       <Suspense fallback={<SkeletonVideoCard count={12} />}>
         {video.map((video, index) => (
           <VideoCard

@@ -1,7 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authSlice from "./authSlice.js";
-import footerSlice from "./authSlice.js";
-import watchLaterSlice from "./watchLaterSlice.js";
+import { authSlice, footerSlice, watchLaterSlice } from "@Store/slice";
 
 export const store = configureStore({
    reducer: {

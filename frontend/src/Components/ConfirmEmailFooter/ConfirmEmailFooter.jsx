@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { X } from "lucide-react";
-import { closeFooter as close } from "../../Store/FooterSlice.js";
+import { closeFooter as close } from "../../Store/slice/FooterSlice.js";
 
 export default function ConfirmEmailFooter() {
   const email = useSelector((state) => state.auth?.userMeta?.email);

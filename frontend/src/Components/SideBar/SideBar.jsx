@@ -9,7 +9,7 @@ const SideBar = () => {
     { to: "/watchlater", icon: <Clock className="w-15" /> },
   ];
   return (
-    <div className="flex flex-col items-center h-full w-[72px] pr-1 pl-1 m-0 sticky top-0">
+    <div className="flex flex-col items-center h-full w-[72px] pr-1 pl-1 m-0 fixed top-0">
       <div className="pt-4">
         <div className="flex flex-col items-center h-screen w-full space-y-3">
           {isSideBarElement.map((element, index) => (

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setCredentials } from "../../Store/authSlice.js";
-import { refreshAccessToken } from "../../Store/authTrunks.js"; 
+import { setCredentials } from "@Store/slice/authSlice.js";
+import { refreshAccessToken } from "@Store/authTrunks.js"; 
 
 export default function AuthInitializer({ children }) {
    const dispatch = useDispatch();

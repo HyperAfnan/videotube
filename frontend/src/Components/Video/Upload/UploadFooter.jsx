@@ -1,7 +1,7 @@
 import { EllipsisVertical } from "lucide-react";
 import { useState, useRef } from "react";
 import { useFormContext } from "react-hook-form";
-import { secureFetch, asyncHandler } from "../../../utils/index.js";
+import { secureFetch, asyncHandler } from "@Utils";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
