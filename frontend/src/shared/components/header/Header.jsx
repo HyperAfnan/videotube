@@ -6,7 +6,7 @@ export default function Header() {
    const { user, isAuthenticated } = useAuth();
 
   return (
-    <div className=" flex items-center justify-center p-2 font-roboto bg-white/10 backdrop-blur-3xl border-b border-white/20 fixed w-full top-0 z-50">
+    <div className=" flex items-center justify-center p-2 font-roboto bg-white/5 backdrop-blur-3xl border-b border-white/20 fixed w-full top-0 z-50">
       <Menu className="w-[70px]" />
       <Logo />
       <SearchBar />

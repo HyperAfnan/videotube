@@ -1,0 +1,3 @@
+- [x] if the user registers, the login is done properly, after refresh, the user is logged out
+- [ ] the user is not redirected to home page after the video is uploaded
+- [ ] user playlists are not showing when the add to playlist thing opens

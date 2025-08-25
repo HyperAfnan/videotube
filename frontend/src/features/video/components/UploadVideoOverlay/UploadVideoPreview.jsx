@@ -49,7 +49,7 @@ export default function VideoPreview({ videoMeta, thumbnail }) {
                </div>
                <div className="pt-2">
                   <span className="text-xs text-gray-600">Filename</span>
-                  <p className="text-xs">{videoMeta?.videoFile.split("/").pop()}</p>
+                  <p className="text-xs text-gray-600">{videoMeta?.videoFile.split("/").pop()}</p>
                </div>
             </div>
          </div>

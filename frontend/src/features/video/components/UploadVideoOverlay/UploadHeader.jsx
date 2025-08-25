@@ -1,6 +1,8 @@
+import asyncHandler from "@Shared/utils/asyncHandler.js";
+import { deleteFetch } from "@Shared/utils/secureFetch.js";
 import { X } from "lucide-react";
 import { useFormContext, useWatch } from "react-hook-form";
-import { deleteFetch, asyncHandler } from "@Utils";
+// import { deleteFetch, asyncHandler } from "@Utils";
 
 const UploadHeader = ({
    videoMeta,
@@ -21,7 +23,7 @@ const UploadHeader = ({
       <div className="flex items-center justify-between h-12 w-full bg-white rounded-t-xl p-4 m-0">
          {videoMeta ? (
             <>
-               <h1 className=" text-2xl overflow-x-auto ">{title}</h1>
+               <h1 className=" text-2xl overflow-x-auto text-black">{title}</h1>
                <div className="flex items-center justify-end space-x-2">
                   <span className="text-black px-3 py-2 min-w-[135px] rounded-xl bg-gray-300 text-sm">
                      Saved as Private

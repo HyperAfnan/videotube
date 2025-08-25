@@ -9,7 +9,8 @@ export const PlaylistService = {
       });
       if (response.status !== 201)
          throw new Error(`Failed to create playlist ${response.statusText}`);
-      return response.json();
+      const data = await response.json();
+      return data?.data
    },
 
    addToPlaylist: async (videoId, playlistId) => {
@@ -19,10 +20,9 @@ export const PlaylistService = {
             method: "PATCH",
          },
       );
-      if (!response.ok) {
-         throw new Error("Failed to add video to playlist");
-      }
-      return response.json();
+      if (response.status !== 200) throw new Error("Failed to add video to playlist");
+      const data = await response.json();
+      return data?.data
    },
 
    removeFromPlaylist: async (videoId, playlistId) => {
@@ -45,6 +45,7 @@ export const PlaylistService = {
       });
       if (response.status !== 200)
          throw new Error(`Failed to fetch user playlists ${response.statusText}`);
-      return response.json();
+      const data = await response.json();
+      return data?.data
    },
 };

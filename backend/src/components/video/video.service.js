@@ -1,5 +1,4 @@
 import { WatchHistory } from "../watchHistory/watchHistory.model.js";
-import mongoose from "mongoose";
 import { ApiError } from "../../utils/apiErrors.js";
 import { serviceHandler } from "../../utils/handlers.js";
 import { User } from "../user/user.model.js";
@@ -42,11 +41,11 @@ export const getAllVideos = serviceHandler(
          q,
          sortBy,
          sortType,
-         userId,
+         // userId,
       });
 
       const aggregate = Video.aggregate([
-         { $match: { owner: new mongoose.Types.ObjectId(String(userId)) } },
+         // { $match: { owner: new mongoose.Types.ObjectId(String(userId)) } },
          { $match: { title: { $regex: q } } },
          { $sort: { [sortBy]: sortType } },
       ]);
@@ -70,7 +69,7 @@ export const getAllVideos = serviceHandler(
          page,
          limit,
          count: data?.videos?.length ?? 0,
-         userId,
+         // userId,
       });
       return data;
    },

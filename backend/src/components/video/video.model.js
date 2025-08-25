@@ -15,11 +15,11 @@ const videoSchema = new Schema(
 			enum: ["public", "private", "unlisted"],
 			default: "private",
 		},
-		owner: { type: Schema.Types.ObjectId, ref: "user" },
+		owner: { type: Schema.Types.ObjectId, ref: "users" },
 	},
 	{ timestamps: true },
 );
 
 videoSchema.plugin(mongooseAggregatePaginate);
 
-export const Video = mongoose.model("video", videoSchema);
+export const Video = mongoose.model("videos", videoSchema);

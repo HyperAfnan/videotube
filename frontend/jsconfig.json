@@ -2,8 +2,8 @@
   "compilerOptions": {
     "baseUrl": "src",
     "paths": {
-      "@Store/*": ["store/*"]
-      "@Features/*": ["features/*"]
+      "@Store/*": ["store/*"],
+      "@Features/*": ["features/*"],
       "@Shared/*": ["shared/*"]
     }
   }

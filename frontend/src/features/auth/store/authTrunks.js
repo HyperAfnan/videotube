@@ -8,6 +8,11 @@ function safeParse(jsonString) {
     return null;
   }
 }
+/* 
+This function refreshes the access token when the authInitializer calls it
+ - Usually calls when the the user refreshes the site
+*/
+
 export const refreshAccessToken = () => async (dispatch) => {
   try {
     const res = await fetch("/api/v1/user/refreshToken", {

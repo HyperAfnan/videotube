@@ -1,14 +1,14 @@
-import { useSelector } from "react-redux";
 import VideoCard from "./WatchLaterVideoCard.jsx";
 import WatchListSort from "./WatchLateSort.jsx";
 import { useState } from "react";
+import { useWatchLater } from "../hook/useWatchLaterQueries.js";
 
 const WatchLaterRightSideContainer = () => {
-   const { watchList } = useSelector( (state) => state.watchLater);
-
+   const { watchLater, isFetching } = useWatchLater();
+   
    const [sortOption, setSortOption] = useState({
       label: "Date Published (newest)",
-      filter: (a, b) => new Date(a.video.createdAt) - new Date(b.video.createdAt),
+      filter: (a, b) => new Date(b.video.createdAt) - new Date(a.video.createdAt),
       value: "dataPublishedNewest",
    });
 
@@ -16,10 +16,15 @@ const WatchLaterRightSideContainer = () => {
       <div className="w-full h-screen pl-[470px] pt-[40px]">
          <div className="w-full h-10px flex justify-start items-center p-4 ">
             <WatchListSort setSortOption={setSortOption} />
+            
+            {isFetching && (
+               <span className="ml-4 text-sm text-gray-500">Updating...</span>
+            )}
          </div>
+         
          <div className="w-full h-full ">
-            {watchList?.length > 0 ? (
-               [...watchList]
+            {watchLater?.length > 0 ? (
+               [...watchLater]
                   .sort(sortOption.filter)
                   .map((watchLater) => (
                      <VideoCard

@@ -1,6 +1,7 @@
+import asyncHandler from "@Shared/utils/asyncHandler.js";
+import { secureFetch } from "@Shared/utils/secureFetch.js";
 import { Upload } from "lucide-react";
 import { useSelector } from "react-redux";
-import { asyncHandler, secureFetch } from "@Utils";
 
 const UploadPrompt = ({ setProgress, setVideoMeta, setThumbnail, methods }) => {
    const accessToken = useSelector((state) => state.auth.accessToken);

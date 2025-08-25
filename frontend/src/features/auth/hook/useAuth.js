@@ -15,8 +15,11 @@ export const useAuth = () => {
       setError(null);
       try {
          const userData = await authService.login(credentials);
-         dispatch(setCredentials({ userMeta: userData }));
-         localStorage.setItem("user", JSON.stringify(userData));
+
+         dispatch(setCredentials({ userMeta: userData.user, accessToken: userData.accessToken }));
+         localStorage.setItem("user", JSON.stringify(userData.user));
+
+         return userData;
       } catch (err) {
          setError(err.message);
       }
@@ -24,9 +27,8 @@ export const useAuth = () => {
    const signup = async (credentials) => {
       setError(null);
       try {
-         const userData = await authService.signup(credentials);
-         dispatch(setCredentials({ userMeta: userData }));
-         localStorage.setItem("user", JSON.stringify(userData));
+         const data = await authService.signup(credentials);
+         return data;
       } catch (err) {
          setError(err.message);
       }

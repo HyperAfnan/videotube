@@ -1,18 +1,21 @@
 import { EllipsisVertical } from "lucide-react";
 import { useState, useRef } from "react";
 import { useFormContext } from "react-hook-form";
-import { secureFetch, asyncHandler } from "@Utils";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import asyncHandler from "@Shared/utils/asyncHandler.js";
+import { useVideo } from "@Features/video/hook/useVideo.js";
+import { notificationService } from "@Shared/services/notification.services.js";
+
+ // TODO:  use useFloating hook for the menu toggle logic and positioning
 
 const UploadFooter = ({ setProgress, videoMeta }) => {
   const { setValue, handleSubmit } = useFormContext();
-  const { accessToken } = useSelector((state) => state.auth);
   const [menuStatus, setMenuStatus] = useState(false);
   const buttonTexts = ["Publish Now", "Public Later"];
   const [buttonText, setButtonText] = useState(buttonTexts[0]);
   const spanRef = useRef(null);
   const navigate = useNavigate();
+   const { updateAfterUploading } = useVideo();
   const toggleMenu = () => {
     if (spanRef.current.classList.contains("hidden")) {
       setMenuStatus(true);
@@ -24,37 +27,17 @@ const UploadFooter = ({ setProgress, videoMeta }) => {
   };
 
   const uploadHandler = asyncHandler(async (data) => {
-    const { thumbnail, ...dataWithoutThumbnail } = data;
-    await secureFetch(
-      `/api/v1/videos/${data?._id}`,
-      {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dataWithoutThumbnail),
-      },
-      accessToken,
-    );
-
-    if (thumbnail !== videoMeta.thumbnail) {
-      const formData = new FormData();
-      formData.append("thumbnail", thumbnail);
-
-      await secureFetch(
-        `/api/v1/videos/${data._id}`,
-        { method: "PATCH", body: formData },
-        accessToken,
-      );
-    }
-
-    if (data.playlist) {
-      await secureFetch(
-        `/api/v1/playlist/add/${data._id}/${data.playlist}`,
-        { method: "PATCH" },
-        accessToken,
-      );
-    }
-
-    navigate("/");
+      try {
+         const status = await updateAfterUploading(data, videoMeta)
+         if(status) {
+            notificationService.success("Video uploaded successfully");
+            navigate("/");
+         }
+      }
+      catch (error) {
+         notificationService.error("Video upload failed");
+         console.error("Upload failed:", error);
+      }
   });
 
   function closeMenu() {

@@ -173,11 +173,11 @@ router.use("/watchlater", watchLaterRoutes);
  */
 router.route("/register").post(
 	authRateLimiter,
-	upload.fields([
-		{ name: "avatar", maxCount: 1 },
-		{ name: "coverImage", maxCount: 1 },
-	]),
-	registerationFilesValidator,
+	// upload.fields([
+	// 	{ name: "avatar", maxCount: 1 },
+	// 	{ name: "coverImage", maxCount: 1 },
+	// ]),
+	// registerationFilesValidator,
 	registerValidator,
 	validator,
 	registerUser,
@@ -514,7 +514,7 @@ router
  *       401:
  *         description: Unauthorized
  */
-router.route("/:userId").get(defaultRateLimiter, auth, getUser);
+router.route("/:userId").get(defaultRateLimiter, getUser);
 
 /**
  * @swagger

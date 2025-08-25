@@ -81,7 +81,7 @@ const router = Router();
  */
 
 router.use(defaultRateLimiter);
-router.use(verifyAccessToken); // Apply verifyJWT middleware to all routes in this file
+// router.use(verifyAccessToken); // Apply verifyJWT middleware to all routes in this file
 
 /**
  * @swagger
@@ -177,6 +177,7 @@ router
 	.route("/")
 	.get(getAllVideosValidator, validator, getAllVideos)
 	.post(
+      verifyAccessToken,
 		upload.fields([
 			{ name: "videoFile", maxCount: 1 },
 			// { name: "thumbnail", maxCount: 1 },
@@ -276,17 +277,15 @@ router
  *         description: Unauthorized
  */
 
-function logger(req, _, next) {
-	console.log("body", req.body);
-	console.log("file", req.file);
-	next();
-}
 router
 	.route("/:videoId")
-	.get(getVideoByIdValidator, validator, getVideoById)
-	.delete(deleteVideoValidator, validator, deleteVideo)
+	.get(
+      getVideoByIdValidator, validator, getVideoById)
+	.delete(
+      verifyAccessToken,
+      deleteVideoValidator, validator, deleteVideo)
 	.patch(
-		logger,
+      verifyAccessToken,
 		upload.single("thumbnail"),
 		updateVideoValidator,
 		validator,
@@ -321,7 +320,7 @@ router
  */
 router
 	.route("/toggle/publish/:videoId")
-	.patch(togglePublishStatusValidator, validator, togglePublishStatus);
+	.patch(verifyAccessToken, togglePublishStatusValidator, validator, togglePublishStatus);
 
 /**
  * @swagger
