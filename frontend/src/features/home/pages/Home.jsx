@@ -1,5 +1,4 @@
 import { useEffect, Suspense, lazy } from "react";
-
 import SkeletonVideoCard from "@Features/video/components/SkeletonVideoCard.jsx";
 const VideoCard = lazy(
   () => import("@Features/video/components/VideoCard.jsx"),
@@ -33,13 +32,13 @@ export default function Home() {
         <Suspense fallback={<SkeletonVideoCard count={12} />}>
           {videos.map((video, index) => (
             <VideoCard
-              key={video._id || index}
-              videoId={video._id}
-              title={video.title}
-              thumbnail={video.thumbnail}
-              views={video.views}
-              uploadedAt={video.createdAt}
-              video={video}
+              key={video?._id || index}
+              videoId={video?._id}
+              title={video?.title}
+              thumbnail={video?.thumbnail}
+              views={video?.views}
+              uploadedAt={video?.createdAt}
+              owner={video?.owner}
             />
           ))}
           {isLoading && <SkeletonVideoCard count={12} />}

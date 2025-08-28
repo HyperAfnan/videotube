@@ -88,5 +88,5 @@ export const VideoService = {
       const blob = await response.blob();
       if (!blob) throw new Error("Failed to download video");
       return blob;
-   }
+   },
 }

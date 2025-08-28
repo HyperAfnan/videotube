@@ -3,10 +3,7 @@ import { useState, useRef } from "react";
 import { useFormContext } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import asyncHandler from "@Shared/utils/asyncHandler.js";
-import { useVideo } from "@Features/video/hook/useVideo.js";
-import { notificationService } from "@Shared/services/notification.services.js";
-
- // TODO:  use useFloating hook for the menu toggle logic and positioning
+import { useUpdateVideo } from "@Features/video/hook/useVideoMutations.js";
 
 const UploadFooter = ({ setProgress, videoMeta }) => {
   const { setValue, handleSubmit } = useFormContext();
@@ -15,7 +12,7 @@ const UploadFooter = ({ setProgress, videoMeta }) => {
   const [buttonText, setButtonText] = useState(buttonTexts[0]);
   const spanRef = useRef(null);
   const navigate = useNavigate();
-   const { updateAfterUploading } = useVideo();
+   const { mutate } = useUpdateVideo(videoMeta._id, videoMeta);
   const toggleMenu = () => {
     if (spanRef.current.classList.contains("hidden")) {
       setMenuStatus(true);
@@ -27,17 +24,8 @@ const UploadFooter = ({ setProgress, videoMeta }) => {
   };
 
   const uploadHandler = asyncHandler(async (data) => {
-      try {
-         const status = await updateAfterUploading(data, videoMeta)
-         if(status) {
-            notificationService.success("Video uploaded successfully");
-            navigate("/");
-         }
-      }
-      catch (error) {
-         notificationService.error("Video upload failed");
-         console.error("Upload failed:", error);
-      }
+    const status = mutate(videoMeta._id, data);
+    if (status) navigate("/");
   });
 
   function closeMenu() {

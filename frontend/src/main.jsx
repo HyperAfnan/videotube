@@ -13,6 +13,11 @@ import Signup from "@Features/auth/pages/Signup.jsx";
 import WatchLaterPage from "@Features/watchlater/pages/WatchLaterPage.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Button } from "./shared/components/ui/button.jsx";
+
+const TestPage = () => { return ( <div className="flex items-center justify-center w-full ml-35 h-screen">
+   <Button> Hello world</Button>
+</div> ) };
 
 const router = createBrowserRouter([
    {
@@ -42,6 +47,12 @@ const router = createBrowserRouter([
                <Protected auth={false}>
                   <Signup />
                </Protected>
+            ),
+         },
+         {
+            path: "/test",
+            element: (
+                  <TestPage />
             ),
          },
          // {

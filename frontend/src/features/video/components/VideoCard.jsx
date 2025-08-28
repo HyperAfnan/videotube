@@ -1,42 +1,70 @@
-import { Dot } from "lucide-react";
+import {
+  EllipsisVertical,
+  Clock4,
+  ListPlusIcon,
+  DownloadIcon,
+  BookmarkIcon,
+  Share2,
+  MessageSquareWarning,
+  Dot,
+} from "lucide-react";
 import { Link } from "react-router-dom";
-import { lazy, useState, useEffect } from "react";
-import { useInView } from "react-intersection-observer";
-const VideoCardMenu = lazy(() => import("./VideoCardMenu.jsx"));
 import { getWebpThumbnail, timeAgo } from "@Shared/utils/formatter.js";
-import { useVideo } from "../hook/useVideo.js";
+import { Menu } from "@Shared/components/Menu/Menu.jsx";
+import { useWatchLaterOperations } from "@Features/watchlater/hook/useWatchLaterMutation.js";
+import {
+  shareVideo,
+  downloadVideo,
+} from "@Shared/components/Menu/menuActions.js";
+import LazyImage from "@Shared/components/LazyImage.jsx";
+import { useReportVideo } from "../hook/useVideoMutations.js";
 
-const LazyImage = ({ src, alt, className }) => {
-  const { ref, inView } = useInView({
-    triggerOnce: true,
-    rootMargin: "200px 0px",
-  });
+const VideoCard = ({ thumbnail, title, uploadedAt, views, videoId, owner }) => {
+  const { addToWatchLater, isAddingToWatchLater ,} = useWatchLaterOperations();
+   const { mutate } = useReportVideo();
 
-  return (
-    <img
-      ref={ref}
-      src={inView ? src : undefined}
-      alt={alt}
-      className={`${className} transition-opacity duration-300 ${
-        inView ? "opacity-100" : "opacity-0"
-      }`}
-    />
-  );
-};
-
-const VideoCard = ({ thumbnail, title, uploadedAt, views, videoId, video }) => {
-  const { fetchOwner } = useVideo();
-  const [ownerData, setOwnerData] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (video?.owner) {
-        const data = await fetchOwner(video.owner);
-        setOwnerData(data);
-      }
-    };
-    fetchData();
-  }, []);
+  const menuOptions = [
+    {
+      label: "Add to Queue",
+      icon: <ListPlusIcon className="w-4 h-4 inline mr-2" />,
+      onClick: () => {
+        console.log("Add to Queue clicked");
+      },
+    },
+    {
+      label: isAddingToWatchLater
+        ? "Saving to watch later"
+        : "Save to Watch later",
+      icon: <Clock4 className="w-4 h-4 inline mr-2" />,
+      onClick: () => {
+        addToWatchLater(videoId);
+      },
+    },
+    {
+      label: "Add to Playlist",
+      icon: <BookmarkIcon className="w-4 h-4 inline mr-2" />,
+      onClick: () => {
+        console.log("Add to playlist");
+      },
+    },
+    {
+      label: "Download",
+      icon: <DownloadIcon className="w-4 h-4 inline mr-2" />,
+      onClick: () => {
+        downloadVideo(videoId, videoTitle);
+      },
+    },
+    {
+      label: "Share",
+      icon: <Share2 className="w-4 h-4 inline mr-2" />,
+      onClick: () => shareVideo(videoId),
+    },
+    {
+      label: "Report",
+      icon: <MessageSquareWarning className="w-4 h-4 inline mr-2" />,
+      onClick: () => mutate(videoId),
+    },
+  ];
 
   return (
     <div className="flex flex-col space-y-4 w-[435px] h-[350px] mx-2 my-2 hover:bg-gray-100 rounded-xl p-2">
@@ -45,17 +73,22 @@ const VideoCard = ({ thumbnail, title, uploadedAt, views, videoId, video }) => {
         <LazyImage
           src={getWebpThumbnail(thumbnail)}
           alt="Video Thumbnail"
-          className="w-[435px] h-[245px] object-cover rounded-xl"
+          className="object-cover rounded-xl"
+          width={"435px"}
+          height={"245px"}
         />
       </Link>
 
       <div className="flex flex-row space-x-2">
         {/* Owner PFP */}
-        <Link to={`/user/${ownerData?.username}`} className="flex-shrink-0">
+        <Link to={`/user/${owner?.username}`} className="flex-shrink-0">
           <LazyImage
-            src={ownerData?.avatar}
-            alt={ownerData?.username}
-            className="w-10 h-10 rounded-full"
+            src={owner?.avatar}
+            alt={owner?.username}
+            className="rounded-full"
+            width={10}
+            height={10}
+            circle
           />
         </Link>
 
@@ -64,9 +97,9 @@ const VideoCard = ({ thumbnail, title, uploadedAt, views, videoId, video }) => {
           <Link to={`/watch/${videoId}`}>
             <span className="text-base font-semibold">{title}</span>
           </Link>
-          <Link to={`/user/${ownerData?.username}`}>
+          <Link to={`/user/${owner?.username}`}>
             <span className="text-sm text-gray-600 hover:text-black">
-              {ownerData?.username}
+              {owner?.username}
             </span>
           </Link>
 
@@ -79,8 +112,15 @@ const VideoCard = ({ thumbnail, title, uploadedAt, views, videoId, video }) => {
                 {timeAgo(uploadedAt)}
               </span>
             </div>
+
             {/* Ellipsis Menu */}
-            <VideoCardMenu videoId={videoId} videoTitle={title} />
+            <Menu
+              trigger={<EllipsisVertical />}
+              triggerClasses={"text-gray-500"}
+              menuClasses={"flex-col w-[220px] h-auto bg-white"}
+            >
+              {menuOptions}
+            </Menu>
           </div>
         </div>
       </div>

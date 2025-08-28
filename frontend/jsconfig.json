@@ -1,10 +1,28 @@
+// {
+// "compilerOptions": {
+// "baseUrl": "src",
+// "paths": {
+//   "@Store/*": ["store/*"],
+//   "@Features/*": ["features/*"],
+//   "@Shared/*": ["shared/*"]
+// }
+
 {
   "compilerOptions": {
-    "baseUrl": "src",
+    "target": "es6",
+    "module": "commonjs",
+    "baseUrl": ".",
     "paths": {
+      "@Utils*": ["shared/utils*"],
+      "@Components*": ["shared/components*"],
+      "@Lib*": ["shared/lib*"],
       "@Store/*": ["store/*"],
       "@Features/*": ["features/*"],
       "@Shared/*": ["shared/*"]
-    }
-  }
+    },
+    "jsx": "react"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }
+// }

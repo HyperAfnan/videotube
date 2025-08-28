@@ -10,6 +10,9 @@ export default defineConfig({
       "@Store": path.resolve(__dirname, "src/store"),
       "@Features": path.resolve(__dirname, "src/features"),
       "@Shared": path.resolve(__dirname, "src/shared"),
+      "@Utils": path.resolve(__dirname, "src/shared/utils"),
+      "@Components": path.resolve(__dirname, "src/shared/components"),
+      "@Lib": path.resolve(__dirname, "src/shared/lib"),
     },
   },
   server: {
