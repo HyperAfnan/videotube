@@ -15,17 +15,17 @@ const getAllVideos = asyncHandler(async (req, res) => {
       q,
       sortBy,
       sortType,
-      userId: userId || req.user._id,
+      // userId: userId || req.user._id,
    });
 
-   if (userId) {
-      const user = await VideoService.findUserById(userId);
-      if (!user) {
-         throw new ApiError(404, "User not found", { userId, requestId: req.id });
-      }
-   }
+   // if (userId) {
+   //    const user = await VideoService.findUserById(userId);
+   //    if (!user) {
+   //       throw new ApiError(404, "User not found", { userId, requestId: req.id });
+   //    }
+   // }
 
-   const user = userId || req.user._id;
+   // const user = userId || req.user._id;
 
    const allVideos = await VideoService.getAllVideos(
       page,
@@ -33,12 +33,12 @@ const getAllVideos = asyncHandler(async (req, res) => {
       q,
       sortBy,
       sortType,
-      user,
+      // user,
    );
 
    videoLogger.info(`[Request] ${req.id} Fetched videos successfully`, {
       count: allVideos.length,
-      user,
+      // user,
    });
 
    return res

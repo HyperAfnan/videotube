@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
-import { secureFetch, asyncHandler } from "@Utils";
-import { useSelector, useDispatch } from "react-redux";
-import { setCredentials } from "@Store/slice/authSlice.js";
+import { usePlaylist } from "@Features/playlist/hook/usePlaylist.js";
+import { notificationService } from "@Shared/services/notification.services.js";
+import { useEffect } from "react";
 
 function Input({ name, placeholder, type, onChange }) {
    return (
@@ -32,26 +31,37 @@ export const MenuButton = ({ children, onClick }) => {
 };
 
 export const AddToPlaylist = ({ videoId, menu, ref, style, ...floatingProps }) => {
-   const { _id, playlists: userPlaylist } = useSelector(
-      (state) => state.auth.userMeta,
-   );
-   const [playlists, setPlaylists] = useState([]);
-   const dispatch = useDispatch();
+   const { playlists, fetchUserPlaylists, error, addToPlaylist } = usePlaylist();
 
-   const fetchUserPlaylist = asyncHandler(async () => {
-      const response = await secureFetch(`/api/v1/playlist/user/${_id}`);
-      setPlaylists(response.data[0].playlists);
-      dispatch(
-         setCredentials({ userMeta: { playlists: response.data[0].playlists } }),
-      );
-   });
+   const fetchUserPlaylist = async () => {
+      try {
+         const {status} = await fetchUserPlaylists();
+         if (status) { // Playlists fetched successfully
+         } 
+
+         if (error) notificationService.error("Failed to fetch playlists");
+      } catch (err) {
+         notificationService.error("Failed to fetch playlists");
+      }
+   }
 
    useEffect(() => {
-      if (_id) {
-         if (!userPlaylist) fetchUserPlaylist();
-         else setPlaylists(userPlaylist);
+      fetchUserPlaylist();
+   }, []);
+
+   const addToPlaylistHandler = async (playlistId, video) => {
+      try {
+         const { status } = await addToPlaylist(playlistId, video);
+         if (status) {
+            notificationService.success("Video added to playlist");
+            menu(false);
+         } else {
+            notificationService.error("Failed to add video to playlist");
+         }
+      } catch (err) {
+         notificationService.error("Failed to add video to playlist");
       }
-   }, [_id]);
+   }
 
    return (
       <div
@@ -65,11 +75,11 @@ export const AddToPlaylist = ({ videoId, menu, ref, style, ...floatingProps }) =
             placeholder="Search Playlist"
             type="search"
             onChange={(e) => {
-               const searchTerm = e.target.value.toLowerCase();
-               const filteredPlaylists = userPlaylist.filter((playlist) =>
-                  playlist.name.toLowerCase().includes(searchTerm),
-               );
-               setPlaylists(filteredPlaylists);
+               // const searchTerm = e.target.value.toLowerCase();
+               // const filteredPlaylists = playlists.filter((playlist) =>
+               //    playlist.name.toLowerCase().includes(searchTerm),
+               // );
+               // setPlaylists(filteredPlaylists);
             }}
          />
          {playlists?.map((playlist ) => (
@@ -77,10 +87,7 @@ export const AddToPlaylist = ({ videoId, menu, ref, style, ...floatingProps }) =
                key={playlist._id}
                className="flex items-center p-2 hover:bg-gray-100 rounded-lg cursor-pointer"
                onClick={() => {
-                  secureFetch(`/api/v1/playlist/add/${videoId}/${playlist._id}`, {
-                     method: "PATCH",
-                  });
-                  menu(false);
+                  addToPlaylistHandler(playlist._id, { videoId });
                }}
             >
                <span>{playlist.name}</span>

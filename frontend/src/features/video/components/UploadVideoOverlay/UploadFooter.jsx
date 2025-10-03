@@ -1,18 +1,18 @@
 import { EllipsisVertical } from "lucide-react";
 import { useState, useRef } from "react";
 import { useFormContext } from "react-hook-form";
-import { secureFetch, asyncHandler } from "@Utils";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import asyncHandler from "@Shared/utils/asyncHandler.js";
+import { useUpdateVideo } from "@Features/video/hook/useVideoMutations.js";
 
 const UploadFooter = ({ setProgress, videoMeta }) => {
   const { setValue, handleSubmit } = useFormContext();
-  const { accessToken } = useSelector((state) => state.auth);
   const [menuStatus, setMenuStatus] = useState(false);
   const buttonTexts = ["Publish Now", "Public Later"];
   const [buttonText, setButtonText] = useState(buttonTexts[0]);
   const spanRef = useRef(null);
   const navigate = useNavigate();
+   const { mutate } = useUpdateVideo(videoMeta._id, videoMeta);
   const toggleMenu = () => {
     if (spanRef.current.classList.contains("hidden")) {
       setMenuStatus(true);
@@ -24,37 +24,8 @@ const UploadFooter = ({ setProgress, videoMeta }) => {
   };
 
   const uploadHandler = asyncHandler(async (data) => {
-    const { thumbnail, ...dataWithoutThumbnail } = data;
-    await secureFetch(
-      `/api/v1/videos/${data?._id}`,
-      {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dataWithoutThumbnail),
-      },
-      accessToken,
-    );
-
-    if (thumbnail !== videoMeta.thumbnail) {
-      const formData = new FormData();
-      formData.append("thumbnail", thumbnail);
-
-      await secureFetch(
-        `/api/v1/videos/${data._id}`,
-        { method: "PATCH", body: formData },
-        accessToken,
-      );
-    }
-
-    if (data.playlist) {
-      await secureFetch(
-        `/api/v1/playlist/add/${data._id}/${data.playlist}`,
-        { method: "PATCH" },
-        accessToken,
-      );
-    }
-
-    navigate("/");
+    const status = mutate(videoMeta._id, data);
+    if (status) navigate("/");
   });
 
   function closeMenu() {

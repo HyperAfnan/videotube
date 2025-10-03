@@ -1,5 +1,5 @@
-import { UploadComponent } from "@Components";
-import { useFloatingMenu } from "@Hooks/useFloatingMenu.js";
+import { UploadComponent } from "@Features/video/components/UploadVideoOverlay/index.js";
+import { useFloatingMenu } from "@Shared/hooks/useFloatingMenu.js";
 import { Plus, FilePlay } from "lucide-react";
 
 export default function Create() {

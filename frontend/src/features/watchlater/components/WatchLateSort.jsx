@@ -1,5 +1,5 @@
+import { useFloatingMenu } from "@Shared/hooks/useFloatingMenu.js";
 import { ArrowDown01 } from "lucide-react";
-import { useFloatingMenu } from "@Hooks/useFloatingMenu.js";
 
 const sortOptions = [
    {

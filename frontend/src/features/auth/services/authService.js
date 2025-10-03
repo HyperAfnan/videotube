@@ -1,4 +1,4 @@
-import asyncHandler from "shared/utils/asyncHandler.js";
+import asyncHandler from "@Shared/utils/asyncHandler.js";
 
 export const authService = {
   login: asyncHandler(async (payload) => {
@@ -15,28 +15,29 @@ export const authService = {
 
     return data?.data;
   }),
-   signup: asyncHandler(async (payload) => {
-      const res = await fetch("/api/v1/user/signup", {
-         headers: { "Content-Type": "application/json" },
-         method: "POST",
-         credentials: "include",
-         body: JSON.stringify(payload),
-      });
-   
-      const data = await res.json();
-   
-      if (res.status !== 201) throw new Error(data.message || "Registration failed");
-   
-      return data?.data;
-   }),
-   logout: asyncHandler(async () => {
-      const res = await fetch("/api/v1/user/logout", {
-         method: "POST",
-         credentials: "include",
-      });
-   
-      if (res.status !== 200) throw new Error("Logout failed");
-   
-      return true;
-   })
+  signup: asyncHandler(async (payload) => {
+    const res = await fetch("/api/v1/user/register", {
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
+      credentials: "include",
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    if (res.status !== 201)
+      throw new Error(data.message || "Registration failed");
+
+    return data?.data;
+  }),
+  logout: asyncHandler(async () => {
+    const res = await fetch("/api/v1/user/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+
+    if (res.status !== 200) throw new Error("Logout failed");
+
+    return true;
+  }),
 };

@@ -1,6 +1,6 @@
 export const VideoService = {
-   async fetchAll() {
-      const response = await fetch("/api/v1/videos", {
+   async getVideos( page = 1 ) {
+      const response = await fetch(`/api/v1/videos?page=${page}`, {
          credentials: "include",
          method: "GET",
          headers: { "Content-Type": "application/json" },
@@ -9,7 +9,7 @@ export const VideoService = {
       if (response.status !== 200) throw new Error(`Failed to fetch videos: ${response.statusText}`);
    
       const data = await response.json();
-      return data?.data;
+      return data?.data?.videos || [];
    },
    
    async fetchById(videoId) {
@@ -24,8 +24,21 @@ export const VideoService = {
       const data = await response.json();
       return data?.data;
    },
+
+   async fetchOwner(ownerId) {
+      const response = await fetch(`/api/v1/user/${ownerId}`, {
+         credentials: "include",
+         method: "GET",
+         headers: { "Content-Type": "application/json" },
+      });
    
-   async add(videoData) {
+      if (response.status !== 200) throw new Error(`Failed to fetch owner: ${response.statusText}`);
+   
+      const data = await response.json();
+      return data?.data;
+   },
+   
+   async upload(videoData) {
       const response = await fetch("/api/v1/videos", {
          credentials: "include",
          method: "POST",
@@ -42,7 +55,7 @@ export const VideoService = {
    async update(videoId, videoData) {
       const response = await fetch(`/api/v1/videos/${videoId}`, {
          credentials: "include",
-         method: "PUT",
+         method: "PATCH",
          headers: { "Content-Type": "application/json" },
          body: JSON.stringify(videoData),
       });
@@ -75,5 +88,5 @@ export const VideoService = {
       const blob = await response.blob();
       if (!blob) throw new Error("Failed to download video");
       return blob;
-   }
+   },
 }

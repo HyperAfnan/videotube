@@ -87,8 +87,8 @@ export const getWatchLaterVideos = asyncHandler(async (req, res) => {
 		await WatchLaterService.getWatchLaterVideosService(userId);
 	if (!watchLaterVideos || watchLaterVideos.length === 0) {
 		return res
-			.status(404)
-			.json(new ApiResponse(404, [], "No watch later videos found"));
+			.status(200)
+			.json(new ApiResponse(200, [], "No watch later videos found"));
 	}
 	return res
 		.status(200)

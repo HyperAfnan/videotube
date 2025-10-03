@@ -9,7 +9,7 @@ const UploadThumbnail = ({ setThumbnail, videoMeta }) => {
           Set a thumbnail that stands out...
         </p>
       </div>
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4 text-black">
         <label htmlFor="thumbnail">
           <span className="border-2 border-dotted border-black px-4 py-2 rounded-lg cursor-pointer hover:bg-gray-200">
             Select Thumbnail

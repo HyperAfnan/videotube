@@ -1,6 +1,6 @@
-import { useSelector } from "react-redux";
+import { useAuth } from "@Features/auth/hook/useAuth.js";
 const Dashboard = () => {
-  const userMeta = useSelector((state) => state.auth.userMeta);
+   const { user: userMeta } = useAuth();
   return (
     <div>
       <h1 className="text-2xl font-bold text-center mt-10">Dashboard </h1>

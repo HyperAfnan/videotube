@@ -1,21 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
-   status: false,
-   userMeta: {
-      username: null,
-      _id: null,
-      avatar: null,
-      coverImage: null,
-      fullname: null,
-      email: null,
-      playlists: [],
-      videos: [],
-      tweets: [],
-      watchHistory: [],
-      subscribers: [],
-      subscriptions: [],
-   },
-   accessToken: null,
+  status: false,
+  userMeta: {
+    username: null,
+    _id: null,
+    avatar: null,
+    coverImage: null,
+    fullname: null,
+    email: null,
+    playlists: [],
+    videos: [],
+    tweets: [],
+    watchHistory: [],
+    subscribers: [],
+    subscriptions: [],
+  },
+  accessToken: null,
 };
 
 const authSlice = createSlice({
@@ -61,7 +61,7 @@ const authSlice = createSlice({
 });
 
 export const {
-   setCredentials: setCredentials,
-   clearCredentials: clearCredentials,
+  setCredentials: setCredentials,
+  clearCredentials: clearCredentials,
 } = authSlice.actions;
 export default authSlice.reducer;

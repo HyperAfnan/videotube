@@ -8,15 +8,15 @@ import {
   MessageSquareWarning,
 } from "lucide-react";
 import { AddToPlaylist, MenuButton } from "./Utils.jsx";
-import { useDispatch } from "react-redux";
-import { useFloatingMenu } from "@Hooks/useFloatingMenu.js";
 import { FloatingPortal } from "@floating-ui/react";
-import { useWatchLater } from "@Hooks/useWatchLater.js";
-import { useVideo } from "@Hooks/useVideo.js";
+import { useFloatingMenu } from "@Shared/hooks/useFloatingMenu.js";
+import { useVideo } from "../hook/useVideo.js";
+import { useWatchLaterOperations } from "@Features/watchlater/hook/useWatchLaterMutation.js";
 
 const VideoCardMenu = ({ videoId, videoTitle }) => {
-  const dispatch = useDispatch();
-  const { addToWatchLater } = useWatchLater();
+  // const { addToWatchLater } = useWatchLater();
+   const { addToWatchLater, isAdding} = useWatchLaterOperations();
+
    const { downloadVideo , shareVideo } = useVideo();
 
   const {
@@ -63,7 +63,7 @@ const VideoCardMenu = ({ videoId, videoTitle }) => {
             <MenuButton
               onClick={() => {
                 setMenuOpen(false);
-                addToWatchLater(videoId, dispatch);
+                addToWatchLater(videoId);
               }}
             >
               <Clock4 className="w-4 h-4 inline mr-2" /> Save to Watch later

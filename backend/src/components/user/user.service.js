@@ -49,6 +49,11 @@ async function generateForgotPasswordToken(user) {
 	return { forgotPasswordToken };
 }
 
+export const findUserById = serviceHandler(async (_id) => {
+	const user = await User.findById(_id).select("-password -refreshToken");
+	return user;
+});
+
 export const findUserByEmail = serviceHandler(async (email) => {
 	const user = await User.findOne({ email });
 	return user;
@@ -215,9 +220,7 @@ export const loginUser = serviceHandler(async (email, password) => {
 	// }
 	//
 	const isPasswordCorrect = await user.isPasswordCorrect(password);
-	if (!isPasswordCorrect) {
-		throw new ApiError(401, "Invalid User Credentials", { email });
-	}
+	if (!isPasswordCorrect) throw new ApiError(401, "Incorrect Password", { email });
 
 	const { accessToken, refreshToken } = await generateTokens(user);
 

@@ -1,3 +1,8 @@
+/**
+ * Service layer for Watch Later API calls
+ * Pure functions that handle HTTP requests
+ * No state management logic here
+ */
 export const watchLaterService = {
    async fetchAll() {
       const response = await fetch("/api/v1/user/watchlater", {
@@ -6,7 +11,8 @@ export const watchLaterService = {
          headers: { "Content-Type": "application/json" },
       });
 
-      if (response.status !== 200) throw new Error(`Failed to fetch watch later videos: ${response.statusText}`);
+      if (response.status !== 200) 
+         throw new Error(`Failed to fetch watch later videos: ${response.statusText}`);
 
       const data = await response.json();
       return data?.data;
@@ -32,7 +38,9 @@ export const watchLaterService = {
          method: "DELETE",
       });
 
-      if (response.status !== 201) throw new Error(`Failed to remove video: ${response.statusText}`);
+      if (response.status !== 201) 
+         throw new Error(`Failed to remove video: ${response.statusText}`);
+         
       return { success: true, message: "Video removed from Watch Later successfully" }
    },
 };
