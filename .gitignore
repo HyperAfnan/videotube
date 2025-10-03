@@ -3,3 +3,5 @@ package-lock.json
 .env
 logs/
 requests/
+todo.md
+todo.txt

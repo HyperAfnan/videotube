@@ -1,0 +1,1 @@
+- [] properly test the send confirm email button with different params and how to display success message
