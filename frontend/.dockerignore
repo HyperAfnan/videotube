@@ -1,0 +1,26 @@
+# Dependencies
+node_modules
+
+# Git and OS
+.git
+.gitignore
+.DS_Store
+npm-debug.log
+
+# Docker artifacts
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Environment files and secrets
+.env
+.aws
+.npmrc
+*.key
+*.pem
+
+# Testing and editor files
+coverage
+*.test.js
+*.spec.js
+.vscode
