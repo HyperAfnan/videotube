@@ -1,2 +1,0 @@
-- [x] make avatar non required in registration
-- [x] make a route to send confirmation email
