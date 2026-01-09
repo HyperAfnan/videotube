@@ -1,0 +1,38 @@
+{
+  "name": "Update a playlist",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/playlist/:playlistId",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "PATCH",
+    "queryParams": [],
+    "headers": [],
+    "body": "{\n  \"name\": \"\",\n  \"description\": \"\"\n}",
+    "bodyContainer": {
+      "text": "{\n  \"name\": \"\",\n  \"description\": \"\"\n}",
+      "form": [],
+      "multipartForm": []
+    },
+    "contentType": "application/json",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": [
+      {
+        "id": 1,
+        "key": "playlistId",
+        "value": "string",
+        "description": "Playlist ID",
+        "dataType": "string"
+      }
+    ]
+  }
+}

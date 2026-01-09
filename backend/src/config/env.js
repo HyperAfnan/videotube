@@ -36,6 +36,8 @@ const ENV = {
 	BREVO_EMAIL_FROM: process.env.EMAIL_USER,
 
 	LOG_LEVEL: process.env.LOG_LEVEL || "info",
+
+   rabbitMQURL: process.env.RABBITMQ_URI || "amqp://localhost:5672",
 };
 
 const requiredKeys = [

@@ -1,0 +1,76 @@
+{
+  "name": "Update video details",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/videos/:videoId",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "PATCH",
+    "queryParams": [],
+    "headers": [],
+    "body": [
+      {
+        "id": 1,
+        "key": "title",
+        "value": "",
+        "isEnabled": true
+      },
+      {
+        "id": 2,
+        "key": "description",
+        "value": "",
+        "isEnabled": true
+      },
+      {
+        "id": 3,
+        "key": "thumbnail",
+        "value": "",
+        "isEnabled": true
+      }
+    ],
+    "bodyContainer": {
+      "text": "",
+      "form": [],
+      "multipartForm": [
+        {
+          "id": 1,
+          "key": "title",
+          "value": "",
+          "isEnabled": true
+        },
+        {
+          "id": 2,
+          "key": "description",
+          "value": "",
+          "isEnabled": true
+        },
+        {
+          "id": 3,
+          "key": "thumbnail",
+          "value": "",
+          "isEnabled": true
+        }
+      ]
+    },
+    "contentType": "multipart/form-data",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": [
+      {
+        "id": 1,
+        "key": "videoId",
+        "value": "string",
+        "description": "ID of the video to update",
+        "dataType": "string"
+      }
+    ]
+  }
+}

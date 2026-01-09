@@ -1,0 +1,47 @@
+{
+  "name": "Get all tweets",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/tweets",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "GET",
+    "queryParams": [
+      {
+        "id": 1,
+        "key": "page",
+        "value": "1",
+        "isEnabled": true,
+        "description": "Page number for pagination",
+        "dataType": "integer"
+      },
+      {
+        "id": 2,
+        "key": "limit",
+        "value": "1",
+        "isEnabled": true,
+        "description": "Number of tweets per page",
+        "dataType": "integer"
+      }
+    ],
+    "headers": [],
+    "body": null,
+    "bodyContainer": {
+      "text": "",
+      "form": [],
+      "multipartForm": []
+    },
+    "contentType": "text/plain",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": []
+  }
+}

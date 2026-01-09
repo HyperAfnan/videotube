@@ -25,12 +25,12 @@ app.use(cookieParser());
 app.use(requestLogger);
 app.use(compression());
 
-if (ENV.NODE_ENV === "development") {
-	logger.info("Development mode enabled");
-	import("./config/bullboard.js").then(({ setupBullBoard }) =>
-		setupBullBoard(app),
-	);
-}
+// if (ENV.NODE_ENV === "development") {
+// 	logger.info("Development mode enabled");
+// 	import("./config/bullboard.js").then(({ setupBullBoard }) =>
+// 		setupBullBoard(app),
+// 	);
+// }
 
 import userRoutes from "./components/user/user.route.js";
 import authRoutes from "./components/auth/auth.route.js";

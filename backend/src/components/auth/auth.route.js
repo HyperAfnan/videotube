@@ -91,10 +91,10 @@ router.use(defaultRateLimiter);
 
 /**
  * @swagger
- * /user/register:
+ * /auth/register:
  *   post:
  *     summary: Register a new user
- *     tags: [Users]
+ *     tags: [Auth]
  *     description: Register a new user with avatar and cover image
  *     requestBody:
  *       required: true
@@ -179,10 +179,10 @@ router
 
 /**
  * @swagger
- * /user/confirmEmail/{confirmationToken}:
+ * /auth/confirmEmail/{confirmationToken}:
  *   get:
  *     summary: Confirm user email address
- *     tags: [Users]
+ *     tags: [Auth]
  *     description: Confirm a user's email address using a confirmation token sent to their email.
  *     parameters:
  *       - in: path
@@ -211,10 +211,10 @@ router
 
 /**
  * @swagger
- * /user/login:
+ * /auth/login:
  *   post:
  *     summary: Login a user
- *     tags: [Users]
+ *     tags: [Auth]
  *     description: Authenticate a user and generate access & refresh tokens
  *     requestBody:
  *       required: true
@@ -270,10 +270,10 @@ router
 
 /**
  * @swagger
- * /user/logout:
+ * /auth/logout:
  *   post:
  *     summary: Logout a user
- *     tags: [Users]
+ *     tags: [Auth]
  *     description: Invalidate user's refresh token
  *     security:
  *       - bearerAuth: []
@@ -287,10 +287,10 @@ router.route("/logout").post(authRateLimiter, auth, logoutUser);
 
 /**
  * @swagger
- * /user/refreshToken:
+ * /auth/refreshToken:
  *   post:
  *     summary: Refresh access token
- *     tags: [Users]
+ *     tags: [Auth]
  *     description: Generate new access token using refresh token
  *     requestBody:
  *       required: true
@@ -334,10 +334,10 @@ router
 
 /**
  * @swagger
- * /user/forgotPassword:
+ * /auth/forgotPassword:
  *   post:
  *     summary: Send password reset email
- *     tags: [Users]
+ *     tags: [Auth]
  *     description: Send a password reset link to the user's email address.
  *     requestBody:
  *       required: true
@@ -372,10 +372,10 @@ router
 
 /**
  * @swagger
- * /user/resetPassword/{token}:
+ * /auth/resetPassword/{token}:
  *   patch:
  *     summary: Reset password using token
- *     tags: [Users]
+ *     tags: [Auth]
  *     description: Reset the user's password using a valid reset token.
  *     parameters:
  *       - in: path
@@ -417,10 +417,10 @@ router
 
 /**
  * @swagger
- * /user/changePassword:
+ * /auth/changePassword:
  *   patch:
  *     summary: Change user password
- *     tags: [Users]
+ *     tags: [Auth]
  *     description: Update the user's password
  *     security:
  *       - bearerAuth: []
@@ -464,10 +464,10 @@ router
 
 /**
  * @swagger
- * /user/delete:
+ * /auth/delete:
  *   delete:
  *     summary: Delete user account
- *     tags: [Users]
+ *     tags: [Auth]
  *     description: Delete the current user's account
  *     security:
  *       - bearerAuth: []

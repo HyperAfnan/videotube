@@ -1,0 +1,38 @@
+{
+  "name": "Get a playlist by ID",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/playlist/:playlistId",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "GET",
+    "queryParams": [],
+    "headers": [],
+    "body": null,
+    "bodyContainer": {
+      "text": "",
+      "form": [],
+      "multipartForm": []
+    },
+    "contentType": "text/plain",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": [
+      {
+        "id": 1,
+        "key": "playlistId",
+        "value": "string",
+        "description": "Playlist ID",
+        "dataType": "string"
+      }
+    ]
+  }
+}

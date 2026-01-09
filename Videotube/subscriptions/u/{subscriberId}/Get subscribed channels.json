@@ -1,0 +1,38 @@
+{
+  "name": "Get subscribed channels",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/subscriptions/u/:subscriberId",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "GET",
+    "queryParams": [],
+    "headers": [],
+    "body": null,
+    "bodyContainer": {
+      "text": "",
+      "form": [],
+      "multipartForm": []
+    },
+    "contentType": "text/plain",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": [
+      {
+        "id": 1,
+        "key": "subscriberId",
+        "value": "string",
+        "description": "ID of the user to get subscribed channels for",
+        "dataType": "string"
+      }
+    ]
+  }
+}

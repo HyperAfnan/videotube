@@ -1,0 +1,38 @@
+{
+  "name": "Update a tweet",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/tweets/:tweetId",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "PATCH",
+    "queryParams": [],
+    "headers": [],
+    "body": "{\n  \"content\": \"\"\n}",
+    "bodyContainer": {
+      "text": "{\n  \"content\": \"\"\n}",
+      "form": [],
+      "multipartForm": []
+    },
+    "contentType": "application/json",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": [
+      {
+        "id": 1,
+        "key": "tweetId",
+        "value": "string",
+        "description": "ID of the tweet to update",
+        "dataType": "string"
+      }
+    ]
+  }
+}

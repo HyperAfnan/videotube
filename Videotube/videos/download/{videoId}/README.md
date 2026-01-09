@@ -1,0 +1,1 @@
+Collection for /videos/download/{videoId} endpoints

@@ -1,0 +1,45 @@
+{
+  "name": "Remove video from playlist",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/playlist/remove/:videoId/:playlistId",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "PATCH",
+    "queryParams": [],
+    "headers": [],
+    "body": null,
+    "bodyContainer": {
+      "text": "",
+      "form": [],
+      "multipartForm": []
+    },
+    "contentType": "text/plain",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": [
+      {
+        "id": 1,
+        "key": "videoId",
+        "value": "string",
+        "description": "Video ID to remove from the playlist",
+        "dataType": "string"
+      },
+      {
+        "id": 2,
+        "key": "playlistId",
+        "value": "string",
+        "description": "Playlist ID to remove the video from",
+        "dataType": "string"
+      }
+    ]
+  }
+}

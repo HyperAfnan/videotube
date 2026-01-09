@@ -1,0 +1,30 @@
+{
+  "name": "Create a new tweet",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/tweets",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "POST",
+    "queryParams": [],
+    "headers": [],
+    "body": "{\n  \"content\": \"\"\n}",
+    "bodyContainer": {
+      "text": "{\n  \"content\": \"\"\n}",
+      "form": [],
+      "multipartForm": []
+    },
+    "contentType": "application/json",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": []
+  }
+}

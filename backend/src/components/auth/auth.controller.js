@@ -70,7 +70,7 @@ const sendConfirmationEmail = asyncHandler(async (req, res) => {
 		});
 	}
 
-	await authService.sendEmailToUser(isEmailExists);
+	await authService.callEmailService(isEmailExists);
 	authLogger.info(`[Request] ${requestId} Confirmation email sent`, {
 		email,
 	});

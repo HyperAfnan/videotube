@@ -16,9 +16,9 @@ const { body, cookie, param } = new ExpressValidator({
 export const registerValidator = [
 	body("fullname")
 		.notEmpty()
-		.withMessage("Fullname is required")
+		.withMessage("fullname is required")
 		.isString()
-		.withMessage("Name must be a string")
+		.withMessage("fullname must be a string")
 		.trim(),
 
 	body("email")

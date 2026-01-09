@@ -5,13 +5,8 @@
 	"main": "src/server.js",
 	"type": "module",
 	"scripts": {
-		"dev": "nodemon --ignore logs/ src/index.js",
-		"dev:worker:user": "nodemon src/microservices/user/user.worker.js",
-		"dev:worker:email": "nodemon src/microservices/email/email.worker.js",
-		"dev:worker:dlemail": "nodemon src/microservices/email/email.deadletter.worker.js",
+		"dev": "npx nodemon --ignore logs/ src/index.js",
 		"start": "node src/index.js",
-		"start:worker:email": "node src/microservices/email/email.worker.js",
-		"start:worker:dlemail": "node src/microservices/email/email.deadletter.worker.js",
 		"lint": "npx eslint src ",
 		"lint:fix": "npm run lint -- --fix",
 		"prettier": "npx prettier --write . ",
@@ -29,6 +24,7 @@
 	},
 	"homepage": "https://github.com/HyperAfnan/chai-code-backend#readme",
 	"dependencies": {
+		"amqplib": "^0.10.9",
 		"bcrypt": "^5.1.1",
 		"bullmq": "^5.53.2",
 		"cloudinary": "^2.6.1",
@@ -61,6 +57,7 @@
 		"eslint-config-prettier": "^10.1.5",
 		"eslint-plugin-prettier": "^5.4.0",
 		"globals": "^16.1.0",
+		"nodemon": "^3.1.11",
 		"prettier": "^3.5.3"
 	}
 }

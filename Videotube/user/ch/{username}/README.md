@@ -1,0 +1,1 @@
+Collection for /user/ch/{username} endpoints

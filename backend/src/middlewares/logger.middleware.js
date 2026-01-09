@@ -18,6 +18,8 @@ export const requestLogger = (req, res, next) => {
 
 	res.on("finish", () => {
 		const status = res.statusCode;
+
+      console.log(req.body)
 		logger.log({
 			level: ENV.LOG_LEVEL,
 			message: `[Request]: ${req.id} ${req.method} ${status} ${req.originalUrl}`,

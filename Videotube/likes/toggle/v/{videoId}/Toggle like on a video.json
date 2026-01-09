@@ -1,0 +1,38 @@
+{
+  "name": "Toggle like on a video",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/likes/toggle/v/:videoId",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "POST",
+    "queryParams": [],
+    "headers": [],
+    "body": null,
+    "bodyContainer": {
+      "text": "",
+      "form": [],
+      "multipartForm": []
+    },
+    "contentType": "text/plain",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": [
+      {
+        "id": 1,
+        "key": "videoId",
+        "value": "string",
+        "description": "ID of the video to toggle like",
+        "dataType": "string"
+      }
+    ]
+  }
+}

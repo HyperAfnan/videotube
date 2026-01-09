@@ -1,0 +1,1 @@
+Collection for /videos/toggle/publish/{videoId} endpoints

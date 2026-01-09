@@ -1,0 +1,1 @@
+Collection for /likes/videos/{userId} endpoints

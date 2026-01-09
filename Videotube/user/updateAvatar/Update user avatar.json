@@ -1,0 +1,44 @@
+{
+  "name": "Update user avatar",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/user/updateAvatar",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "PATCH",
+    "queryParams": [],
+    "headers": [],
+    "body": [
+      {
+        "id": 1,
+        "key": "avatar",
+        "value": "",
+        "isEnabled": true
+      }
+    ],
+    "bodyContainer": {
+      "text": "",
+      "form": [],
+      "multipartForm": [
+        {
+          "id": 1,
+          "key": "avatar",
+          "value": "",
+          "isEnabled": true
+        }
+      ]
+    },
+    "contentType": "multipart/form-data",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": []
+  }
+}

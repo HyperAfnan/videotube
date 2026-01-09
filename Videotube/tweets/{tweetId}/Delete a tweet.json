@@ -1,0 +1,38 @@
+{
+  "name": "Delete a tweet",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/tweets/:tweetId",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "DELETE",
+    "queryParams": [],
+    "headers": [],
+    "body": null,
+    "bodyContainer": {
+      "text": "",
+      "form": [],
+      "multipartForm": []
+    },
+    "contentType": "text/plain",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": [
+      {
+        "id": 1,
+        "key": "tweetId",
+        "value": "string",
+        "description": "ID of the tweet to delete",
+        "dataType": "string"
+      }
+    ]
+  }
+}

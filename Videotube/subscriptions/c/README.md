@@ -1,0 +1,1 @@
+Collection for /subscriptions/c endpoints
