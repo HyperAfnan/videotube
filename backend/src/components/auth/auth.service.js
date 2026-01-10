@@ -18,7 +18,7 @@ import { User } from "../user/user.model.js";
 import { getChannel } from "../../config/rabbit.js";
 const authServiceLogger = logger.child({ module: "auth.services" });
 
-async function generateTokens(user) {
+export const generateTokens =  async (user) =>  {
    const accessToken = await user.generateAccessToken();
    const refreshToken = await user.generateRefreshToken();
 

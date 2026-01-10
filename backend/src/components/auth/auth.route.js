@@ -10,6 +10,7 @@ import {
 	registerUser,
 	resetPassword,
 	sendConfirmationEmail,
+   googleLogin,
 } from "./auth.controller.js";
 // import { upload } from "../../middlewares/multer.middleware.js";
 import { verifyAccessToken as auth} from "../../middlewares/auth.middleware.js";
@@ -24,6 +25,7 @@ import {
 	registerValidator,
 	resetPasswordValidator,
 	sendConfirmationEmailValidator,
+   googleAuthValidator
 } from "./auth.validator.js";
 import {
 	authRateLimiter,
@@ -478,5 +480,49 @@ router
  *         description: Unauthorized
  */
 router.route("/delete").delete(authRateLimiter, auth, deleteUser);
+
+
+/**
+ * @swagger
+ * /auth/googleLogin:
+ *   post:
+ *     summary: Login or register a user using Google OAuth
+ *     tags: [Auth]
+ *     description: Authenticate a user via Google OAuth and generate access & refresh tokens
+ *     requestBody:
+ *       required: true
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User logged in successfully via Google
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 accessToken:
+ *                   type: string
+ *                   description: JWT access token
+ *                 refreshToken:
+ *                   type: string
+ *                   description: JWT refresh token
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     username:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     fullname:
+ *                       type: string
+ *                     avatar:
+ *                       type: string
+ *       401:
+ *         description: Invalid Google credentials
+ */
+router.route('/googleLogin', post(authRateLimiter,googleAuthValidator, googleLogin));
 
 export default router;

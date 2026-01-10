@@ -20,7 +20,6 @@ connectDB()
 	)
 	.catch((err) => logger.error("Database connection failed: %O", err));
 
-logger.info("Connecting to RabbitMQ ...");
 ConnectToRabbitMQ()
 	.then(() => logger.debug("RabbitMQ connected successfully"))
 	.catch((err) => logger.error("RabbitMQ connection failed: %O", err));

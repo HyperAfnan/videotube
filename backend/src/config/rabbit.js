@@ -4,7 +4,7 @@ import { logger } from "../utils/logger/index.js";
 const rabbitMQConnectionLogger = logger.child({ module: "RabbitMQ Connection" });
 
 const { rabbitMQURL } = env;
-console.log("Connecting to RabbitMQ at:", rabbitMQURL);
+rabbitMQConnectionLogger.info(`Connecting to RabbitMQ at: ${rabbitMQURL}`);
 let connection, channel;
 
 export const ConnectToRabbitMQ = async (retry = 10, delay = 5000) => {
@@ -26,6 +26,5 @@ export const ConnectToRabbitMQ = async (retry = 10, delay = 5000) => {
   throw new Error("Could not connect to RabbitMQ");
 };
 
-// Export getter functions to ensure we get the current value
 export const getChannel = () => channel;
 export const getConnection = () => connection;

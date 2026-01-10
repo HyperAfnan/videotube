@@ -3,6 +3,7 @@ import { ApiResponse } from "../../utils/apiResponse.js";
 import { asyncHandler } from "../../utils/handlers.js";
 import * as authService from "./auth.service.js";
 import { logger } from "../../utils/logger/index.js";
+import googleAuthService from '../services/googleAuth.service.js';
 const authLogger = logger.child({ module: "auth.controllers" });
 
 const cookieOptions = { httpOnly: true, secure: true, sameSite: "Strict" };
@@ -300,6 +301,49 @@ const resetPassword = asyncHandler(async (req, res) => {
 // 	}
 // });
 
+/**
+ * @route POST /api/v1/auth/google
+ * @desc Authenticate user with Google
+ * @access Public
+ */
+const googleLogin = asyncHandler(async (req, res) => {
+  const { credential } = req.body;
+  
+   // NOTE: move to validation middleware
+  if (!credential) {
+    return res.status(400).json(
+      new ApiResponse(400, null, 'Google credential is required')
+    );
+  }
+  
+  const googleProfile = await googleAuthService.verifyToken(credential);
+  const user = await googleAuthService.findOrCreateUser(googleProfile);
+  
+   const { accessToken, refreshToken } = await authService.generateTokens(user);
+  
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  });
+  
+  return res.status(200).json(
+    new ApiResponse(200, {
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        fullname: user.fullname,
+        avatarUrl: user.avatar,
+        coverImage: user.coverImage,
+        isEmailConfirmed: user.isEmailConfirmed,
+        authProvider: user.authProvider,
+      },
+      accessToken,
+    }, 'Logged in successfully with Google')
+  );
+});
 
 export {
 	registerUser,
@@ -313,4 +357,5 @@ export {
 	confirmEmail,
 	// getUser,
 	sendConfirmationEmail,
+   googleLogin,
 };

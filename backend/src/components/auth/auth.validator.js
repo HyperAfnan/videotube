@@ -172,3 +172,11 @@ export const sendConfirmationEmailValidator = [
 		.withMessage("Invalid email format")
 		.trim(),
 ];
+
+export const googleAuthValidator = [
+   body("idToken")
+      .notEmpty()
+      .withMessage("ID Token is required")
+      .isString()
+      .withMessage("ID Token must be a string"),
+];
