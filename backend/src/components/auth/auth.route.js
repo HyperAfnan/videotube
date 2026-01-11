@@ -1,35 +1,35 @@
 import { Router } from "express";
 import {
-	changePassword,
-	confirmEmail,
-	deleteUser,
-	forgotPassword,
-	loginUser,
-	logoutUser,
-	refreshAccessToken,
-	registerUser,
-	resetPassword,
-	sendConfirmationEmail,
+   changePassword,
+   confirmEmail,
+   deleteUser,
+   forgotPassword,
+   loginUser,
+   logoutUser,
+   refreshAccessToken,
+   registerUser,
+   resetPassword,
+   sendConfirmationEmail,
    googleLogin,
 } from "./auth.controller.js";
 // import { upload } from "../../middlewares/multer.middleware.js";
-import { verifyAccessToken as auth} from "../../middlewares/auth.middleware.js";
+import { verifyAccessToken as auth } from "../../middlewares/auth.middleware.js";
 import { validator } from "../../middlewares/validator.middleware.js";
 import {
-	changePasswordValidator,
-	confirmEmailValidator,
-	forgotPasswordValidator,
-	loginValidator,
-	refreshAccessTokenValidator,
-	// registerationFilesValidator,
-	registerValidator,
-	resetPasswordValidator,
-	sendConfirmationEmailValidator,
-   googleAuthValidator
+   changePasswordValidator,
+   confirmEmailValidator,
+   forgotPasswordValidator,
+   loginValidator,
+   refreshAccessTokenValidator,
+   // registerationFilesValidator,
+   registerValidator,
+   resetPasswordValidator,
+   sendConfirmationEmailValidator,
+   googleAuthValidator,
 } from "./auth.validator.js";
 import {
-	authRateLimiter,
-	defaultRateLimiter,
+   authRateLimiter,
+   defaultRateLimiter,
 } from "../../middlewares/rateLimiter.middleware.js";
 
 const router = Router();
@@ -164,20 +164,20 @@ router.use(defaultRateLimiter);
 
 // NOTE: file uploads are disabled for a while
 router.route("/register").post(
-	authRateLimiter,
-	// upload.fields([
-	// 	{ name: "avatar", maxCount: 1 },
-	// 	{ name: "coverImage", maxCount: 1 },
-	// ]),
-	// registerationFilesValidator,
-	registerValidator,
-	validator,
-	registerUser,
+   authRateLimiter,
+   // upload.fields([
+   // 	{ name: "avatar", maxCount: 1 },
+   // 	{ name: "coverImage", maxCount: 1 },
+   // ]),
+   // registerationFilesValidator,
+   registerValidator,
+   validator,
+   registerUser,
 );
 
 router
-	.route("/sendConfirmEmail")
-	.post(sendConfirmationEmailValidator, validator, sendConfirmationEmail);
+   .route("/sendConfirmEmail")
+   .post(sendConfirmationEmailValidator, validator, sendConfirmationEmail);
 
 /**
  * @swagger
@@ -208,8 +208,8 @@ router
  *         description: Invalid or expired confirmation token
  */
 router
-	.route("/confirmEmail/:confirmationToken")
-	.get(authRateLimiter, confirmEmailValidator, validator, confirmEmail);
+   .route("/confirmEmail/:confirmationToken")
+   .get(authRateLimiter, confirmEmailValidator, validator, confirmEmail);
 
 /**
  * @swagger
@@ -267,8 +267,8 @@ router
  *         description: Invalid credentials
  */
 router
-	.route("/login")
-	.post(authRateLimiter, loginValidator, validator, loginUser);
+   .route("/login")
+   .post(authRateLimiter, loginValidator, validator, loginUser);
 
 /**
  * @swagger
@@ -324,15 +324,14 @@ router.route("/logout").post(authRateLimiter, auth, logoutUser);
  *         description: Invalid refresh token
  */
 router
-	.route("/refreshToken")
-	.post(
-		authRateLimiter,
-		auth,
-		refreshAccessTokenValidator,
-		validator,
-		refreshAccessToken,
-	);
-
+   .route("/refreshToken")
+   .post(
+      authRateLimiter,
+      auth,
+      refreshAccessTokenValidator,
+      validator,
+      refreshAccessToken,
+   );
 
 /**
  * @swagger
@@ -369,8 +368,8 @@ router
  *         description: Invalid email or user not found
  */
 router
-	.route("/forgotPassword")
-	.post(authRateLimiter, forgotPasswordValidator, validator, forgotPassword);
+   .route("/forgotPassword")
+   .post(authRateLimiter, forgotPasswordValidator, validator, forgotPassword);
 
 /**
  * @swagger
@@ -414,8 +413,8 @@ router
  *         description: Invalid or expired token, or invalid password
  */
 router
-	.route("/resetPassword/:token")
-	.patch(authRateLimiter, resetPasswordValidator, validator, resetPassword);
+   .route("/resetPassword/:token")
+   .patch(authRateLimiter, resetPasswordValidator, validator, resetPassword);
 
 /**
  * @swagger
@@ -454,15 +453,14 @@ router
  */
 
 router
-	.route("/changePassword")
-	.patch(
-		defaultRateLimiter,
-		auth,
-		changePasswordValidator,
-		validator,
-		changePassword,
-	);
-
+   .route("/changePassword")
+   .patch(
+      defaultRateLimiter,
+      auth,
+      changePasswordValidator,
+      validator,
+      changePassword,
+   );
 
 /**
  * @swagger
@@ -480,7 +478,6 @@ router
  *         description: Unauthorized
  */
 router.route("/delete").delete(authRateLimiter, auth, deleteUser);
-
 
 /**
  * @swagger
@@ -523,6 +520,8 @@ router.route("/delete").delete(authRateLimiter, auth, deleteUser);
  *       401:
  *         description: Invalid Google credentials
  */
-router.route('/googleLogin', post(authRateLimiter,googleAuthValidator, googleLogin));
+router
+   .route("/google")
+   .post(authRateLimiter, googleAuthValidator, googleLogin);
 
 export default router;

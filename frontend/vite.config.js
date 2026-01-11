@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
+      "@": path.resolve(__dirname, "src"),
       "@Store": path.resolve(__dirname, "src/store"),
       "@Features": path.resolve(__dirname, "src/features"),
       "@Shared": path.resolve(__dirname, "src/shared"),
@@ -18,7 +19,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:5000",
+        target: "http://backend:5000/",
         changeOrigin: true,
         secure: false,
       },

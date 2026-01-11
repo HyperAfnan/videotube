@@ -4,6 +4,7 @@ const header = "../../public/logo.webp";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hook/useAuth.js";
 import { notificationService } from "@Shared/services/notification.services.js";
+import GoogleLoginButton from "../components/GoogleAuthButton.jsx";
 
 function Input({ name, placeholder, type, ...props }) {
   return (
@@ -69,6 +70,10 @@ export default function Signup() {
                 <img src={header} alt="Logo" className="h-16 mx-auto mb-6" />
               </Link>
             </h1>
+          </div>
+
+          <div className="mb-6">
+            <GoogleLoginButton />
           </div>
 
           <form

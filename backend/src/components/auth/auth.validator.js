@@ -174,7 +174,7 @@ export const sendConfirmationEmailValidator = [
 ];
 
 export const googleAuthValidator = [
-   body("idToken")
+   body("tokenId")
       .notEmpty()
       .withMessage("ID Token is required")
       .isString()
