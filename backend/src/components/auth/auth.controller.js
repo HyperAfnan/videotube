@@ -202,7 +202,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       userId: isTokenValid.userMeta._id,
    });
 
-   const { refreshToken, accessToken } = await authService.refreshAccessToken(
+   const { refreshToken, accessToken , user } = await authService.refreshAccessToken(
       isTokenValid.userMeta,
    );
    authLogger.info(`[Request] ${requestId} Access token refreshed`, {
@@ -212,7 +212,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
    return res
       .status(200)
       .cookie("refreshToken", refreshToken, cookieOptions)
-      .json(new ApiResponse(200, { accessToken }, "Access Token refreshed"));
+      .json(new ApiResponse(200, { user, accessToken }, "Access Token refreshed"));
 });
 
 const forgotPassword = asyncHandler(async (req, res) => {
@@ -336,7 +336,14 @@ const googleLogin = asyncHandler(async (req, res) => {
       httpOnly: true,
       secure: ENV.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+   });
+
+   res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: ENV.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
    });
 
    return res.status(200).json(

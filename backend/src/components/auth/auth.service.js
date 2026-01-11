@@ -18,7 +18,7 @@ import { User } from "../user/user.model.js";
 import { getChannel } from "../../config/rabbit.js";
 const authServiceLogger = logger.child({ module: "auth.services" });
 
-export const generateTokens =  async (user) =>  {
+export const generateTokens = async (user) => {
    const accessToken = await user.generateAccessToken();
    const refreshToken = await user.generateRefreshToken();
 
@@ -26,7 +26,7 @@ export const generateTokens =  async (user) =>  {
    await user.save({ validateBeforeSave: false });
 
    return { accessToken, refreshToken };
-}
+};
 
 async function generateConfirmationToken(user) {
    const confirmationToken = await user.generateConfirmationToken();
@@ -110,11 +110,12 @@ export const callEmailService = serviceHandler(async (userMeta, type) => {
          JSON.stringify({
             type,
             userMeta,
-            token: type === "registration"
-               ? await generateConfirmationToken(userMeta)
-               : type === "resetPassword"
-               ? await generateForgotPasswordToken(userMeta)
-               : null,
+            token:
+               type === "registration"
+                  ? await generateConfirmationToken(userMeta)
+                  : type === "resetPassword"
+                     ? await generateForgotPasswordToken(userMeta)
+                     : null,
          }),
       ),
       {
@@ -274,7 +275,7 @@ export const refreshAccessToken = serviceHandler(async (userId) => {
       userId: user._id,
       username: user.username,
    });
-   return { refreshToken, accessToken };
+   return { refreshToken, accessToken, user };
 });
 
 export const resetPassword = serviceHandler(async (token, newPassword) => {
