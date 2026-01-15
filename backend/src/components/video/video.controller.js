@@ -6,8 +6,8 @@ import { logger } from "../../utils/logger/index.js";
 const videoLogger = logger.child({ module: "video.controllers" });
 import fetch from "node-fetch";
 
-const getAllVideos = asyncHandler(async (req, res) => {
-	const { page = 1, limit = 10, q = "", sortBy, sortType, userId } = req.query;
+const getFeed = asyncHandler(async (req, res) => {
+	const { page = 1, limit = 10, q = "", sortBy, sortType, } = req.query;
 
 	videoLogger.info(`[Request] ${req.id} Fetching all videos`, {
 		page,
@@ -15,17 +15,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 		q,
 		sortBy,
 		sortType,
-		// userId: userId || req.user._id,
 	});
-
-	// if (userId) {
-	//    const user = await VideoService.findUserById(userId);
-	//    if (!user) {
-	//       throw new ApiError(404, "User not found", { userId, requestId: req.id });
-	//    }
-	// }
-
-	// const user = userId || req.user._id;
 
 	const allVideos = await VideoService.getAllVideos(
 		page,
@@ -33,12 +23,38 @@ const getAllVideos = asyncHandler(async (req, res) => {
 		q,
 		sortBy,
 		sortType,
-		// user,
 	);
 
 	videoLogger.info(`[Request] ${req.id} Fetched videos successfully`, {
 		count: allVideos.length,
-		// user,
+	});
+
+	return res
+		.status(200)
+		.json(new ApiResponse(200, allVideos, "successfully got all videos"));
+})
+
+const getAllVideos = asyncHandler(async (req, res) => {
+	const { page = 1, limit = 10, q = "", sortBy, sortType } = req.query;
+
+	videoLogger.info(`[Request] ${req.id} Fetching all videos`, {
+		page,
+		limit,
+		q,
+		sortBy,
+		sortType,
+	});
+
+	const allVideos = await VideoService.getAllVideos(
+		page,
+		limit,
+		q,
+		sortBy,
+		sortType,
+	);
+
+	videoLogger.info(`[Request] ${req.id} Fetched videos successfully`, {
+		count: allVideos.length,
 	});
 
 	return res
@@ -53,6 +69,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
 	const { visiblity = "private", isPublished = false } = req.body;
 	// const { title, description } = req.body;
 	const videoFileLocalPath = req.files.videoFile[0].path;
+   console.log(videoFileLocalPath);
 	// const thumbnailLocalPath = req.files.thumbnail[0].path;
 
 	videoLogger.info(`[Request] ${requestId} Publishing a new video`, {
@@ -249,6 +266,7 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
 });
 
 export {
+   getFeed,
 	getAllVideos,
 	publishAVideo,
 	getVideoById,
