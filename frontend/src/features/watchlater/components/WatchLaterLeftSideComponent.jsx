@@ -1,21 +1,29 @@
 import { timeAgo } from "@Shared/utils/formatter.js";
 import { useWatchLater } from "../hook/useWatchLaterQueries.js";
 import { useAuth } from "@Features/auth/hook/useAuth.js";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Play, Shuffle } from "lucide-react";
 
-export const WatchLaterPreviewButton = ({ onClick, children }) => (
-   <button
-      className="w-28 h-10 px-4 py-2 text-white rounded-lg transition-colors duration-300 bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+export const WatchLaterPreviewButton = ({ onClick, children, icon: Icon }) => (
+   <Button
       onClick={onClick}
+      variant="secondary"
+      size="sm"
+      className="flex-1"
    >
+      {Icon && <Icon className="w-4 h-4 mr-2" />}
       {children}
-   </button>
+   </Button>
 );
 
 export default function WatchLaterLeftSideComponent() {
    const { userMeta: { fullname } = {} } = useAuth();
    const { watchLater, isFetching } = useWatchLater();
 
-   const thumbnail = watchLater[0]?.video?.thumbnail;
+   // TODO: Remove static thumbnail after testing
+   const thumbnail = "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400&h=240&fit=crop";
    const lastUpdated = timeAgo(watchLater[watchLater.length - 1]?.createdAt);
 
    const totalDuration = watchLater.reduce((acc, video) => {
@@ -24,64 +32,60 @@ export default function WatchLaterLeftSideComponent() {
    }, 0);
 
    return (
-      <div className="fixed top-20 left-20 w-[360px] h-[700px] rounded-2xl flex flex-col justify-start items-center p-4 bg-gray-300 border border-gray-300 z-20">
-         {isFetching && (
-            <div className="absolute top-2 right-2">
-               <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-            </div>
-         )}
+      <Card className="fixed top-20 left-20 w-[360px] rounded-2xl z-20 border-border bg-card">
+         <CardContent className="p-4">
+            {isFetching && (
+               <Badge variant="secondary" className="absolute top-2 right-2 animate-pulse">
+                  Updating
+               </Badge>
+            )}
 
-{/*          // watch later preview thumbnail */}
-         <div className="h-50 w-full rounded-2xl flex justify-center items-center ">
-            <div className="">
+            {/* watch later preview thumbnail */}
+            <div className="w-full rounded-2xl flex justify-center items-center mb-4">
                <img
                   src={thumbnail}
                   alt="Watch Later Thumbnail"
                   className="h-[165px] object-cover rounded-2xl hover:scale-105 transition-transform duration-300"
                />
             </div>
-         </div>
 
-         <div className="w-full h-auto rounded-lg flex flex-col justify-start items-center text-black">
-            <div className="flex justify-start items-center w-full h-[40px] ">
-               <span className="text-lg font-semibold pl-4 pt-2 pb-2 pr-2 text-left ">
+            <div className="space-y-2">
+               <h2 className="text-lg font-semibold text-foreground">
                   Watch Later
-               </span>
-            </div>
+               </h2>
 
-            <div className="flex justify-start items-center w-full h-[40px]">
-               <span className="text-base font-medium pl-4 pt-2 pb-2 pr-2 ">
+               <p className="text-base font-medium text-muted-foreground">
                   {fullname?.toUpperCase()}
-               </span>
-            </div>
+               </p>
 
-            <div className="flex justify-evenly items-center w-full h-[40px]">
-               <div className="flex justify-start items-center w-auto h-[40px] pl-4 pt-2 pb-2 pr-2">
-                  <span className="text-xs text-gray-600 w-full">
+               <div className="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
+                  <Badge variant="outline">
                      {watchLater.length} videos
-                  </span>
+                  </Badge>
+                  <Badge variant="outline">
+                     {totalDuration} min
+                  </Badge>
+                  <Badge variant="outline">
+                     {lastUpdated}
+                  </Badge>
                </div>
 
-               <div className="flex justify-end items-center w-auto h-full pr-4 pl-4 pt-2 pb-2">
-                  <span className="text-xs text-gray-600">
-                     {totalDuration} minutes
-                  </span>
-               </div>
-
-               <div className="flex justify-end items-center w-auto h-full pr-4 pl-4 pt-2 pb-2">
-                  <span className="text-xs text-gray-600">{lastUpdated}</span>
+               <div className="flex gap-2 pt-4">
+                  <WatchLaterPreviewButton 
+                     onClick={() => console.log("Play All")}
+                     icon={Play}
+                  >
+                     Play All
+                  </WatchLaterPreviewButton>
+                  <WatchLaterPreviewButton 
+                     onClick={() => console.log("Shuffle")}
+                     icon={Shuffle}
+                  >
+                     Shuffle
+                  </WatchLaterPreviewButton>
                </div>
             </div>
-
-            <div className="w-full h-[50px] flex text-base font-normal justify-evenly items-center pt-8">
-               <WatchLaterPreviewButton onClick={() => console.log("Play All")}>
-                  Play All
-               </WatchLaterPreviewButton>
-               <WatchLaterPreviewButton onClick={() => console.log("Shuffle")}>
-                  Shuffle
-               </WatchLaterPreviewButton>
-            </div>
-         </div>
-      </div>
+         </CardContent>
+      </Card>
    );
 }

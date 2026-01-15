@@ -1,75 +1,79 @@
-import { EllipsisVertical } from "lucide-react";
-import { useState, useRef } from "react";
+import { MoreVertical } from "lucide-react";
+import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import asyncHandler from "@Shared/utils/asyncHandler.js";
 import { useUpdateVideo } from "@Features/video/hook/useVideoMutations.js";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { notificationService } from "@Shared/services/notification.services.js";
 
 const UploadFooter = ({ setProgress, videoMeta }) => {
-  const { setValue, handleSubmit } = useFormContext();
-  const [menuStatus, setMenuStatus] = useState(false);
-  const buttonTexts = ["Publish Now", "Public Later"];
-  const [buttonText, setButtonText] = useState(buttonTexts[0]);
-  const spanRef = useRef(null);
+  const { handleSubmit } = useFormContext();
+  const [publishType, setPublishType] = useState("Publish Now");
   const navigate = useNavigate();
-   const { mutate } = useUpdateVideo(videoMeta._id, videoMeta);
-  const toggleMenu = () => {
-    if (spanRef.current.classList.contains("hidden")) {
-      setMenuStatus(true);
-      spanRef.current.classList.remove("hidden");
-    } else {
-      setMenuStatus(false);
-      spanRef.current.classList.add("hidden");
+  const { mutate: updateVideo, isPending } = useUpdateVideo();
+
+  const uploadHandler = async (data) => {
+    try {
+      updateVideo(
+        { videoId: videoMeta._id, updatedData: data },
+        {
+          onSuccess: () => {
+            setProgress(100);
+            setTimeout(() => {
+              setProgress(0);
+              navigate("/");
+            }, 1000);
+          },
+        }
+      );
+    } catch (error) {
+      notificationService.error("Failed to publish video");
     }
   };
 
-  const uploadHandler = asyncHandler(async (data) => {
-    const status = mutate(videoMeta._id, data);
-    if (status) navigate("/");
-  });
-
-  function closeMenu() {
-    spanRef.current.classList.add("hidden");
-    setMenuStatus(false);
-  }
-
-  function SelectionElement({ text, className, ...props }) {
-    return (
-      <span
-        className={`rounded-l-xl bg-black hover:bg-gray-500 py-2 px-3 text-white flex justify-center items-center ${className}`}
-        ref={spanRef}
-        onClick={() => {
-          closeMenu();
-          setButtonText(text);
-          !menuStatus &&
-            handleSubmit(uploadHandler)() &&
-            setProgress(100) &&
-            setTimeout(() => {
-              setProgress(0);
-            }, 1000);
-
-          setValue("isPublished", text === "Publish Now");
-        }}
-        {...props}
-      >
-        {text}
-      </span>
-    );
-  }
+  const handlePublish = (type) => {
+    setPublishType(type);
+    handleSubmit((data) => {
+      uploadHandler({ ...data, isPublished: type === "Publish Now" });
+    })();
+  };
 
   return (
-    <div className="flex items-center justify-end border-t-2  border-gray-200 ">
-      <div className="flex items-center text-white px-4 py-2 rounded-xl space-x-0.5">
-        <button type="button" className="rounded-l-xl flex flex-col">
-          <SelectionElement text={buttonText} className="w-full" />
-          <SelectionElement
-            text={buttonTexts.find((text) => text !== buttonText)}
-            className="hidden absolute bottom-7.5 h-[40px] w-[118px] right-auto  "
-          />
-        </button>
-        <div className="bg-black py-2 px-0.5 rounded-r-xl text-white ">
-          <EllipsisVertical className="" onClick={toggleMenu} />
-        </div>
+    <div className="flex items-center justify-end border-t border-border p-4">
+      <div className="flex items-center gap-2">
+        <Button
+          onClick={() => handlePublish(publishType)}
+          disabled={isPending}
+          className="rounded-l-xl rounded-r-none"
+        >
+          {isPending ? "Publishing..." : publishType}
+        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="default"
+              size="icon"
+              className="rounded-l-none rounded-r-xl h-10 w-10"
+              disabled={isPending}
+            >
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="bg-popover">
+            <DropdownMenuItem onClick={() => handlePublish("Publish Now")}>
+              Publish Now
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handlePublish("Public Later")}>
+              Public Later
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );

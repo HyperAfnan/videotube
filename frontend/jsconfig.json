@@ -13,12 +13,13 @@
     "module": "commonjs",
     "baseUrl": ".",
     "paths": {
-      "@Utils*": ["shared/utils*"],
-      "@Components*": ["shared/components*"],
-      "@Lib*": ["shared/lib*"],
-      "@Store/*": ["store/*"],
-      "@Features/*": ["features/*"],
-      "@Shared/*": ["shared/*"]
+      "@/*": ["src/*"],
+      "@Utils*": ["src/shared/utils*"],
+      "@Components*": ["src/shared/components*"],
+      "@Lib*": ["src/shared/lib*"],
+      "@Store/*": ["src/store/*"],
+      "@Features/*": ["src/features/*"],
+      "@Shared/*": ["src/shared/*"]
     },
     "jsx": "react"
   },

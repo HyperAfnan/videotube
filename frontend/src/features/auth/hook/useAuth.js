@@ -5,7 +5,6 @@ import { AUTH_KEYS } from "@/lib/queryKeys.js";
 export const useAuth = () => {
    const queryClient = useQueryClient();
 
-   // Fetch authenticated user from localStorage
    const {
       data: user,
       error: fetchError,
@@ -19,7 +18,6 @@ export const useAuth = () => {
       staleTime: Infinity,
    });
 
-   // Login mutation
    const {
       mutateAsync: login,
       error: loginError,
@@ -32,7 +30,6 @@ export const useAuth = () => {
       },
    });
 
-   // Signup mutation
    const {
       mutateAsync: signup,
       error: signupError,
@@ -41,7 +38,6 @@ export const useAuth = () => {
       mutationFn: authService.signup,
    });
 
-   // Logout mutation
    const {
       mutateAsync: logout,
       error: logoutError,
@@ -54,7 +50,6 @@ export const useAuth = () => {
       },
    });
 
-   // Login with Google mutation
    const {
       mutateAsync: loginWithGoogle,
       error: googleLoginError,
@@ -67,7 +62,6 @@ export const useAuth = () => {
       },
    });
 
-   // Refresh token mutation
    const {
       mutateAsync: refreshToken,
       error: refreshTokenError,

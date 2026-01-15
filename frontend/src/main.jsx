@@ -1,34 +1,32 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import queryClient from "./lib/queryCilent.js";
+import { store } from "@Store/index.js";
+import "react-loading-skeleton/dist/skeleton.css";
 import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { Layout, Protected } from "@Shared/components/";
 import { Provider } from "react-redux";
-import { store } from "@Store/index.js";
 import { SkeletonTheme } from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
 import Home from "@Features/home/pages/Home.jsx";
 import AuthInitializer from "@Features/auth/components/AuthInit.jsx";
 import ThemeInitializer from "@Features/theme/components/ThemeInitializer.jsx";
 import Login from "@Features/auth/pages/Login.jsx";
 import Signup from "@Features/auth/pages/Signup.jsx";
 import WatchLaterPage from "@Features/watchlater/pages/WatchLaterPage.jsx";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Button } from "./shared/components/ui/button.jsx";
-
-const TestPage = () => {
-  return (
-    <div className="flex items-center justify-center w-full ml-35 h-screen">
-      <Button> Hello world</Button>
-    </div>
-  );
-};
+import NotFoundPage from "./pages/NotFoundPage.jsx";
+import ErrorPage from "./pages/ErrorPage.jsx";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import ConfirmEmail from "./features/auth/pages/ConfirmEmail.jsx";
+import PlayingVideoPage from "./features/video/pages/playingVideo/index.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "/",
@@ -56,17 +54,13 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/test",
-        element: <TestPage />,
+         path: "/confirm-email",
+         element: (
+            <Protected auth={false}>
+               <ConfirmEmail />
+            </Protected>
+         ),
       },
-      // {
-      //    path: "/confirm-email",
-      //    element: (
-      //       <Protected auth={false}>
-      //          <ConfirmEmail />
-      //       </Protected>
-      //    ),
-      // },
       // {
       //    path: "/dashboard",
       //    element: (
@@ -83,28 +77,27 @@ const router = createBrowserRouter([
           </Protected>
         ),
       },
+      {
+         path: "/watch/:videoId",
+        element: (
+          <PlayingVideoPage />
+        )
+
+        
+      },
+      {
+        path: "*",
+        element: <NotFoundPage />,
+      },
     ],
   },
 ]);
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 2,
-      staleTime: 5 * 60 * 1000,
-      cacheTime: 10 * 60 * 1000,
-      refetchOnWindowFocus: true,
-    },
-    mutations: {
-      retry: 1,
-    },
-  },
-});
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />
+         <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <Provider store={store}>
         <ThemeInitializer>
           <SkeletonTheme
@@ -118,6 +111,7 @@ createRoot(document.getElementById("root")).render(
           </SkeletonTheme>
         </ThemeInitializer>
       </Provider>
+         </GoogleOAuthProvider>
     </QueryClientProvider>
   </StrictMode>,
 );

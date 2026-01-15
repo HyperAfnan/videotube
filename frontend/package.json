@@ -10,8 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@base-ui-components/react": "^1.0.0-beta.2",
-    "@floating-ui/react": "^0.27.15",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-avatar": "^1.1.11",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -37,7 +35,6 @@
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.70.0",
     "react-intersection-observer": "^9.16.0",
-    "react-loading-skeleton": "^3.5.0",
     "react-player": "^3.3.1",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.7.1",

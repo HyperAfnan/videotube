@@ -2,6 +2,7 @@ import VideoCard from "./WatchLaterVideoCard.jsx";
 import WatchListSort from "./WatchLateSort.jsx";
 import { useState } from "react";
 import { useWatchLater } from "../hook/useWatchLaterQueries.js";
+import { Badge } from "@/components/ui/badge";
 
 const WatchLaterRightSideContainer = () => {
    const { watchLater, isFetching } = useWatchLater();
@@ -13,16 +14,18 @@ const WatchLaterRightSideContainer = () => {
    });
 
    return (
-      <div className="w-full h-screen pl-[470px] pt-[40px]">
-         <div className="w-full h-10px flex justify-start items-center p-4 ">
+      <div className="w-full h-screen pl-117.5 pt-10">
+         <div className="w-full h-10px flex justify-start items-center p-4">
             <WatchListSort setSortOption={setSortOption} />
             
             {isFetching && (
-               <span className="ml-4 text-sm text-gray-500">Updating...</span>
+               <Badge variant="secondary" className="ml-4 animate-pulse">
+                  Updating...
+               </Badge>
             )}
          </div>
          
-         <div className="w-full h-full ">
+         <div className="w-full h-full">
             {watchLater?.length > 0 ? (
                [...watchLater]
                   .sort(sortOption.filter)
@@ -35,7 +38,7 @@ const WatchLaterRightSideContainer = () => {
                   ))
             ) : (
                <div className="w-full h-full flex justify-center items-center">
-                  <span className="text-gray-500">No videos in Watch Later</span>
+                  <p className="text-muted-foreground">No videos in Watch Later</p>
                </div>
             )}
          </div>
