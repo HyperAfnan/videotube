@@ -16,7 +16,7 @@ const SideBar = () => {
             <Link
               key={element.to + index}
               to={element.to}
-              className="flex items-center justify-center  pt-2 pb-2 m-0 hover:bg-gray-100 rounded-xl  w-full "
+              className="flex items-center justify-center  pt-2 pb-2 m-0 hover:bg-gray-100 dark:hover:bg-neutral-600 rounded-xl  w-full "
             >
               {element.icon}
             </Link>

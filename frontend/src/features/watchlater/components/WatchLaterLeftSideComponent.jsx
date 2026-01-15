@@ -22,8 +22,6 @@ export default function WatchLaterLeftSideComponent() {
    const { userMeta: { fullname } = {} } = useAuth();
    const { watchLater, isFetching } = useWatchLater();
 
-   // TODO: Remove static thumbnail after testing
-   const thumbnail = "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400&h=240&fit=crop";
    const lastUpdated = timeAgo(watchLater[watchLater.length - 1]?.createdAt);
 
    const totalDuration = watchLater.reduce((acc, video) => {

@@ -30,7 +30,7 @@ export const useUploadVideo = () => {
          queryClient.setQueryData(videoQueryKeys.list(), (old) => {
             if (!old) return [uploadedVideo];
 
-            return old.map((video) =>
+            return [...old]?.map((video) =>
                video._id === "temp-id" ? uploadedVideo : video,
             );
          });
@@ -131,7 +131,7 @@ export const useUpdateVideo = () => {
          const previousVideos = queryClient.getQueryData(videoQueryKeys.list());
          if (previousVideos) {
             queryClient.setQueryData(videoQueryKeys.list(), (old) =>
-               old.map((video) =>
+               [...old]?.map((video) =>
                   video._id === videoId ? { ...video, ...updatedData } : video,
                ),
             );
