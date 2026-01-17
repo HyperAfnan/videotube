@@ -129,12 +129,14 @@ export const useUpdateVideo = () => {
       onMutate: async (videoId, updatedData) => {
          await queryClient.cancelQueries({ queryKey: videoQueryKeys.list() });
          const previousVideos = queryClient.getQueryData(videoQueryKeys.list());
+         console.log("Updating video:", videoId, updatedData);
          if (previousVideos) {
-            queryClient.setQueryData(videoQueryKeys.list(), (old) =>
-               [...old]?.map((video) =>
-                  video._id === videoId ? { ...video, ...updatedData } : video,
-               ),
-            );
+            console.log("Previous videos found, updating cache optimistically");
+            queryClient.setQueryData(videoQueryKeys.list(), (old) => {
+               const videos = Array.isArray(old) ? old : [];
+               console.log("Old videos in cache:", videos);
+               return videos.map((video) => video._id === videoId ? { ...video, ...updatedData } : video);
+            });
          }
          return { previousVideos };
       },
@@ -170,7 +172,7 @@ export const useAddComment = (videoId) => {
          // Optimistically update the cache
          queryClient.setQueryData(videoQueryKeys.comments(videoId), (old) => {
             if (!old) return old;
-            
+
             const optimisticComment = {
                _id: 'temp-' + Date.now(),
                content: newComment.content,
@@ -224,14 +226,14 @@ export const useToggleVideoLike = (videoId) => {
          // Optimistically update the cache
          queryClient.setQueryData(videoQueryKeys.detail(videoId), (old) => {
             if (!old) return old;
-            
+
             const currentIsLiked = old.userInteration?.isLiked;
             const currentIsDisliked = old.userInteration?.isDisliked;
-            
+
             let newLikes = old.likes || 0;
             let newIsLiked = false;
             let newIsDisliked = false;
-            
+
             if (type === 'like') {
                if (currentIsLiked) {
                   // Removing like
@@ -299,10 +301,10 @@ export const useLikeComment = (videoId) => {
          // Optimistically update the cache
          queryClient.setQueryData(videoQueryKeys.comments(videoId), (old) => {
             if (!old?.comments) return old;
-            
+
             return {
                ...old,
-               comments: old.comments.map(comment => 
+               comments: old.comments.map(comment =>
                   comment._id === commentId
                      ? { ...comment, likes: comment.likes + 1 }
                      : comment
@@ -340,10 +342,10 @@ export const useToggleSubscription = (videoId) => {
          // Optimistically update the cache
          queryClient.setQueryData(videoQueryKeys.detail(videoId), (old) => {
             if (!old) return old;
-            
+
             const currentIsSubscribed = old.owner?.isSubscribed || old.userInteration?.isSubscribed;
             const currentSubscribers = old.owner?.subscribers || 0;
-            
+
             return {
                ...old,
                owner: {

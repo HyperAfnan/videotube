@@ -7,10 +7,11 @@ import { videoQueryKeys } from "../constants/queryKeys.js";
 export const useVideos = (options = {}) => {
    return useInfiniteQuery({
       queryKey: videoQueryKeys.list(),
-      queryFn: ({ pageParam = 1 }) => VideoService.getVideos(pageParam),
+      queryFn: ({ pageParam = 1 }) => VideoService.getVideos(pageParam) || [],
       getNextPageParam: (lastPage, allPages) => {
-         if (lastPage.length === 0) return undefined;
-         return allPages.length + 1;
+         console.log(lastPage, allPages);
+         if (lastPage?.length === 0) return undefined;
+         return allPages?.length + 1;
       },
       initialPageParam: 1,
       staleTime: 5 * 60 * 1000,

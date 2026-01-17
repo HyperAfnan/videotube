@@ -355,7 +355,7 @@ const googleLogin = asyncHandler(async (req, res) => {
                username: user.username,
                email: user.email,
                fullname: user.fullname,
-               avatarUrl: user.avatar,
+               avatar: user.avatar,
                coverImage: user.coverImage,
                isEmailConfirmed: user.isEmailConfirmed,
                authProvider: user.authProvider,

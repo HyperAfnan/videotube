@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { useAuth } from "../hook/useAuth.js";
 import { notificationService } from "@Shared/services/notification.services.js";
 import GoogleLoginButton from "../components/GoogleAuthButton.jsx";
+import { Button } from "@/components/ui/button.jsx";
 
 function Input({ name, placeholder, type, error, ...rest }) {
    return (
@@ -57,13 +58,13 @@ export default function Login() {
    }
 
    return (
-      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-100 p-4">
+      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-100 dark:bg-zinc-900 p-4">
          <div className="w-full max-w-md">
-            <div className="bg-white rounded-lg shadow-lg p-8">
+            <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-8">
                <div className="text-center mb-8">
                   <h1 className="text-2xl font-bold text-gray-900">
                      <Link to="/">
-                        <img src={header} alt="Logo" className="h-16 mx-auto mb-6" />
+                        <img src={header} alt="Logo" className="h-16 mx-auto mb-6 dark:brightness-0 dark:invert" />
                      </Link>
                   </h1>
                </div>
@@ -102,20 +103,21 @@ export default function Login() {
                         },
                      })}
                   />
-                  <button
+                  <Button
                      type="submit"
-                     className="w-full bg-black text-white py-3 px-4 rounded-lg hover:bg-gray-800 transition-colors font-medium"
+                     className="w-full py-5 px-4 rounded-lg hover:bg-gray-800 transition-colors"
+                     variant="outline"
                   >
                      Login
-                  </button>
+                  </Button>
                </form>
 
-               <div className="text-center mt-6 pt-6 border-t border-gray-200">
-                  <p className="text-gray-600 text-sm">
+               <div className="text-center mt-6 pt-6">
+                  <p className="text-gray-600 dark:text-zinc-300 text-sm">
                      Don't have an account?{" "}
                      <Link
                         to="/signup"
-                        className="text-black font-medium hover:underline"
+                        className="text-black dark:text-white font-medium hover:underline"
                      >
                         Sign Up
                      </Link>

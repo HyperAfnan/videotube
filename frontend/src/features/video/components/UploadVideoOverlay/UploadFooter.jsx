@@ -46,18 +46,19 @@ const UploadFooter = ({ setProgress, videoMeta }) => {
 
   return (
     <div className="flex items-center justify-end border-t border-border p-4">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         <Button
           onClick={() => handlePublish(publishType)}
           disabled={isPending}
-          className="rounded-l-xl rounded-r-none"
+            variant="outline"
+          className="rounded-l-xl rounded-r-none h-10"
         >
           {isPending ? "Publishing..." : publishType}
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
-              variant="default"
+              variant="outline"
               size="icon"
               className="rounded-l-none rounded-r-xl h-10 w-10"
               disabled={isPending}
@@ -65,7 +66,7 @@ const UploadFooter = ({ setProgress, videoMeta }) => {
               <MoreVertical className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-popover">
+          <DropdownMenuContent align="end" side="bottom" sideOffset={4} className="bg-popover ">
             <DropdownMenuItem onClick={() => handlePublish("Publish Now")}>
               Publish Now
             </DropdownMenuItem>

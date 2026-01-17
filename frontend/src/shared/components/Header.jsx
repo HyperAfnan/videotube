@@ -83,14 +83,10 @@ export default function Header() {
          ) : (
             <div className="flex items-center justify-center w-2xs space-x-4 text-white text-large ">
                <Link to={"/login"}>
-                  <button className=" bg-black px-5 py-2 rounded-md border-2 border-neutral-200 ">
-                     Login
-                  </button>
+                  <Button variant="outline">Login</Button>
                </Link>
                <Link to={"/signup"}>
-                  <button className=" bg-black px-5 py-2 rounded-md border-2 border-neutral-200 ">
-                     Signup
-                  </button>
+                  <Button variant="outline">SignUp</Button>
                </Link>
             </div>
          )}

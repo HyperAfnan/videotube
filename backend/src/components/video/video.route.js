@@ -82,7 +82,7 @@ const router = Router();
  */
 
 router.use(defaultRateLimiter);
-router.use(verifyAccessToken);
+// router.use(verifyAccessToken);
 
 /**
  * @swagger
