@@ -1,4 +1,4 @@
-import { setCredentials } from "@Features/auth/store/authSlice.js";
+// import { setCredentials } from "@Features/auth/store/authSlice.js";
 import { useState } from "react";
 import { useDispatch , useSelector } from "react-redux";
 import { PlaylistService } from "../services/playlist.services.js";
@@ -18,7 +18,7 @@ export const usePlaylist = () => {
          const response = await PlaylistService.getUserPlaylists(user._id);
          console.log(response);
          setLoading(false);
-         dispatch(setCredentials({ userMeta: { playlists: response.playlists } }));
+         // dispatch(setCredentials({ userMeta: { playlists: response.playlists } }));
          return { status: "success" };
       } catch (err) {
          setLoading(false);
@@ -35,7 +35,7 @@ export const usePlaylist = () => {
          const updatedPlaylists = playlists.map((playlist) =>
             playlist._id === playlistId ? response.data.playlist : playlist,
          );
-         dispatch(setCredentials({ userMeta: { playlists: updatedPlaylists } }));
+         // dispatch(setCredentials({ userMeta: { playlists: updatedPlaylists } }));
          return { status: "success" };
       } catch (err) {
          setLoading(false);

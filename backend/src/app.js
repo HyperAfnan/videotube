@@ -25,14 +25,15 @@ app.use(cookieParser());
 app.use(requestLogger);
 app.use(compression());
 
-if (ENV.NODE_ENV === "development") {
-	logger.info("Development mode enabled");
-	import("./config/bullboard.js").then(({ setupBullBoard }) =>
-		setupBullBoard(app),
-	);
-}
+// if (ENV.NODE_ENV === "development") {
+// 	logger.info("Development mode enabled");
+// 	import("./config/bullboard.js").then(({ setupBullBoard }) =>
+// 		setupBullBoard(app),
+// 	);
+// }
 
 import userRoutes from "./components/user/user.route.js";
+import authRoutes from "./components/auth/auth.route.js";
 import healthRoutes from "./components/health/health.route.js";
 import tweetRoutes from "./components/tweet/tweet.route.js";
 import subscriptionRoutes from "./components/subscription/subscription.route.js";
@@ -48,6 +49,7 @@ import { swaggerDocs } from "./utils/swagger.js";
 app.get("/", (_, res) => res.redirect("/docs"));
 app.use("/api/v1/health", healthRoutes);
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/tweets", tweetRoutes);
 app.use("/api/v1/videos", videoRoutes);
 app.use("/api/v1/playlist", playlistRoutes);

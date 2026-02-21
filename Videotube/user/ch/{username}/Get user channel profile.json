@@ -1,0 +1,38 @@
+{
+  "name": "Get user channel profile",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/user/ch/:username",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "GET",
+    "queryParams": [],
+    "headers": [],
+    "body": null,
+    "bodyContainer": {
+      "text": "",
+      "form": [],
+      "multipartForm": []
+    },
+    "contentType": "text/plain",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": [
+      {
+        "id": 1,
+        "key": "username",
+        "value": "string",
+        "description": "The username of the channel",
+        "dataType": "string"
+      }
+    ]
+  }
+}

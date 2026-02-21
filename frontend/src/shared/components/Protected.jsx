@@ -1,20 +1,20 @@
 import { useState, useEffect } from "react"
-import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
+import { useAuth } from "@/features/auth/hook/useAuth.js"
 
 export default function Protected ( { children, auth = true }) {
    const navigate = useNavigate()
-   const authStatus = useSelector((state) => state?.auth?.status)
+   const { isAuthenticated } = useAuth()
    const [loading, setLoading] = useState(true)
    useEffect(() => {
-      if (auth && authStatus !== auth ) {
+      if (auth && !isAuthenticated ) {
          navigate("/login")
-      } else if (!auth && authStatus !== auth) {
+      } else if (!auth && isAuthenticated) {
          navigate("/")
       } else {
          setLoading(false)
       }
       setLoading(false)
-   }, [authStatus, navigate, auth])
+   }, [isAuthenticated ? "Authenticated" : "Not Authenticated", navigate, auth])
    return loading ? "" : <>{children}</>
 }

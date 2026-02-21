@@ -1,0 +1,30 @@
+{
+  "name": "Update user details",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/user/updateDetails",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "PATCH",
+    "queryParams": [],
+    "headers": [],
+    "body": "{\n  \"fullname\": \"\",\n  \"email\": \"\"\n}",
+    "bodyContainer": {
+      "text": "{\n  \"fullname\": \"\",\n  \"email\": \"\"\n}",
+      "form": [],
+      "multipartForm": []
+    },
+    "contentType": "application/json",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": []
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "Get tweets by user",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/tweets/user/:userId",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "GET",
+    "queryParams": [],
+    "headers": [],
+    "body": null,
+    "bodyContainer": {
+      "text": "",
+      "form": [],
+      "multipartForm": []
+    },
+    "contentType": "text/plain",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": [
+      {
+        "id": 1,
+        "key": "userId",
+        "value": "string",
+        "description": "ID of the user whose tweets to retrieve",
+        "dataType": "string"
+      }
+    ]
+  }
+}

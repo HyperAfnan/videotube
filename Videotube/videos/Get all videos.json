@@ -1,0 +1,79 @@
+{
+  "name": "Get all videos",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/videos",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "GET",
+    "queryParams": [
+      {
+        "id": 1,
+        "key": "page",
+        "value": "1",
+        "isEnabled": true,
+        "description": "Page number for pagination",
+        "dataType": "integer"
+      },
+      {
+        "id": 2,
+        "key": "limit",
+        "value": "1",
+        "isEnabled": true,
+        "description": "Number of videos per page",
+        "dataType": "integer"
+      },
+      {
+        "id": 3,
+        "key": "q",
+        "value": "string",
+        "isEnabled": true,
+        "description": "Search term for video title or description",
+        "dataType": "string"
+      },
+      {
+        "id": 4,
+        "key": "sortBy",
+        "value": "createdAt",
+        "isEnabled": true,
+        "description": "Field to sort by",
+        "dataType": "string"
+      },
+      {
+        "id": 5,
+        "key": "sortType",
+        "value": "asc",
+        "isEnabled": true,
+        "description": "Sort order (ascending or descending)",
+        "dataType": "string"
+      },
+      {
+        "id": 6,
+        "key": "userId",
+        "value": "string",
+        "isEnabled": true,
+        "description": "User ID to filter videos by owner",
+        "dataType": "string"
+      }
+    ],
+    "headers": [],
+    "body": null,
+    "bodyContainer": {
+      "text": "",
+      "form": [],
+      "multipartForm": []
+    },
+    "contentType": "text/plain",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": []
+  }
+}

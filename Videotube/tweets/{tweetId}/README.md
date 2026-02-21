@@ -1,0 +1,1 @@
+Collection for /tweets/{tweetId} endpoints

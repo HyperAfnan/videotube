@@ -1,6 +1,18 @@
 export const VideoService = {
+   async getFeed(page = 1) {
+      const response = await fetch(`/api/v1/videos/feed&page=${page}`, {
+         credentials: "include",
+         method: "GET",
+         headers: { "Content-Type": "application/json" },
+      });
+   
+      if (response.status !== 200) throw new Error(`Failed to fetch videos: ${response.statusText}`);
+   
+      const data = await response.json();
+      return data?.data?.videos || [];
+   },
    async getVideos( page = 1 ) {
-      const response = await fetch(`/api/v1/videos?page=${page}`, {
+      const response = await fetch(`/api/v1/videos/feed?page=${page}`, {
          credentials: "include",
          method: "GET",
          headers: { "Content-Type": "application/json" },
@@ -52,16 +64,16 @@ export const VideoService = {
       return data?.data;
    },
    
-   async update(videoId, videoData) {
-      const response = await fetch(`/api/v1/videos/${videoId}`, {
+   async update(videoData) {
+      const response = await fetch(`/api/v1/videos/${videoData.videoId}`, {
          credentials: "include",
          method: "PATCH",
          headers: { "Content-Type": "application/json" },
-         body: JSON.stringify(videoData),
+         body: JSON.stringify(videoData.updatedData),
       });
-   
+
       if (response.status !== 200) throw new Error(`Failed to update video: ${response.statusText}`);
-   
+
       const data = await response.json();
       return data?.data;
    },
@@ -77,6 +89,22 @@ export const VideoService = {
    
       return { success: true, message: "Video deleted successfully" };
    },
+   
+   async toggleVideoLike(videoId, type = "like") {
+      const response = await fetch(`/api/v1/likes/toggle/v/${videoId}?type=${type}`, {
+         credentials: "include",
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+      });
+   
+      if (response.status !== 200 && response.status !== 201) {
+         throw new Error(`Failed to ${type} video: ${response.statusText}`);
+      }
+   
+      const data = await response.json();
+      return data?.data;
+   },
+   
    async download(videoId) {
       const response = await fetch(`/api/v1/videos/download/${videoId}`, {
          credentials: "include",

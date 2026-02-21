@@ -1,0 +1,44 @@
+{
+  "name": "Update user cover image",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/user/updateCoverImage",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "PATCH",
+    "queryParams": [],
+    "headers": [],
+    "body": [
+      {
+        "id": 1,
+        "key": "coverImage",
+        "value": "",
+        "isEnabled": true
+      }
+    ],
+    "bodyContainer": {
+      "text": "",
+      "form": [],
+      "multipartForm": [
+        {
+          "id": 1,
+          "key": "coverImage",
+          "value": "",
+          "isEnabled": true
+        }
+      ]
+    },
+    "contentType": "multipart/form-data",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": []
+  }
+}

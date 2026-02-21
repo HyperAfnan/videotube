@@ -1,5 +1,4 @@
-import { cn } from "@Lib/utils";
-
+import { cn } from "@/lib/utils";
 /**
  * Container component with dark mode support
  * Provides consistent spacing and responsive layout for page content

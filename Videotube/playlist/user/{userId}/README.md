@@ -1,0 +1,1 @@
+Collection for /playlist/user/{userId} endpoints

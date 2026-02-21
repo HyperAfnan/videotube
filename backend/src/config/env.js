@@ -36,6 +36,13 @@ const ENV = {
 	BREVO_EMAIL_FROM: process.env.EMAIL_USER,
 
 	LOG_LEVEL: process.env.LOG_LEVEL || "info",
+
+   rabbitMQURL: process.env.RABBITMQ_URI || "amqp://localhost:5672",
+
+   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+   GOOGLE_REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI,
+
 };
 
 const requiredKeys = [
@@ -51,6 +58,10 @@ const requiredKeys = [
 	"BREVO_USERNAME",
 	"BREVO_PASSWORD",
 	"CORS_ORIGIN",
+
+   "GOOGLE_CLIENT_ID",
+   "GOOGLE_CLIENT_SECRET",
+   "GOOGLE_REDIRECT_URI",
 ];
 
 for (const key of requiredKeys) {

@@ -1,0 +1,1 @@
+Collection for /dashboard/stats endpoints

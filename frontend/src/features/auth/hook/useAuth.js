@@ -1,48 +1,99 @@
-import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { authService } from "../services/authService.js";
-import { useDispatch , useSelector } from "react-redux";
-import { setCredentials } from "../store/authSlice.js";
+import { AUTH_KEYS } from "@/lib/queryKeys.js";
 
 export const useAuth = () => {
-   const dispatch = useDispatch();
-   const user = useSelector((state) => state.auth.userMeta);
-   const accessToken = useSelector((state) => state.auth.accessToken);
-   const isAuthenticated = useSelector((state) => state.auth.status);
+   const queryClient = useQueryClient();
 
-   const [error, setError] = useState(null);
+   const {
+      data: user,
+      error: fetchError,
+      isLoading: isFetching,
+   } = useQuery({
+      queryKey: AUTH_KEYS.user,
+      queryFn: async () => {
+         const userMeta = JSON.parse(localStorage.getItem("user"));
+         return userMeta || null;
+      },
+      staleTime: Infinity,
+   });
 
-   const login = async (credentials) => {
-      setError(null);
-      try {
-         const userData = await authService.login(credentials);
+   const {
+      mutateAsync: login,
+      error: loginError,
+      isLoading: isLoggingIn,
+   } = useMutation({
+      mutationFn: authService.login,
+      onSuccess: (data) => {
+         localStorage.setItem("user", JSON.stringify(data.user));
+         queryClient.setQueryData(AUTH_KEYS.user, data.user);
+      },
+   });
 
-         dispatch(setCredentials({ userMeta: userData.user, accessToken: userData.accessToken }));
-         localStorage.setItem("user", JSON.stringify(userData.user));
+   const {
+      mutateAsync: signup,
+      error: signupError,
+      isLoading: isSigningUp,
+   } = useMutation({
+      mutationFn: authService.signup,
+   });
 
-         return userData;
-      } catch (err) {
-         setError(err.message);
-      }
-   };
-   const signup = async (credentials) => {
-      setError(null);
-      try {
-         const data = await authService.signup(credentials);
-         return data;
-      } catch (err) {
-         setError(err.message);
-      }
-   };
-   const logout = async() => {
-      setError(null);
-      try {
-         authService.logout();
-         dispatch(setCredentials({ userMeta: {}, accessToken: null, status: false }));
+   const {
+      mutateAsync: logout,
+      error: logoutError,
+      isLoading: isLoggingOut,
+   } = useMutation({
+      mutationFn: authService.logout,
+      onSuccess: () => {
          localStorage.removeItem("user");
-      } catch (err) {
-         setError(err.message);
-      }
-   };
+         queryClient.setQueryData(AUTH_KEYS.user, null);
+      },
+   });
 
-   return { user, error, login , logout, signup, accessToken, isAuthenticated };
+   const {
+      mutateAsync: loginWithGoogle,
+      error: googleLoginError,
+      isLoading: isGoogleLoggingIn,
+   } = useMutation({
+      mutationFn: authService.loginWithGoogle,
+      onSuccess: (data) => {
+         localStorage.setItem("user", JSON.stringify(data.user));
+         queryClient.setQueryData(AUTH_KEYS.user, data.user);
+      },
+   });
+
+   const {
+      mutateAsync: refreshToken,
+      error: refreshTokenError,
+      isLoading: isRefreshingToken,
+   } = useMutation({
+      mutationFn: authService.refreshToken,
+      onSuccess: (data) => {
+         localStorage.setItem("user", JSON.stringify(data.user));
+         queryClient.setQueryData(AUTH_KEYS.user, data.user);
+      },
+   });
+
+   const error =
+      fetchError || loginError || signupError || logoutError || googleLoginError || refreshTokenError;
+   const isAuthenticated = !!user;
+   const isLoading =
+      isFetching ||
+      isLoggingIn ||
+      isSigningUp ||
+      isLoggingOut ||
+      isGoogleLoggingIn
+      || isRefreshingToken;
+
+   return {
+      user,
+      error,
+      login,
+      logout,
+      signup,
+      loginWithGoogle,
+      isAuthenticated,
+      refreshToken,
+      isLoading,
+   };
 };

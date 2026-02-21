@@ -1,0 +1,38 @@
+{
+  "name": "Toggle subscription",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/subscriptions/c/:channelId",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "POST",
+    "queryParams": [],
+    "headers": [],
+    "body": null,
+    "bodyContainer": {
+      "text": "",
+      "form": [],
+      "multipartForm": []
+    },
+    "contentType": "text/plain",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": [
+      {
+        "id": 1,
+        "key": "channelId",
+        "value": "string",
+        "description": "ID of the channel to subscribe/unsubscribe",
+        "dataType": "string"
+      }
+    ]
+  }
+}

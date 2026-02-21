@@ -1,30 +1,20 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setCredentials } from "../store/authSlice.js";
-import { refreshAccessToken } from "../store/authTrunks.js"; 
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "../hook/useAuth.js";
 
-/*
-   * AuthInitializer component checks if the user is authenticated
-   * and refreshes the access token if necessary.
-   * It should be used at the root of your application to ensure
-   * authentication state is set before rendering any protected routes.
-*/
 export default function AuthInitializer({ children }) {
-   const dispatch = useDispatch();
-   const [loading, setLoading] = useState(true);
-   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-
+   const queryClient = useQueryClient();
+   const { refreshToken, isLoading, isError } = useAuth();
    useEffect(() => {
-      const init = async () => {
-         const userMeta = JSON.parse(localStorage.getItem("user"));
-         if (userMeta && !isAuthenticated) {
-            dispatch(setCredentials({ userMeta, accessToken: null }));
-            dispatch(refreshAccessToken());
-         }
-         setLoading(false);
-      };
-      init();
-   }, [dispatch, isAuthenticated]);
+      const userMeta = JSON.parse(localStorage.getItem("user"));
+      if (userMeta) {
+         refreshToken(userMeta).then((data) => {
+            queryClient.setQueryData(["user"], data.user);
+         });
+      }
+   }, [refreshToken, queryClient]);
 
-   return loading ? null : children;
+   if (isLoading) return null;
+   if (isError) return <div>Authentication failed. Please log in again.</div>;
+   return children;
 }

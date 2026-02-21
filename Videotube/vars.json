@@ -1,0 +1,20 @@
+{
+  "base_url": {
+    "value": "http://localhost:5000/api/v1",
+    "type": "string",
+    "id": 1,
+    "isSecret": false
+  },
+  "base_url2": {
+    "value": "192.168.217.18:5000/api/v1",
+    "type": "string",
+    "id": 2,
+    "isSecret": false
+  },
+  "base_url3": {
+    "value": "https://chai-code-backend.onrender.com/api/v1",
+    "type": "string",
+    "id": 3,
+    "isSecret": false
+  }
+}

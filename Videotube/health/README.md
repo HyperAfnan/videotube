@@ -1,0 +1,1 @@
+Collection for /health endpoints

@@ -1,0 +1,38 @@
+{
+  "name": "Redirect to the video file URL",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/videos/download/:videoId",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "GET",
+    "queryParams": [],
+    "headers": [],
+    "body": null,
+    "bodyContainer": {
+      "text": "",
+      "form": [],
+      "multipartForm": []
+    },
+    "contentType": "text/plain",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": [
+      {
+        "id": 1,
+        "key": "videoId",
+        "value": "string",
+        "description": "ID of the video to download",
+        "dataType": "string"
+      }
+    ]
+  }
+}

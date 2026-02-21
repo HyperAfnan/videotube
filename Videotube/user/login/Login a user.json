@@ -1,0 +1,26 @@
+{
+  "name": "Login a user",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/user/login",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "POST",
+    "queryParams": [],
+    "headers": [],
+    "body": "{\n  \"email\": \"\",\n  \"password\": \"\"\n}",
+    "bodyContainer": {
+      "text": "{\n  \"email\": \"\",\n  \"password\": \"\"\n}",
+      "form": [],
+      "multipartForm": []
+    },
+    "contentType": "application/json",
+    "auth": {
+      "currentAuthType": "INHERIT",
+      "authConfigStore": {}
+    },
+    "pathVariables": []
+  }
+}

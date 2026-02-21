@@ -21,7 +21,7 @@ export default function VideoPreview({ videoMeta, thumbnail }) {
 
    return (
       <div className="flex justify-center items-center flex-col space-y-4 w-1/3 p-2 m-2 sticky right-12 top-10 cursor-default">
-         <div className="flex flex-col space-y-4 h-[320px] w-[320px] rounded-xl bg-gray-200 overflow-hidden">
+         <div className="flex flex-col space-y-4 h-[320px] w-[320px] rounded-xl bg-muted overflow-hidden">
             <ReactPlayer
                src={videoMeta?.videoFile}
                controls
@@ -31,25 +31,25 @@ export default function VideoPreview({ videoMeta, thumbnail }) {
                className="rounded-xl"
             />
             <div className="p-2">
-               <span className="text-xs text-gray-600">Video link</span>
+               <span className="text-xs text-muted-foreground">Video link</span>
                <div className="flex justify-between items-center">
                   <Link to={videoMeta?.videoFile} target="_blank">
                      <span
                         ref={linkRef}
-                        className="text-xs text-blue-600 hover:underline"
+                        className="text-xs text-primary hover:underline"
                      >
                         https://vt.be/video/{videoMeta?._id}
                      </span>
                   </Link>
                   <Copy
                      height={20}
-                     className="text-gray-600 cursor-pointer"
+                     className="text-muted-foreground cursor-pointer hover:text-foreground"
                      onClick={copyLink}
                   />
                </div>
                <div className="pt-2">
-                  <span className="text-xs text-gray-600">Filename</span>
-                  <p className="text-xs text-gray-600">{videoMeta?.videoFile.split("/").pop()}</p>
+                  <span className="text-xs text-muted-foreground">Filename</span>
+                  <p className="text-xs text-muted-foreground">{videoMeta?.videoFile.split("/").pop()}</p>
                </div>
             </div>
          </div>

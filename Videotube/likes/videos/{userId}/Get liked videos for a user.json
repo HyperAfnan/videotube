@@ -1,0 +1,38 @@
+{
+  "name": "Get liked videos for a user",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/likes/videos/:userId",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "GET",
+    "queryParams": [],
+    "headers": [],
+    "body": null,
+    "bodyContainer": {
+      "text": "",
+      "form": [],
+      "multipartForm": []
+    },
+    "contentType": "text/plain",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": [
+      {
+        "id": 1,
+        "key": "userId",
+        "value": "string",
+        "description": "The ID of the user whose liked videos are being retrieved",
+        "dataType": "string"
+      }
+    ]
+  }
+}

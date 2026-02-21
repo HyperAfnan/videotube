@@ -1,0 +1,80 @@
+{
+  "name": "Upload a new video",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/videos",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "POST",
+    "queryParams": [],
+    "headers": [],
+    "body": [
+      {
+        "id": 1,
+        "key": "videoFile",
+        "value": "",
+        "isEnabled": true
+      },
+      {
+        "id": 2,
+        "key": "thumbnail",
+        "value": "",
+        "isEnabled": true
+      },
+      {
+        "id": 3,
+        "key": "title",
+        "value": "",
+        "isEnabled": true
+      },
+      {
+        "id": 4,
+        "key": "description",
+        "value": "",
+        "isEnabled": true
+      }
+    ],
+    "bodyContainer": {
+      "text": "",
+      "form": [],
+      "multipartForm": [
+        {
+          "id": 1,
+          "key": "videoFile",
+          "value": "",
+          "isEnabled": true
+        },
+        {
+          "id": 2,
+          "key": "thumbnail",
+          "value": "",
+          "isEnabled": true
+        },
+        {
+          "id": 3,
+          "key": "title",
+          "value": "",
+          "isEnabled": true
+        },
+        {
+          "id": 4,
+          "key": "description",
+          "value": "",
+          "isEnabled": true
+        }
+      ]
+    },
+    "contentType": "multipart/form-data",
+    "auth": {
+      "currentAuthType": "BEARER_TOKEN",
+      "authConfigStore": {
+        "BEARER_TOKEN": {
+          "bearer": "JWT"
+        }
+      }
+    },
+    "pathVariables": []
+  }
+}

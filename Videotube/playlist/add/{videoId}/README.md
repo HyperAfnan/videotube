@@ -1,0 +1,1 @@
+Collection for /playlist/add/{videoId} endpoints

@@ -1,4 +1,4 @@
-import { param } from "express-validator";
+import { param, query } from "express-validator";
 
 export const toggleVideoLikeValidator = [
 	param("videoId")
@@ -6,6 +6,10 @@ export const toggleVideoLikeValidator = [
 		.withMessage("Video id is required")
 		.isMongoId()
 		.withMessage("Invalid video id"),
+   query("type")
+      .optional()
+      .isIn(["like", "dislike"])
+      .withMessage("Like type must be either 'like' or 'dislike'"),
 ];
 
 export const toggleCommentLikeValidator = [

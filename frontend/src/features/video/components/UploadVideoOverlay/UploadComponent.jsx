@@ -14,9 +14,6 @@ import { useForm, FormProvider } from "react-hook-form";
 
 const UploadComponent = ({
   setOpen,
-  ref,
-  floatingStyles,
-  getFloatingProps,
 }) => {
   const methods = useForm({
     defaultValues: {
@@ -37,17 +34,14 @@ const UploadComponent = ({
   return (
     <div
       className="w-screen h-screen fixed inset-0 z-50 flex items-center justify-center bg-black/80"
-      ref={ref}
-      {...(getFloatingProps ? getFloatingProps() : {})}
-      style={{ ...floatingStyles }}
     >
-      <div className="flex flex-col h-[650px] w-[1200px] min-h-[400px] min-w-[800px] bg-white rounded-2xl shadow-lg animate-fade-in-scale">
+      <div className="flex flex-col h-[650px] w-[1200px] min-h-[400px] min-w-[800px] bg-background border border-border rounded-2xl shadow-lg animate-fade-in-scale">
         <FormProvider {...methods}>
           <UploadHeader
             setVideoMeta={setVideoMeta}
             videoMeta={videoMeta}
             setProgress={setProgress}
-            setFloating={setOpen}
+            setOpen={setOpen}
           />
           <UploadProgress progress={progress} />
           <div className="flex-grow flex overflow-hidden">
@@ -76,7 +70,7 @@ const UploadComponent = ({
             )}
           </div>
           {videoMeta && (
-            <UploadFooter setProgress={setProgress} videoMeta={videoMeta} />
+            <UploadFooter setProgress={setProgress} videoMeta={videoMeta} setOpen={setOpen} />
           )}
         </FormProvider>
       </div>

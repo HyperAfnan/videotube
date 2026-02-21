@@ -3,6 +3,7 @@ import {
 	deleteVideo,
 	downloadVideo,
 	getAllVideos,
+	getFeed,
 	getVideoById,
 	publishAVideo,
 	togglePublishStatus,
@@ -81,7 +82,7 @@ const router = Router();
  */
 
 router.use(defaultRateLimiter);
-// router.use(verifyAccessToken); // Apply verifyJWT middleware to all routes in this file
+// router.use(verifyAccessToken);
 
 /**
  * @swagger
@@ -180,13 +181,15 @@ router
       verifyAccessToken,
 		upload.fields([
 			{ name: "videoFile", maxCount: 1 },
-			// { name: "thumbnail", maxCount: 1 },
+			{ name: "thumbnail", maxCount: 1 },
 		]),
 		publishVideoFilesValidator,
 		publishVideoValidator,
 		// validator,
 		publishAVideo,
 	);
+
+router.route("/feed").get(getFeed)
 
 /**
  * @swagger

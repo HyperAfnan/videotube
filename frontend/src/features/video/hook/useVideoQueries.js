@@ -1,14 +1,18 @@
 import { useQuery , useInfiniteQuery } from "@tanstack/react-query";
-import { VideoService as videoService } from "../services/video.services.js";
+import { VideoService } from "../services/video.services.js";
+import { CommentService } from "../services/comment.services.js";
+import { SubscriptionService } from "../services/subscription.services.js";
 import { videoQueryKeys } from "../constants/queryKeys.js";
 
 export const useVideos = (options = {}) => {
    return useInfiniteQuery({
       queryKey: videoQueryKeys.list(),
-      queryFn: ({ pageParam = 1 }) => videoService.getVideos(pageParam),
+      queryFn: ({ pageParam = 1 }) => VideoService.getVideos(pageParam) || [],
       getNextPageParam: (lastPage, allPages) => {
-         if (lastPage.length === 0) return undefined;
-         return allPages.length + 1;
+         // console.log("Last Page:", lastPage);
+         // console.log("All Pages:", allPages);
+         if (lastPage?.length === 0) return undefined;
+         return allPages?.length + 1;
       },
       initialPageParam: 1,
       staleTime: 5 * 60 * 1000,
@@ -22,7 +26,7 @@ export const useVideos = (options = {}) => {
 export const useVideoById = (videoId, options = {}) => {
   return useQuery({
     queryKey: videoQueryKeys.detail(videoId),
-    queryFn: () => videoService.fetchById(videoId),
+    queryFn: () => VideoService.fetchById(videoId),
     enabled: !!videoId,
     staleTime: 5 * 60 * 1000,
     cacheTime: 10 * 60 * 1000,
@@ -31,6 +35,19 @@ export const useVideoById = (videoId, options = {}) => {
     ...options,
   });
 };
+
+export const useVideoComments = (videoId, options = {}) => {
+  return useQuery({
+    queryKey: videoQueryKeys.comments(videoId),
+    queryFn: () => CommentService.getVideoComments(videoId),
+    enabled: !!videoId,
+    staleTime: 2 * 60 * 1000,
+    cacheTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    retry: 2,
+    ...options,
+  });
+}
 
 // export const useVideoOwner = (ownerId, options = {}) => {
 //   return useQuery({
@@ -65,4 +82,30 @@ export const useVideo = (videoId, options = {}) => {
     // },
       ...videoQuery,
   };
+};
+
+export const useChannelSubscribers = (channelId, options = {}) => {
+  return useQuery({
+    queryKey: videoQueryKeys.subscribers(channelId),
+    queryFn: () => SubscriptionService.getChannelSubscribers(channelId),
+    enabled: !!channelId,
+    staleTime: 2 * 60 * 1000,
+    cacheTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    retry: 2,
+    ...options,
+  });
+};
+
+export const useSubscribedChannels = (userId, options = {}) => {
+  return useQuery({
+    queryKey: videoQueryKeys.subscriptions(userId),
+    queryFn: () => SubscriptionService.getSubscribedChannels(userId),
+    enabled: !!userId,
+    staleTime: 2 * 60 * 1000,
+    cacheTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    retry: 2,
+    ...options,
+  });
 };

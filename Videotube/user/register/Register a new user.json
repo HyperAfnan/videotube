@@ -1,0 +1,100 @@
+{
+  "name": "Register a new user",
+  "request": {
+    "type": "http",
+    "url": "{{base_url}}/user/register",
+    "scripts": {
+      "preRequest": "",
+      "postResponse": ""
+    },
+    "method": "POST",
+    "queryParams": [],
+    "headers": [],
+    "body": [
+      {
+        "id": 1,
+        "key": "username",
+        "value": "",
+        "isEnabled": true
+      },
+      {
+        "id": 2,
+        "key": "email",
+        "value": "",
+        "isEnabled": true
+      },
+      {
+        "id": 3,
+        "key": "password",
+        "value": "",
+        "isEnabled": true
+      },
+      {
+        "id": 4,
+        "key": "fullname",
+        "value": "",
+        "isEnabled": true
+      },
+      {
+        "id": 5,
+        "key": "avatar",
+        "value": "",
+        "isEnabled": true
+      },
+      {
+        "id": 6,
+        "key": "coverImage",
+        "value": "",
+        "isEnabled": true
+      }
+    ],
+    "bodyContainer": {
+      "text": "",
+      "form": [],
+      "multipartForm": [
+        {
+          "id": 1,
+          "key": "username",
+          "value": "",
+          "isEnabled": true
+        },
+        {
+          "id": 2,
+          "key": "email",
+          "value": "",
+          "isEnabled": true
+        },
+        {
+          "id": 3,
+          "key": "password",
+          "value": "",
+          "isEnabled": true
+        },
+        {
+          "id": 4,
+          "key": "fullname",
+          "value": "",
+          "isEnabled": true
+        },
+        {
+          "id": 5,
+          "key": "avatar",
+          "value": "",
+          "isEnabled": true
+        },
+        {
+          "id": 6,
+          "key": "coverImage",
+          "value": "",
+          "isEnabled": true
+        }
+      ]
+    },
+    "contentType": "multipart/form-data",
+    "auth": {
+      "currentAuthType": "INHERIT",
+      "authConfigStore": {}
+    },
+    "pathVariables": []
+  }
+}
