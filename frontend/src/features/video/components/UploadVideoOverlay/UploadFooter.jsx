@@ -12,13 +12,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { notificationService } from "@Shared/services/notification.services.js";
 
-const UploadFooter = ({ setProgress, videoMeta }) => {
+const UploadFooter = ({ setProgress, videoMeta, setOpen }) => {
   const { handleSubmit } = useFormContext();
   const [publishType, setPublishType] = useState("Publish Now");
   const navigate = useNavigate();
   const { mutate: updateVideo, isPending } = useUpdateVideo();
 
   const uploadHandler = async (data) => {
+      console.log("Upload Handler ", data);
     try {
       updateVideo(
         { videoId: videoMeta._id, updatedData: data },
@@ -29,6 +30,7 @@ const UploadFooter = ({ setProgress, videoMeta }) => {
               setProgress(0);
               navigate("/");
             }, 1000);
+            setOpen(false);
           },
         }
       );
@@ -37,11 +39,12 @@ const UploadFooter = ({ setProgress, videoMeta }) => {
     }
   };
 
-  const handlePublish = (type) => {
+   const changePublishType = (type) => {
     setPublishType(type);
-    handleSubmit((data) => {
-      uploadHandler({ ...data, isPublished: type === "Publish Now" });
-    })();
+  }
+
+  const handlePublish = (type) => {
+    handleSubmit((data) => uploadHandler({ ...data, isPublished: type === "Publish Now" }))();
   };
 
   return (
@@ -67,10 +70,10 @@ const UploadFooter = ({ setProgress, videoMeta }) => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" side="bottom" sideOffset={4} className="bg-popover ">
-            <DropdownMenuItem onClick={() => handlePublish("Publish Now")}>
+            <DropdownMenuItem onClick={() => changePublishType("Publish Now")}>
               Publish Now
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handlePublish("Public Later")}>
+            <DropdownMenuItem onClick={() => changePublishType("Public Later")}>
               Public Later
             </DropdownMenuItem>
           </DropdownMenuContent>

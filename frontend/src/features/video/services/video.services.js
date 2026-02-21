@@ -64,16 +64,16 @@ export const VideoService = {
       return data?.data;
    },
    
-   async update(videoId, videoData) {
-      const response = await fetch(`/api/v1/videos/${videoId}`, {
+   async update(videoData) {
+      const response = await fetch(`/api/v1/videos/${videoData.videoId}`, {
          credentials: "include",
          method: "PATCH",
          headers: { "Content-Type": "application/json" },
-         body: JSON.stringify(videoData),
+         body: JSON.stringify(videoData.updatedData),
       });
-   
+
       if (response.status !== 200) throw new Error(`Failed to update video: ${response.statusText}`);
-   
+
       const data = await response.json();
       return data?.data;
    },

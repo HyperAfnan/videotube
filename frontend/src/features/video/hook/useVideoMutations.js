@@ -16,11 +16,24 @@ export const useUploadVideo = () => {
 
          const previousVideos = queryClient.getQueryData(videoQueryKeys.list());
 
-         if (previousVideos) {
-            queryClient.setQueryData(videoQueryKeys.list(), (old) => [
-               ...old,
-               { ...newVideo, _id: "temp-id", createdAt: new Date().toISOString() },
-            ]);
+         if (previousVideos?.pages) {
+            queryClient.setQueryData(videoQueryKeys.list(), (old) => {
+               if (!old?.pages) return old;
+               
+               // Add to the first page
+               const newPages = [...old.pages];
+               if (newPages[0]) {
+                  newPages[0] = [
+                     { ...newVideo, _id: "temp-id", createdAt: new Date().toISOString() },
+                     ...newPages[0],
+                  ];
+               }
+               
+               return {
+                  ...old,
+                  pages: newPages,
+               };
+            });
          }
 
          return { previousVideos };
@@ -28,11 +41,16 @@ export const useUploadVideo = () => {
 
       onSuccess: (uploadedVideo) => {
          queryClient.setQueryData(videoQueryKeys.list(), (old) => {
-            if (!old) return [uploadedVideo];
+            if (!old?.pages) return old;
 
-            return [...old]?.map((video) =>
-               video._id === "temp-id" ? uploadedVideo : video,
-            );
+            return {
+               ...old,
+               pages: old.pages.map((page) =>
+                  page.map((video) =>
+                     video._id === "temp-id" ? uploadedVideo : video
+                  )
+               ),
+            };
          });
 
          notificationService.success("Video uploaded successfully");
@@ -94,10 +112,17 @@ export const useDeleteVideo = (videoId) => {
 
          const previousVideos = queryClient.getQueryData(videoQueryKeys.list());
 
-         if (previousVideos) {
-            queryClient.setQueryData(videoQueryKeys.list(), (old) =>
-               old.filter((video) => video._id !== videoId),
-            );
+         if (previousVideos?.pages) {
+            queryClient.setQueryData(videoQueryKeys.list(), (old) => {
+               if (!old?.pages) return old;
+               
+               return {
+                  ...old,
+                  pages: old.pages.map((page) =>
+                     page.filter((video) => video._id !== videoId)
+                  ),
+               };
+            });
          }
 
          return { previousVideos };
@@ -125,17 +150,30 @@ export const useDeleteVideo = (videoId) => {
 export const useUpdateVideo = () => {
    const queryClient = useQueryClient();
    return useMutation({
-      mutationFn: VideoService.update,
-      onMutate: async (videoId, updatedData) => {
+      mutationFn: (data) =>  { 
+         // console.log("useVideoMutations - useUpdateVideo - mutationFn called with:", data);
+         return VideoService.update(data) },
+      retry: false,
+      onMutate: async ({ videoId, updatedData }) => {
          await queryClient.cancelQueries({ queryKey: videoQueryKeys.list() });
          const previousVideos = queryClient.getQueryData(videoQueryKeys.list());
-         console.log("Updating video:", videoId, updatedData);
-         if (previousVideos) {
-            console.log("Previous videos found, updating cache optimistically");
+         // console.log("Updating video:", { videoId, updatedData });
+         
+         if (previousVideos?.pages) {
+            // console.log("Previous videos found, updating cache optimistically");
             queryClient.setQueryData(videoQueryKeys.list(), (old) => {
-               const videos = Array.isArray(old) ? old : [];
-               console.log("Old videos in cache:", videos);
-               return videos.map((video) => video._id === videoId ? { ...video, ...updatedData } : video);
+               if (!old?.pages) return old;
+               
+               // console.log("Old videos in cache:", old.pages);
+               
+               return {
+                  ...old,
+                  pages: old.pages.map((page) => 
+                     page.map((video) => 
+                        video._id === videoId ? { ...video, ...updatedData } : video
+                     )
+                  ),
+               };
             });
          }
          return { previousVideos };
@@ -143,7 +181,7 @@ export const useUpdateVideo = () => {
       onSuccess: () => {
          notificationService.success("Video updated successfully");
       },
-      onError: (error, context) => {
+      onError: (error, _, context) => {
          if (context?.previousVideos) {
             queryClient.setQueryData(videoQueryKeys.list(), context.previousVideos);
          }
@@ -163,13 +201,8 @@ export const useAddComment = (videoId) => {
       mutationFn: (newComment) => CommentService.addComment(newComment),
       retry: false,
       onMutate: async (newComment) => {
-         // Cancel any outgoing refetches
          await queryClient.cancelQueries({ queryKey: videoQueryKeys.comments(videoId) });
-
-         // Snapshot the previous value
          const previousComments = queryClient.getQueryData(videoQueryKeys.comments(videoId));
-
-         // Optimistically update the cache
          queryClient.setQueryData(videoQueryKeys.comments(videoId), (old) => {
             if (!old) return old;
 
@@ -195,7 +228,6 @@ export const useAddComment = (videoId) => {
          return { previousComments };
       },
       onError: (err, newComment, context) => {
-         // Rollback to previous value on error
          if (context?.previousComments) {
             queryClient.setQueryData(videoQueryKeys.comments(videoId), context.previousComments);
          }
@@ -205,7 +237,6 @@ export const useAddComment = (videoId) => {
          notificationService.success("Comment added successfully");
       },
       onSettled: () => {
-         // Refetch to ensure we have the correct data
          queryClient.invalidateQueries({ queryKey: videoQueryKeys.comments(videoId) });
       }
    });

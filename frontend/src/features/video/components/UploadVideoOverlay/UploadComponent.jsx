@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
 import {
   UploadDetails,
   VideoPreview,
@@ -12,13 +11,9 @@ import {
   UploadProgress,
 } from "./index.js";
 import { useForm, FormProvider } from "react-hook-form";
-import { VideoService } from "@Features/video/services/video.services.js";
 
 const UploadComponent = ({
   setOpen,
-  ref,
-  floatingStyles,
-  getFloatingProps,
 }) => {
   const methods = useForm({
     defaultValues: {
@@ -39,9 +34,6 @@ const UploadComponent = ({
   return (
     <div
       className="w-screen h-screen fixed inset-0 z-50 flex items-center justify-center bg-black/80"
-      ref={ref}
-      {...(getFloatingProps ? getFloatingProps() : {})}
-      style={{ ...floatingStyles }}
     >
       <div className="flex flex-col h-[650px] w-[1200px] min-h-[400px] min-w-[800px] bg-background border border-border rounded-2xl shadow-lg animate-fade-in-scale">
         <FormProvider {...methods}>
@@ -78,7 +70,7 @@ const UploadComponent = ({
             )}
           </div>
           {videoMeta && (
-            <UploadFooter setProgress={setProgress} videoMeta={videoMeta} />
+            <UploadFooter setProgress={setProgress} videoMeta={videoMeta} setOpen={setOpen} />
           )}
         </FormProvider>
       </div>

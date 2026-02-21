@@ -9,7 +9,8 @@ export const useVideos = (options = {}) => {
       queryKey: videoQueryKeys.list(),
       queryFn: ({ pageParam = 1 }) => VideoService.getVideos(pageParam) || [],
       getNextPageParam: (lastPage, allPages) => {
-         console.log(lastPage, allPages);
+         // console.log("Last Page:", lastPage);
+         // console.log("All Pages:", allPages);
          if (lastPage?.length === 0) return undefined;
          return allPages?.length + 1;
       },
