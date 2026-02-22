@@ -43,6 +43,13 @@ const ENV = {
    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
    GOOGLE_REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI,
 
+   AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+   AWS_REGION: process.env.AWS_REGION,
+   AWS_ENDPOINT: process.env.AWS_ENDPOINT,
+
+   KAFKA_BROKERS: process.env.KAFKA_BROKERS,
+   KAFKA_CLIENT_ID: process.env.KAFKA_CLIENT_ID
 };
 
 const requiredKeys = [
@@ -62,6 +69,12 @@ const requiredKeys = [
    "GOOGLE_CLIENT_ID",
    "GOOGLE_CLIENT_SECRET",
    "GOOGLE_REDIRECT_URI",
+
+   "AWS_ACCESS_KEY_ID",
+   "AWS_SECRET_ACCESS_KEY",
+   "AWS_REGION",
+
+   "KAFKA_BROKERS",
 ];
 
 for (const key of requiredKeys) {

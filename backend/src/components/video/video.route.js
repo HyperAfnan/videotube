@@ -1,11 +1,14 @@
 import { Router } from "express";
 import {
+    chunkedUpload,
+	completeChunkedUpload,
 	deleteVideo,
 	downloadVideo,
 	getAllVideos,
 	getFeed,
 	getVideoById,
 	publishAVideo,
+	startChunkedUpload,
 	togglePublishStatus,
 	updateVideo,
 } from "./video.controller.js";
@@ -190,6 +193,24 @@ router
 	);
 
 router.route("/feed").get(getFeed)
+
+router.route("/startChunkedUpload").post(
+   verifyAccessToken,
+   upload.none(),
+   startChunkedUpload
+)
+
+router.route("/chunkedUpload").post(
+   verifyAccessToken,
+   upload.single("chunk"),
+   chunkedUpload,
+)
+
+router.route("/completeChunkedUpload").post(
+   verifyAccessToken,
+   upload.none(),
+   completeChunkedUpload,
+)
 
 /**
  * @swagger
