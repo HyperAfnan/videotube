@@ -282,7 +282,17 @@ export const updateVideo = serviceHandler(
       isPublished,
       thumbnailLocalPath,
    ) => {
-      logger.debug("thumbnailLocalPath", thumbnailLocalPath);
+      // logger.debug("thumbnailLocalPath", thumbnailLocalPath);
+
+      console.log(
+      title,
+      description,
+      videoMeta,
+      videoId,
+      visibility,
+      isPublished,
+      thumbnailLocalPath,
+      )
       let thumbnail;
       if (thumbnailLocalPath) {
          try {

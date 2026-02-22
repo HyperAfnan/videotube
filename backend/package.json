@@ -24,6 +24,7 @@
 	},
 	"homepage": "https://github.com/HyperAfnan/chai-code-backend#readme",
 	"dependencies": {
+		"@aws-sdk/client-s3": "^3.995.0",
 		"amqplib": "^0.10.9",
 		"bcrypt": "^5.1.1",
 		"bullmq": "^5.53.2",
@@ -40,6 +41,7 @@
 		"helmet": "^8.1.0",
 		"ioredis": "^5.6.1",
 		"jsonwebtoken": "^9.0.2",
+		"kafkajs": "^2.2.4",
 		"mongodb": "^6.16.0",
 		"mongoose": "^8.14.1",
 		"mongoose-aggregate-paginate-v2": "^1.1.4",
