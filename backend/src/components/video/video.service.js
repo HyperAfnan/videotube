@@ -13,6 +13,11 @@ import {
 } from "../../utils/fileHandlers.js";
 import { logger } from "../../utils/logger/index.js";
 const videoServiceLogger = logger.child({ module: "video.services" });
+import { CreateMultipartUploadCommand, UploadPartCommand, CompleteMultipartUploadCommand } from "@aws-sdk/client-s3";
+import { stat } from "fs/promises";
+import fs from "fs";
+import crypto from "crypto";
+import { s3Client } from "../../config/aws.js";
 
 export const findUserById = serviceHandler(async (userId) => {
    const user = await User.findById(userId);
@@ -81,8 +86,8 @@ export const getFeed = serviceHandler(
          count: data?.videos?.length ?? 0,
       });
       return data;
-   }
-)
+   },
+);
 
 export const getAllVideos = serviceHandler(
    async (page, limit, q, sortBy, sortType, userId) => {
@@ -202,19 +207,19 @@ export const getUserVideoById = serviceHandler(
       const video = await Video.findByIdAndUpdate(
          videoId,
          { $inc: { views: 1 } },
-         { new: true }
+         { new: true },
       ).populate({
          path: "owner",
-         select: "_id username avatar"
+         select: "_id username avatar",
       });
 
       const subscribers = await Subscription.countDocuments({
-         subscribedTo: video.owner._id
+         subscribedTo: video.owner._id,
       });
 
       const LikeCount = await Like.countDocuments({
          video: videoId,
-         type: "like"
+         type: "like",
       });
       let videoObj = video.toObject();
 
@@ -223,18 +228,18 @@ export const getUserVideoById = serviceHandler(
       if (userId) {
          isSubscribed = await Subscription.exists({
             subscribedBy: userId,
-            subscribedTo: video.owner._id
+            subscribedTo: video.owner._id,
          });
 
          const isLiked = await Like.exists({
             likedBy: userId,
             video: videoId,
-            type: "like"
+            type: "like",
          });
          const isDisliked = await Like.exists({
             likedBy: userId,
             video: videoId,
-            type: "dislike"
+            type: "dislike",
          });
 
          videoObj = {
@@ -247,8 +252,8 @@ export const getUserVideoById = serviceHandler(
             userInteration: {
                isLiked: Boolean(isLiked),
                isDisliked: Boolean(isDisliked),
-               isSubscribed: Boolean(isSubscribed)
-            }
+               isSubscribed: Boolean(isSubscribed),
+            },
          };
       }
 
@@ -285,14 +290,14 @@ export const updateVideo = serviceHandler(
       // logger.debug("thumbnailLocalPath", thumbnailLocalPath);
 
       console.log(
-      title,
-      description,
-      videoMeta,
-      videoId,
-      visibility,
-      isPublished,
-      thumbnailLocalPath,
-      )
+         title,
+         description,
+         videoMeta,
+         videoId,
+         visibility,
+         isPublished,
+         thumbnailLocalPath,
+      );
       let thumbnail;
       if (thumbnailLocalPath) {
          try {
@@ -383,4 +388,146 @@ export const togglePublishStatus = serviceHandler(async (videoMeta) => {
       isPublished: video.isPublished,
    });
    return video;
+});
+
+
+const bucketName = "bucket-1";
+
+export const startChunkedUploadService = serviceHandler(async ({ userId, requestId }) => {
+   videoServiceLogger.info(`[Request] ${requestId} Starting chunked upload`, { userId });
+   const key = `videos/${crypto.randomUUID()}.mp4`;
+
+   let createResponse;
+   try {
+      createResponse = await s3Client.send(
+         new CreateMultipartUploadCommand({
+            Bucket: bucketName,
+            Key: key,
+            ContentType: "video/mp4",
+         }),
+      );
+   } catch (err) {
+      console.error("CreateMultipartUpload failed:", err);
+      throw err;
+   }
+
+   if (!createResponse.UploadId) {
+      videoServiceLogger.error(
+         `[Request] ${requestId} Failed to create multipart upload. Missing UploadId.`, { userId },
+      );
+      throw new ApiError(500, "Failed to create multipart upload. Missing UploadId.");
+   }
+
+   videoServiceLogger.info(`[Request] ${requestId} Multipart upload created successfully`, {
+      userId,
+      uploadId: createResponse.UploadId,
+   });
+
+   return { uploadId: createResponse.UploadId, key };
+});
+
+export const chunkedUploadService = serviceHandler(async ({ userId, requestId, uploadId, partNumber, key, filePath }) => {
+
+   videoServiceLogger.info(`[Request] ${requestId} Uploading part ${partNumber}`, {
+      userId,
+      uploadId,
+      key,
+      filePath,
+   });
+   const fileStats = await stat(filePath);
+   const fileSize = fileStats.size;
+
+   if (fileSize === 0) {
+      videoServiceLogger.error(`[Request] ${requestId} The file is empty and cannot be uploaded.`, { userId });
+      throw new ApiError(400, "The file is empty and cannot be uploaded.");
+   }
+
+   const buffer = await fs.promises.readFile(filePath);
+
+   const uploadPartResponse = await s3Client.send(
+      new UploadPartCommand({
+         Bucket: bucketName,
+         Key: key,
+         UploadId: uploadId,
+         PartNumber: partNumber,
+         Body: buffer,
+      }),
+   );
+
+   if (!uploadPartResponse.ETag) {
+      videoServiceLogger.error(`[Request] ${requestId} Missing ETag for part ${partNumber}.`, { userId });
+      throw new ApiError(500, `Missing ETag for part ${partNumber}.`);
+   }
+
+   videoServiceLogger.info(`[Request] ${requestId} Part ${partNumber} uploaded successfully`, {
+      userId,
+      partNumber,
+      eTag: uploadPartResponse.ETag,
+   });
+
+   return { ETag: uploadPartResponse.ETag, PartNumber: partNumber };
+});
+
+export const completeChunkedUploadService = serviceHandler(async ({
+   user,
+   requestId,
+   uploadId,
+   parts,
+   key,
+   // title,
+   // description,
+   // visibility,
+   // isPublished,
+   // duration,
+}) => {
+   videoServiceLogger.info(`[Request] ${requestId} Completing chunked upload`, {
+      userId: user._id,
+      uploadId,
+   });
+
+   const completeResponse = await s3Client.send(
+      new CompleteMultipartUploadCommand({
+         Bucket: bucketName,
+         Key: key,
+         UploadId: uploadId,
+         MultipartUpload: {
+            Parts: parts,
+         },
+      }),
+   );
+
+   if (!completeResponse.Location) {
+      videoServiceLogger.error(`[Request] ${requestId} Failed to complete multipart upload. Missing Location in response.`, {
+         userId: user._id,
+         uploadId,
+      });
+      throw new ApiError(500, "Failed to complete multipart upload. Missing Location in response.");
+   }
+
+   // const video = await Video.create({
+   //    videoFile: completeResponse.Location,
+   //    title,
+   //    description,
+   //    owner: user._id,
+   //    isPublished,
+   //    visibility,
+   //    duration,
+   // });
+   //
+   // if (!video) {
+   //    videoServiceLogger.error(`[Request] ${requestId} Failed to create video record in DB after completing upload`, {
+   //       userId: user._id,
+   //       uploadId,
+   //       location: completeResponse.Location,
+   //    });
+   //    throw new ApiError(500, "Failed to create video record in DB after completing upload");
+   // }
+
+   videoServiceLogger.info(`[Request] ${requestId} Chunked upload completed successfully`, {
+      userId: user._id,
+      uploadId,
+      location: completeResponse.Location,
+   });
+
+   return { location: completeResponse.Location };
 });

@@ -7,7 +7,6 @@ import UploadThumbnail from "./UploadThumbnail.jsx";
 import UploadVisiblity from "./UploadVisiblity.jsx";
 import VideoPreview from "./UploadVideoPreview.jsx";
 import UploadComponent from "./UploadComponent.jsx";
-import UploadProgress from "./UploadProgress.jsx";
 
 export {
    UploadDetails,
@@ -15,7 +14,6 @@ export {
    UploadHeader,
    UploadPlaylist,
    UploadPrompt,
-   UploadProgress,
    UploadThumbnail,
    UploadVisiblity,
    VideoPreview,

@@ -8,7 +8,7 @@ export default function VideoPreview({ videoMeta, thumbnail }) {
 
    const copyLink = () => {
       navigator.clipboard.writeText(
-         `https://videotube.com/video/${videoMeta?._id}`,
+         `https://videotube.com/videos/${videoMeta?._id}`,
       );
       if (linkRef.current) {
          const range = document.createRange();

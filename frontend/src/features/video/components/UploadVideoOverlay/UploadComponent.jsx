@@ -8,9 +8,9 @@ import {
   UploadPrompt,
   UploadThumbnail,
   UploadVisiblity,
-  UploadProgress,
 } from "./index.js";
 import { useForm, FormProvider } from "react-hook-form";
+import { Progress } from "@/components/ui/progress";
 
 const UploadComponent = ({
   setOpen,
@@ -43,7 +43,7 @@ const UploadComponent = ({
             setProgress={setProgress}
             setOpen={setOpen}
           />
-          <UploadProgress progress={progress} />
+         <Progress value={progress} className="w-full h-1 rounded-full" />
           <div className="flex-grow flex overflow-hidden">
             {videoMeta ? (
               <div className="flex flex-row w-full overflow-y-scroll overflow-x-hidden ">

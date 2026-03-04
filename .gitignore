@@ -5,3 +5,9 @@ logs/
 requests/
 todo.md
 todo.txt
+
+.gitignore
+videotube-bruno/
+volume/
+localstack/
+Videotube/

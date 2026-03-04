@@ -118,6 +118,20 @@ services:
     networks:
       - videotube_network
 
+  localstack:
+    image: localstack/localstack
+    container_name: localstack-main
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3,lambda
+    privileged: true
+    volumes:
+      - "/home/afnan/dev/videotube/localstack:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - videotube_network
+
 volumes:
   mongo_data:
   redis_data:

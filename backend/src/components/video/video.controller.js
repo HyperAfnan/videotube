@@ -6,17 +6,9 @@ import { logger } from "../../utils/logger/index.js";
 const videoLogger = logger.child({ module: "video.controllers" });
 import fetch from "node-fetch";
 import crypto from "crypto";
-import { s3Client } from "../../config/aws.js";
-import {
-   AbortMultipartUploadCommand,
-   CompleteMultipartUploadCommand,
-   CreateMultipartUploadCommand,
-   UploadPartCommand,
-} from "@aws-sdk/client-s3";
-
 
 const getFeed = asyncHandler(async (req, res) => {
-   const { page = 1, limit = 10, q = "", sortBy, sortType, } = req.query;
+   const { page = 1, limit = 10, q = "", sortBy, sortType } = req.query;
 
    videoLogger.info(`[Request] ${req.id} Fetching all videos`, {
       page,
@@ -41,7 +33,7 @@ const getFeed = asyncHandler(async (req, res) => {
    return res
       .status(200)
       .json(new ApiResponse(200, allVideos, "successfully got all videos"));
-})
+});
 
 const getAllVideos = asyncHandler(async (req, res) => {
    const { page = 1, limit = 10, q = "", sortBy, sortType } = req.query;
@@ -274,112 +266,89 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
       );
 });
 
-const bucketName = "bucket-1"
-const key = `videos/${crypto.randomUUID()}.mp4`;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const startChunkedUpload = asyncHandler(async (req, res) => {
+   const { _id: userId } = req.user;
    const requestId = req.id;
-
-   videoLogger.info(`[Request] ${requestId} Uploading chunked video`, {
-      userId: req.user._id,
-   });
-
-   const createResponse = await s3Client.send(
-      new CreateMultipartUploadCommand({
-         Bucket: bucketName,
-         Key: key,
-         ContentType: "video/mp4",
-      })
-   );
-
-   if (!createResponse.UploadId) {
-      videoLogger.error(
-         `[Request] ${requestId} Failed to create multipart upload. Missing UploadId.`, { userId: req.user._id, }
-      );
-      throw new ApiError(500, "Failed to create multipart upload. Missing UploadId.");
-   }
-
-   videoLogger.info(`[Request] ${requestId} Multipart upload created successfully`, {
-      userId: req.user._id,
-      uploadId: createResponse.UploadId,
-   });
-
+   const result = await VideoService.startChunkedUploadService({ userId, requestId });
    return res
       .status(200)
-      .json(new ApiResponse(200, { uploadId: createResponse.UploadId, key }, "Multipart upload initiated successfully"));
-})
+      .json(new ApiResponse(200, result, "Multipart upload initiated successfully"));
+});
 
 const chunkedUpload = asyncHandler(async (req, res) => {
+   const { _id: userId } = req.user;
    const requestId = req.id;
-   const { uploadId, partNumber } = req.query;
-   const filePath = req.file.path;  
+   const { partNumber, key } = req.body;
+   const { uploadId } = req.params;
+   const filePath = req.file.path;
 
-   const fileStats = await stat(filePath);
-   const fileSize = fileStats.size;
-
-   if (fileSize === 0) {
-      videoLogger.error(`[Request] ${requestId} The file is empty and cannot be uploaded.`, { userId: req.user._id, });
-      throw new ApiError(400, "The file is empty and cannot be uploaded.");
-   }
-
-   const buffer = await fs.promises.readFile(filePath);
-
-   const uploadPartResponse = await s3Client.send(
-      new UploadPartCommand({
-         Bucket: bucketName,
-         Key: key,
-         UploadId: uploadId,
-         PartNumber: partNumber,
-         Body: buffer,
-      })
-   );
-
-   if (!uploadPartResponse.ETag) {
-      videoLogger.error(`[Request] ${requestId} Missing ETag for part ${partNumber}.`, { userId: req.user._id, });
-      throw new ApiError(500, `Missing ETag for part ${partNumber}.`);
-   }
-
-   videoLogger.info(`[Request] ${requestId} Part ${partNumber} uploaded successfully`, {
-      userId: req.user._id,
-      partNumber,
-      eTag: uploadPartResponse.ETag,
-   });
-
+   const result = await VideoService.chunkedUploadService({ userId, requestId, uploadId, partNumber, key, filePath });
    return res
       .status(200)
-      .json(new ApiResponse(200, { ETag: uploadPartResponse.ETag, PartNumber: partNumber }, `Part ${partNumber} uploaded successfully`)); 
-})
+      .json(new ApiResponse(200, result, `Part ${result.PartNumber} uploaded successfully`));
+});
 
 const completeChunkedUpload = asyncHandler(async (req, res) => {
    const requestId = req.id;
-   const { uploadId, parts } = req.body;
 
-   videoLogger.info(`[Request] ${requestId} Completing chunked upload`, {
-      userId: req.user._id,
+   const { parts, key, title, description, visibility, isPublished, duration } = req.body;
+   const { uploadId } = req.params;
+
+   const result = await VideoService.completeChunkedUploadService({
+      user: req.user,
+      requestId,
       uploadId,
+      parts,
+      key, 
+      title,
+      description,
+      visibility,
+      isPublished,
+      duration,
    });
-
-   const completeResponse = await s3Client.send(
-      new CompleteMultipartUploadCommand({
-         Bucket: bucketName,
-         Key: key,
-         UploadId: uploadId,
-         MultipartUpload: {
-            Parts: parts,
-         },
-      })
-   );
-
-   videoLogger.info(`[Request] ${requestId} Chunked upload completed successfully`, {
-      userId: req.user._id,
-      uploadId,
-      location: completeResponse.Location,
-   });
-
    return res
       .status(200)
-      .json(new ApiResponse(200, { location: completeResponse.Location }, "Chunked upload completed successfully"));
-})
+      .json(new ApiResponse(200, result, "Chunked upload completed successfully"));
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export {
    getFeed,

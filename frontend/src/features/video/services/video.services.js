@@ -5,34 +5,34 @@ export const VideoService = {
          method: "GET",
          headers: { "Content-Type": "application/json" },
       });
-   
+
       if (response.status !== 200) throw new Error(`Failed to fetch videos: ${response.statusText}`);
-   
+
       const data = await response.json();
       return data?.data?.videos || [];
    },
-   async getVideos( page = 1 ) {
+   async getVideos(page = 1) {
       const response = await fetch(`/api/v1/videos/feed?page=${page}`, {
          credentials: "include",
          method: "GET",
          headers: { "Content-Type": "application/json" },
       });
-   
+
       if (response.status !== 200) throw new Error(`Failed to fetch videos: ${response.statusText}`);
-   
+
       const data = await response.json();
       return data?.data?.videos || [];
    },
-   
+
    async fetchById(videoId) {
       const response = await fetch(`/api/v1/videos/${videoId}`, {
          credentials: "include",
          method: "GET",
          headers: { "Content-Type": "application/json" },
       });
-   
+
       if (response.status !== 200) throw new Error(`Failed to fetch video: ${response.statusText}`);
-   
+
       const data = await response.json();
       return data?.data;
    },
@@ -43,13 +43,13 @@ export const VideoService = {
          method: "GET",
          headers: { "Content-Type": "application/json" },
       });
-   
+
       if (response.status !== 200) throw new Error(`Failed to fetch owner: ${response.statusText}`);
-   
+
       const data = await response.json();
       return data?.data;
    },
-   
+
    async upload(videoData) {
       const response = await fetch("/api/v1/videos", {
          credentials: "include",
@@ -57,13 +57,13 @@ export const VideoService = {
          headers: { "Content-Type": "application/json" },
          body: JSON.stringify(videoData),
       });
-   
-      if (response.status !== 201) throw new Error(`Failed to add video: ${response.statusText}`);
-   
+
+if (response.status !== 201) throw new Error(`Failed to add video: ${response.statusText}`);
+
       const data = await response.json();
       return data?.data;
    },
-   
+
    async update(videoData) {
       const response = await fetch(`/api/v1/videos/${videoData.videoId}`, {
          credentials: "include",
@@ -77,44 +77,84 @@ export const VideoService = {
       const data = await response.json();
       return data?.data;
    },
-   
+
    async delete(videoId) {
       const response = await fetch(`/api/v1/videos/${videoId}`, {
          credentials: "include",
          method: "DELETE",
          headers: { "Content-Type": "application/json" },
       });
-   
+
       if (response.status !== 200) throw new Error(`Failed to delete video: ${response.statusText}`);
-   
+
       return { success: true, message: "Video deleted successfully" };
    },
-   
+
    async toggleVideoLike(videoId, type = "like") {
       const response = await fetch(`/api/v1/likes/toggle/v/${videoId}?type=${type}`, {
          credentials: "include",
          method: "POST",
          headers: { "Content-Type": "application/json" },
       });
-   
+
       if (response.status !== 200 && response.status !== 201) {
          throw new Error(`Failed to ${type} video: ${response.statusText}`);
       }
-   
+
       const data = await response.json();
       return data?.data;
    },
-   
+
    async download(videoId) {
       const response = await fetch(`/api/v1/videos/download/${videoId}`, {
          credentials: "include",
          method: "GET",
       });
-   
+
       if (response.status === 204) throw new Error("Failed to download video");
-   
+
       const blob = await response.blob();
       if (!blob) throw new Error("Failed to download video");
       return blob;
    },
+
+   async startChunkedUpload() {
+      const response = await fetch("/api/v1/videos/chunkedUpload/start", {
+         credentials: "include",
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.status !== 200) throw new Error(`Failed to start chunked upload: ${response.statusText}`);
+
+      const data = await response.json();
+      return data?.data;
+   },
+
+   async uploadChunk(uploadId, videoData) {
+      const response = await fetch(`/api/v1/videos/chunkedUpload/${uploadId}/chunk`, {
+         credentials: "include",
+         method: "POST",
+         body: videoData,
+      });
+
+      if (response.status !== 200) throw new Error(`Failed to upload chunk: ${response.statusText}`);
+
+      const data = await response.json();
+      return data?.data;
+   },
+
+   async completeChunkedUpload(uploadId, key, parts ) {
+      const response = await fetch(`/api/v1/videos/chunkedUpload/${uploadId}/complete`, {
+         credentials: "include",
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({ parts, key }),
+      });
+
+      if (response.status !== 200) throw new Error(`Failed to complete chunked upload: ${response.statusText}`);
+
+      const data = await response.json();
+      return data?.data;
+   }
 }
