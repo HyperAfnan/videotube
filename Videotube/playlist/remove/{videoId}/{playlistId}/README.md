@@ -1,1 +1,0 @@
-Collection for /playlist/remove/{videoId}/{playlistId} endpoints

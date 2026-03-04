@@ -1,1 +1,0 @@
-Collection for /likes/toggle/t endpoints
