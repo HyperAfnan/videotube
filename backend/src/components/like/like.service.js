@@ -71,13 +71,13 @@ export const likeVideo = serviceHandler(async (videoMeta, userMeta, type = "like
 	const like = await Like.create({
 		video: videoMeta._id,
 		likedBy: userMeta._id,
-		type: type,
+		type,
 	});
 	likeServiceLogger.info("Video liked", {
 		videoId: videoMeta._id,
 		userId: userMeta._id,
 		likeId: like._id,
-		type: type,
+		type,
 	});
 	return like;
 });
@@ -95,13 +95,13 @@ export const likeComment = serviceHandler(async (commentMeta, userMeta, type = "
 	const like = await Like.create({
 		comment: commentMeta._id,
 		likedBy: userMeta._id,
-		type: type,
+		type,
 	});
 	likeServiceLogger.info("Comment liked", {
 		commentId: commentMeta._id,
 		userId: userMeta._id,
 		likeId: like._id,
-		type: type,
+		type,
 	});
 	return like;
 });
@@ -119,13 +119,13 @@ export const likeTweet = serviceHandler(async (tweetMeta, userMeta, type = "like
 	const like = await Like.create({
 		tweet: tweetMeta._id,
 		likedBy: userMeta._id,
-		type: type,
+		type,
 	});
 	likeServiceLogger.info("Tweet liked", {
 		tweetId: tweetMeta._id,
 		userId: userMeta._id,
 		likeId: like._id,
-		type: type,
+		type,
 	});
 	return like;
 });

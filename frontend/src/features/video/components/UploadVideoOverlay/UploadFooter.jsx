@@ -32,7 +32,7 @@ const UploadFooter = ({ setProgress, videoMeta, setOpen }) => {
             }, 1000);
             setOpen(false);
           },
-        }
+        },
       );
     } catch (error) {
       notificationService.error("Failed to publish video");
@@ -41,7 +41,7 @@ const UploadFooter = ({ setProgress, videoMeta, setOpen }) => {
 
    const changePublishType = (type) => {
     setPublishType(type);
-  }
+  };
 
   const handlePublish = (type) => {
     handleSubmit((data) => uploadHandler({ ...data, isPublished: type === "Publish Now" }))();

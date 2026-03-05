@@ -1,17 +1,17 @@
 import { useState } from "react";
 import {
-   useFloating,
-   offset,
-   flip,
-   shift,
    autoUpdate,
+   flip,
+   offset,
+   shift,
    useClick,
    useDismiss,
-   useRole,
+   useFloating,
    useInteractions,
+   useRole,
 } from "@floating-ui/react";
 
-export const useFloatingMenu = ({ placement = "right-start", offset: offsetValue = 10, } = {}) => {
+export const useFloatingMenu = ({ placement = "right-start", offset: offsetValue = 10 } = {}) => {
    const [isOpen, setIsOpen] = useState(false);
 
    const { refs, floatingStyles, context } = useFloating({

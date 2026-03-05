@@ -1,15 +1,15 @@
 import { Link } from "react-router-dom";
-import { BookmarkIcon, EllipsisVerticalIcon, Download, ListPlusIcon, Share2Icon, Trash, ArrowBigUp, ArrowBigDown } from "lucide-react";
+import { ArrowBigDown, ArrowBigUp, BookmarkIcon, Download, EllipsisVerticalIcon, ListPlusIcon, Share2Icon, Trash } from "lucide-react";
 import { timeAgo } from "@Shared/utils/formatter.js";
 import { useWatchLaterOperations } from "../hook/useWatchLaterMutation.js";
-import { shareVideo, downloadVideo } from "@Shared/components/Menu/menuActions.js";
+import { downloadVideo, shareVideo } from "@Shared/components/Menu/menuActions.js";
 import { Badge } from "@/components/ui/badge";
 import { 
    DropdownMenu,
    DropdownMenuContent,
    DropdownMenuItem,
    DropdownMenuSeparator,
-   DropdownMenuTrigger
+   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
@@ -24,9 +24,9 @@ const WatchLaterVideoCard = ({ video }) => {
       const secs = seconds % 60;
       
       if (hours > 0) {
-         return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+         return `${hours}:${minutes.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
       }
-      return `${minutes}:${secs.toString().padStart(2, '0')}`;
+      return `${minutes}:${secs.toString().padStart(2, "0")}`;
    };
 
    return (

@@ -1,25 +1,30 @@
 import { Router } from "express";
 import {
-	deleteVideo,
-	downloadVideo,
-	getAllVideos,
-	getFeed,
-	getVideoById,
-	publishAVideo,
-	togglePublishStatus,
-	updateVideo,
+   chunkedUpload,
+   completeChunkedUpload,
+   deleteVideo,
+   downloadVideo,
+   getAllVideos,
+   getFeed,
+   getVideoById,
+   publishAVideo,
+   startChunkedUpload,
+   togglePublishStatus,
+   updateVideo,
 } from "./video.controller.js";
 import { verifyAccessToken } from "../../middlewares/auth.middleware.js";
 import { upload } from "../../middlewares/multer.middleware.js";
 import {
-	deleteVideoValidator,
-	downloadVideoValidator,
-	getAllVideosValidator,
-	getVideoByIdValidator,
-	publishVideoFilesValidator,
-	publishVideoValidator,
-	togglePublishStatusValidator,
-	updateVideoValidator,
+   chunkedUploadValidator,
+   completeChunkedUploadValidator,
+   deleteVideoValidator,
+   downloadVideoValidator,
+   getAllVideosValidator,
+   getVideoByIdValidator,
+   publishVideoFilesValidator,
+   publishVideoValidator,
+   togglePublishStatusValidator,
+   updateVideoValidator,
 } from "./video.validator.js";
 import { validator } from "../../middlewares/validator.middleware.js";
 import { defaultRateLimiter } from "../../middlewares/rateLimiter.middleware.js";
@@ -175,21 +180,41 @@ router.use(defaultRateLimiter);
  *         description: Unauthorized
  */
 router
-	.route("/")
-	.get(getAllVideosValidator, validator, getAllVideos)
-	.post(
+   .route("/")
+   .get(getAllVideosValidator, validator, getAllVideos)
+   .post(
       verifyAccessToken,
-		upload.fields([
-			{ name: "videoFile", maxCount: 1 },
-			{ name: "thumbnail", maxCount: 1 },
-		]),
-		publishVideoFilesValidator,
-		publishVideoValidator,
-		// validator,
-		publishAVideo,
-	);
+      upload.fields([
+         { name: "videoFile", maxCount: 1 },
+         { name: "thumbnail", maxCount: 1 },
+      ]),
+      publishVideoFilesValidator,
+      publishVideoValidator,
+      // validator,
+      publishAVideo,
+   );
 
-router.route("/feed").get(getFeed)
+router.route("/feed").get(getFeed);
+
+router.route("/chunkedUpload/start").post(
+   verifyAccessToken,
+   upload.none(),
+   startChunkedUpload,
+);
+
+router.route("/chunkedUpload/:uploadId/chunk").post(
+   verifyAccessToken,
+   chunkedUploadValidator,
+   upload.single("chunk"),
+   chunkedUpload,
+);
+
+router.route("/chunkedUpload/:uploadId/complete").post(
+   verifyAccessToken,
+   completeChunkedUploadValidator,
+   upload.single("thumbnail"),
+   completeChunkedUpload,
+);
 
 /**
  * @swagger
@@ -281,19 +306,19 @@ router.route("/feed").get(getFeed)
  */
 
 router
-	.route("/:videoId")
-	.get(
+   .route("/:videoId")
+   .get(
       getVideoByIdValidator, validator, getVideoById)
-	.delete(
+   .delete(
       verifyAccessToken,
       deleteVideoValidator, validator, deleteVideo)
-	.patch(
+   .patch(
       verifyAccessToken,
-		upload.single("thumbnail"),
-		updateVideoValidator,
-		validator,
-		updateVideo,
-	);
+      upload.single("thumbnail"),
+      updateVideoValidator,
+      validator,
+      updateVideo,
+   );
 
 /**
  * @swagger
@@ -322,8 +347,8 @@ router
  *         description: Unauthorized
  */
 router
-	.route("/toggle/publish/:videoId")
-	.patch(verifyAccessToken, togglePublishStatusValidator, validator, togglePublishStatus);
+   .route("/toggle/publish/:videoId")
+   .patch(verifyAccessToken, togglePublishStatusValidator, validator, togglePublishStatus);
 
 /**
  * @swagger
@@ -357,7 +382,7 @@ router
  */
 
 router
-	.route("/download/:videoId")
-	.get(downloadVideoValidator, validator, downloadVideo);
+   .route("/download/:videoId")
+   .get(downloadVideoValidator, validator, downloadVideo);
 
 export default router;

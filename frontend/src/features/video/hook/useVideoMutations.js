@@ -47,8 +47,8 @@ export const useUploadVideo = () => {
                ...old,
                pages: old.pages.map((page) =>
                   page.map((video) =>
-                     video._id === "temp-id" ? uploadedVideo : video
-                  )
+                     video._id === "temp-id" ? uploadedVideo : video,
+                  ),
                ),
             };
          });
@@ -119,7 +119,7 @@ export const useDeleteVideo = (videoId) => {
                return {
                   ...old,
                   pages: old.pages.map((page) =>
-                     page.filter((video) => video._id !== videoId)
+                     page.filter((video) => video._id !== videoId),
                   ),
                };
             });
@@ -150,9 +150,9 @@ export const useDeleteVideo = (videoId) => {
 export const useUpdateVideo = () => {
    const queryClient = useQueryClient();
    return useMutation({
-      mutationFn: (data) =>  { 
+      mutationFn: (data) =>   
          // console.log("useVideoMutations - useUpdateVideo - mutationFn called with:", data);
-         return VideoService.update(data) },
+          VideoService.update(data) ,
       retry: false,
       onMutate: async ({ videoId, updatedData }) => {
          await queryClient.cancelQueries({ queryKey: videoQueryKeys.list() });
@@ -170,8 +170,8 @@ export const useUpdateVideo = () => {
                   ...old,
                   pages: old.pages.map((page) => 
                      page.map((video) => 
-                        video._id === videoId ? { ...video, ...updatedData } : video
-                     )
+                        video._id === videoId ? { ...video, ...updatedData } : video,
+                     ),
                   ),
                };
             });
@@ -207,21 +207,21 @@ export const useAddComment = (videoId) => {
             if (!old) return old;
 
             const optimisticComment = {
-               _id: 'temp-' + Date.now(),
+               _id: `temp-${  Date.now()}`,
                content: newComment.content,
                user: {
                   _id: newComment.userId,
-                  username: 'You',
-                  avatar: ''
+                  username: "You",
+                  avatar: "",
                },
                likes: 0,
-               createdAt: 'Just now',
+               createdAt: "Just now",
             };
 
             return {
                ...old,
                comments: [optimisticComment, ...(old.comments || [])],
-               totalComments: (old.totalComments || 0) + 1
+               totalComments: (old.totalComments || 0) + 1,
             };
          });
 
@@ -238,9 +238,9 @@ export const useAddComment = (videoId) => {
       },
       onSettled: () => {
          queryClient.invalidateQueries({ queryKey: videoQueryKeys.comments(videoId) });
-      }
+      },
    });
-}
+};
 
 export const useToggleVideoLike = (videoId) => {
    const queryClient = useQueryClient();
@@ -265,7 +265,7 @@ export const useToggleVideoLike = (videoId) => {
             let newIsLiked = false;
             let newIsDisliked = false;
 
-            if (type === 'like') {
+            if (type === "like") {
                if (currentIsLiked) {
                   // Removing like
                   newLikes -= 1;
@@ -278,7 +278,7 @@ export const useToggleVideoLike = (videoId) => {
                   newLikes += 1;
                   newIsLiked = true;
                }
-            } else if (type === 'dislike') {
+            } else if (type === "dislike") {
                if (currentIsDisliked) {
                   // Removing dislike (no change to like count)
                } else if (currentIsLiked) {
@@ -298,7 +298,7 @@ export const useToggleVideoLike = (videoId) => {
                   ...old.userInteration,
                   isLiked: newIsLiked,
                   isDisliked: newIsDisliked,
-               }
+               },
             };
          });
 
@@ -313,9 +313,9 @@ export const useToggleVideoLike = (videoId) => {
       onSettled: () => {
          // Refetch to ensure we have the correct data
          queryClient.invalidateQueries({ queryKey: videoQueryKeys.detail(videoId) });
-      }
+      },
    });
-}
+};
 
 export const useLikeComment = (videoId) => {
    const queryClient = useQueryClient();
@@ -338,8 +338,8 @@ export const useLikeComment = (videoId) => {
                comments: old.comments.map(comment =>
                   comment._id === commentId
                      ? { ...comment, likes: comment.likes + 1 }
-                     : comment
-               )
+                     : comment,
+               ),
             };
          });
 
@@ -354,9 +354,9 @@ export const useLikeComment = (videoId) => {
       onSettled: () => {
          // Refetch to ensure we have the correct data
          queryClient.invalidateQueries({ queryKey: videoQueryKeys.comments(videoId) });
-      }
+      },
    });
-}
+};
 
 export const useToggleSubscription = (videoId) => {
    const queryClient = useQueryClient();
@@ -386,7 +386,7 @@ export const useToggleSubscription = (videoId) => {
                userInteration: {
                   ...old.userInteration,
                   isSubscribed: !currentIsSubscribed,
-               }
+               },
             };
          });
 
@@ -402,9 +402,9 @@ export const useToggleSubscription = (videoId) => {
       onSettled: () => {
          // Refetch to ensure we have the correct data
          queryClient.invalidateQueries({ queryKey: videoQueryKeys.detail(videoId) });
-      }
+      },
    });
-}
+};
 
 // export const useVideoCommentsOperations = () => {
 //    const queryClient = useQueryClient();

@@ -1,1 +1,0 @@
-Collection for /user/confirmEmail/{confirmationToken} endpoints

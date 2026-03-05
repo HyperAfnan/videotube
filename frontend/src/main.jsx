@@ -4,7 +4,7 @@ import queryClient from "./lib/queryCilent.js";
 import { store } from "@Store/index.js";
 import "react-loading-skeleton/dist/skeleton.css";
 import "./index.css";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Layout, Protected } from "@Shared/components/";
 import { Provider } from "react-redux";
 import { SkeletonTheme } from "react-loading-skeleton";
@@ -81,7 +81,7 @@ const router = createBrowserRouter([
          path: "/watch/:videoId",
         element: (
           <PlayingVideoPage />
-        )
+        ),
 
         
       },

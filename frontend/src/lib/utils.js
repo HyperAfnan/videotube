@@ -20,9 +20,9 @@ export function cn(...inputs) {
  */
 export function formatNumberWithSuffix(num) {
   if (num < 1000) return num.toString();
-  if (num < 1000000) return (num / 1000).toFixed(1) + 'K';
-  if (num < 1000000000) return (num / 1000000).toFixed(1) + 'M';
-  return (num / 1000000000).toFixed(1) + 'B';
+  if (num < 1000000) return `${(num / 1000).toFixed(1)  }K`;
+  if (num < 1000000000) return `${(num / 1000000).toFixed(1)  }M`;
+  return `${(num / 1000000000).toFixed(1)  }B`;
 }
 
 /**
@@ -34,5 +34,5 @@ export function formatNumberWithSuffix(num) {
  */
 export function truncateText(text, maxLength) {
   if (!text || text.length <= maxLength) return text;
-  return text.slice(0, maxLength) + '...';
+  return `${text.slice(0, maxLength)  }...`;
 }

@@ -16,9 +16,8 @@ const UploadHeader = ({
    const title = useWatch({ control, name: "title" });
 
    const deleteMutation = useMutation({
-      mutationFn: async (videoId) => {
-         return await deleteFetch(`/api/v1/videos/${videoId}`);
-      },
+      // eslint-disable-next-line no-return-await
+      mutationFn: async (videoId) => await deleteFetch(`/api/v1/videos/${videoId}`),
       onSuccess: () => {
          setVideoMeta(null);
          setProgress(0);

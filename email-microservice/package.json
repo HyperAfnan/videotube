@@ -13,12 +13,12 @@
   "type": "module",
   "dependencies": {
     "amqplib": "^0.10.9",
-    "dotenv": "^17.2.3",
-    "nodemailer": "^6.9.9",
+    "dotenv": "^17.3.1",
+    "nodemailer": "^8.0.1",
     "winston": "^3.19.0",
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "nodemon": "^3.1.14"
   }
 }

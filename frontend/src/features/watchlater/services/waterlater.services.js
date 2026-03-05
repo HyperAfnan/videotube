@@ -41,6 +41,6 @@ export const watchLaterService = {
       if (response.status !== 201) 
          throw new Error(`Failed to remove video: ${response.statusText}`);
          
-      return { success: true, message: "Video removed from Watch Later successfully" }
+      return { success: true, message: "Video removed from Watch Later successfully" };
    },
 };

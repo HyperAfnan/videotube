@@ -1,1 +1,0 @@
-Collection for /user/updateAvatar endpoints

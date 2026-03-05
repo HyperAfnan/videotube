@@ -29,6 +29,6 @@ export function useThemeRedux() {
     setTheme: updateTheme,
     toggleTheme: switchTheme,
     isDark: theme === "dark",
-    isLight: theme === "light"
+    isLight: theme === "light",
   };
 }

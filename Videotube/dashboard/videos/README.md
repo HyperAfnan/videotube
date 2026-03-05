@@ -1,1 +1,0 @@
-Collection for /dashboard/videos endpoints

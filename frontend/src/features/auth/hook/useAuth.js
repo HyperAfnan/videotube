@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authService } from "../services/authService.js";
 import { AUTH_KEYS } from "@/lib/queryKeys.js";
 
@@ -76,7 +76,7 @@ export const useAuth = () => {
 
    const error =
       fetchError || loginError || signupError || logoutError || googleLoginError || refreshTokenError;
-   const isAuthenticated = !!user;
+   const isAuthenticated = Boolean(user);
    const isLoading =
       isFetching ||
       isLoggingIn ||

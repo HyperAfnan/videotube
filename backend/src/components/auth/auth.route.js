@@ -4,13 +4,13 @@ import {
    confirmEmail,
    deleteUser,
    forgotPassword,
+   googleLogin,
    loginUser,
    logoutUser,
    refreshAccessToken,
    registerUser,
    resetPassword,
    sendConfirmationEmail,
-   googleLogin,
 } from "./auth.controller.js";
 // import { upload } from "../../middlewares/multer.middleware.js";
 import { verifyAccessToken as auth } from "../../middlewares/auth.middleware.js";
@@ -19,13 +19,13 @@ import {
    changePasswordValidator,
    confirmEmailValidator,
    forgotPasswordValidator,
+   googleAuthValidator,
    loginValidator,
    refreshAccessTokenValidator,
    // registerationFilesValidator,
    registerValidator,
    resetPasswordValidator,
    sendConfirmationEmailValidator,
-   googleAuthValidator,
 } from "./auth.validator.js";
 import {
    authRateLimiter,

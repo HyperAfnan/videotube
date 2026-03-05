@@ -1,39 +1,49 @@
 import { Upload } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
-import { secureFetch } from "@Shared/utils/secureFetch.js";
 import { Button } from "@/components/ui/button";
 import { notificationService } from "@Shared/services/notification.services.js";
+import { useChunkedUpload } from "../../hook/useChunkedUpload.js";
+import { useState } from "react";
 
 const UploadPrompt = ({ setProgress, setVideoMeta, setThumbnail, methods }) => {
-   const uploadMutation = useMutation({
-      mutationFn: async (file) => {
-         const formData = new FormData();
-         formData.append("videoFile", file);
-         const response = await secureFetch(
-            "/api/v1/videos",
-            { method: "POST", body: formData }
-         );
-         return response.data;
-      },
-      onSuccess: (data) => {
-         setProgress(50);
-         setVideoMeta(data);
-         setThumbnail(data.thumbnail);
-         methods.setValue("thumbnail", data.thumbnail);
-         methods.setValue("_id", data._id);
-         notificationService.success("Video uploaded successfully");
-      },
-      onError: (error) => {
-         notificationService.error(error.message || "Failed to upload video");
-      },
-   });
+   const [uploadError, setUploadError] = useState(null);
+   const { progress, error, startUpload, isUploading } = useChunkedUpload();
+   console.log("UploadPrompt state:", { progress, error, isUploading });
 
-   const onFileChange = (event) => {
-      const selectedFile = event.target.files[0];
-      if (selectedFile) {
-         uploadMutation.mutate(selectedFile);
+   const onFileChange = async (event) => {
+      let status;
+      try {
+         const file = event.target.files[0];
+         if (!file) return;
+
+         await startUpload(file);
+         
+         status = true;
+      } catch (err) {
+         setUploadError(err.message);
+         notificationService.error(err.message || "Failed to upload video");
+         status = false;
+      } finally {
+         event.target.value = null;
+         if (status) notificationService.success("Video uploaded successfully");
       }
    };
+
+   if (uploadError) {
+      return (
+         <div className="flex flex-col space-y-4 items-center justify-center h-full w-full bg-background rounded-b-xl p-0 m-0">
+            <Upload className="text-destructive" size={48} />
+            <h1 className="text-2xl font-bold text-destructive">Upload Failed</h1>
+            <p className="text-muted-foreground">{uploadError}</p>
+            <Button
+               variant="default"
+               className="cursor-pointer"
+               onClick={() => setUploadError(null)}
+            >
+               Try Again
+            </Button>
+         </div>
+      );
+   }
 
    return (
       <div className="flex flex-col space-y-8 items-center justify-center h-full w-full bg-background rounded-b-xl p-0 m-0">
@@ -43,20 +53,18 @@ const UploadPrompt = ({ setProgress, setVideoMeta, setThumbnail, methods }) => {
             <Button
                variant="default"
                className="cursor-pointer"
-               disabled={uploadMutation.isPending}
                asChild
             >
                <span>
-                  {uploadMutation.isPending ? "Uploading..." : "Select File"}
+                  {"Select File"}
                </span>
             </Button>
             <input
                type="file"
-               accept=".mp4,.mov,.avi"
+               accept=".mp4,.mov,.avi,.mkv"
                className="sr-only"
                hidden
                onChange={onFileChange}
-               disabled={uploadMutation.isPending}
             />
          </label>
       </div>

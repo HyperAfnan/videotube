@@ -7,5 +7,5 @@ export {
   Layout,
   Protected,
   SideBar,
-   Header
+   Header,
 };

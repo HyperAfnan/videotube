@@ -31,7 +31,7 @@ const userSchema = new Schema(
       authProvider: { type: String, enum: ["local", "google"], default: "local" },
       password: {
          type: String,
-         required: function() {
+         required() {
             return this.authProvider === "local";
          },
       },

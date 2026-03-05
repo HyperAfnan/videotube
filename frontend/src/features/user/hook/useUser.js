@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { UserService } from "../services/user.services.js";
 import {
-   setProfile,
    setPreferences,
+   setProfile,
    setSubscription,
 } from "../store/userSlice.js";
 import { useState } from "react";

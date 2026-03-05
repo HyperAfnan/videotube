@@ -137,9 +137,7 @@ export const useWatchLaterOperations = () => {
   const watchLater = queryClient.getQueryData(watchLaterKeys.list()) || [];
 
   // Helper to check if video is in watch later
-  const isInWatchLater = (videoId) => {
-    return watchLater.some((item) => item.video._id === videoId);
-  };
+  const isInWatchLater = (videoId) => watchLater.some((item) => item.video._id === videoId);
 
   // Wrapper functions that match existing API
   const addToWatchLater = async (videoId) => {

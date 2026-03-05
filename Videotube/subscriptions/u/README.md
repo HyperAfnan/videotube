@@ -1,1 +1,0 @@
-Collection for /subscriptions/u endpoints

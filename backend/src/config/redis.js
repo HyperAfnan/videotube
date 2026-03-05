@@ -6,7 +6,7 @@ export const redisCacheConnection = new IORedis({
 	host: ENV.REDIS_HOST,
 	port: ENV.REDIS_PORT,
 	maxRetriesPerRequest: null,
-	enableReadyCheck: false
+	enableReadyCheck: false,
 });
 
 redisCacheConnection.on("connect", () => {

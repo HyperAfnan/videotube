@@ -38,10 +38,9 @@ export default function WatchLaterLeftSideComponent() {
                </Badge>
             )}
 
-            {/* watch later preview thumbnail */}
             <div className="w-full rounded-2xl flex justify-center items-center mb-4">
                <img
-                  src={thumbnail}
+                  src={watchLater[watchLater.length - 1]?.video?.thumbnail}
                   alt="Watch Later Thumbnail"
                   className="h-[165px] object-cover rounded-2xl hover:scale-105 transition-transform duration-300"
                />

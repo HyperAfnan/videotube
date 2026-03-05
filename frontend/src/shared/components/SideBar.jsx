@@ -1,4 +1,4 @@
-import { House, UserRound, ListVideo, Clock } from "lucide-react"; 
+import { Clock, House, ListVideo, UserRound } from "lucide-react"; 
 import { Link } from "react-router-dom";
 
 const SideBar = () => {

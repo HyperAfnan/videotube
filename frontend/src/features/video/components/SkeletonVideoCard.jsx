@@ -1,5 +1,4 @@
-const SkeletonVideoCard = ({ count = 1 }) => {
-  return Array(count)
+const SkeletonVideoCard = ({ count = 1 }) => Array(count)
     .fill()
     .map((_, index) => (
       <div
@@ -36,6 +35,5 @@ const SkeletonVideoCard = ({ count = 1 }) => {
         </div>
       </div>
     ));
-};
 
 export default SkeletonVideoCard;

@@ -1,1 +1,0 @@
-Collection for /playlist/user endpoints

@@ -4,7 +4,7 @@ import {
    DropdownMenu,
    DropdownMenuContent,
    DropdownMenuItem,
-   DropdownMenuTrigger
+   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
 const sortOptions = [
@@ -35,8 +35,7 @@ const sortOptions = [
    },
 ];
 
-const WatchListSort = ({ setSortOption }) => {
-   return (
+const WatchListSort = ({ setSortOption }) => (
       <DropdownMenu>
          <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="sm" className="gap-2">
@@ -56,6 +55,5 @@ const WatchListSort = ({ setSortOption }) => {
          </DropdownMenuContent>
       </DropdownMenu>
    );
-};
 
 export default WatchListSort;
