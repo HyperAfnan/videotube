@@ -1,15 +1,15 @@
 import { useState } from "react";
 import {
   UploadDetails,
-  VideoPreview,
   UploadFooter,
   UploadHeader,
   UploadPlaylist,
   UploadPrompt,
   UploadThumbnail,
   UploadVisiblity,
+  VideoPreview,
 } from "./index.js";
-import { useForm, FormProvider } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { Progress } from "@/components/ui/progress";
 
 const UploadComponent = ({

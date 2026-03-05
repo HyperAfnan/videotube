@@ -10,9 +10,10 @@ export const createCacheKey = (keyHead, keyParts = []) => {
 
 export const cacheValue = async (key, value, ex, nx = false) => {
    cacheLogger.debug(`Caching value for key: ${key} with expiration: ${ex} and NX: ${nx}`);
-   const result = await redisCacheConnection.set(key, JSON.stringify(value), "EX", ex ? ex : 3600, nx ? 'NX' : undefined);
+   // eslint-disable-next-line no-undefined
+   const result = await redisCacheConnection.set(key, JSON.stringify(value), "EX", ex ? ex : 3600, nx ? "NX" : undefined);
 	return result;
-}
+};
 
 export const isCached = async (key) => {
    cacheLogger.debug(`Checking if key is cached: ${key}`);
@@ -24,4 +25,4 @@ export const getCachedValue = async (key) => {
    cacheLogger.debug(`Retrieving cached value for key: ${key}`);
   const result = await redisCacheConnection.get(key);
   return result ? JSON.parse(result) : null;
-}
+};

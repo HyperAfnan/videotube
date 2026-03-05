@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useCallback, useRef, useState } from "react";
 import { VideoService } from "../services/video.services.js";
 
 export function useChunkedUpload(chunkSize = 5 * 1024 * 1024) {
@@ -30,7 +30,7 @@ export function useChunkedUpload(chunkSize = 5 * 1024 * 1024) {
 
          const totalParts = Math.ceil(file.size / chunkSize);
          let partNumber = 1;
-         let parts = []
+         const parts = [];
          for (let start = 0; start < file.size; start += chunkSize) {
             if (abortRef.current) throw new Error("Upload aborted");
             const chunk = file.slice(start, start + chunkSize);
@@ -39,7 +39,7 @@ export function useChunkedUpload(chunkSize = 5 * 1024 * 1024) {
             formData.append("partNumber", partNumber);
             formData.append("key", uploadKey);
             const { ETag, PartNumber: partNumberfromBackend} = await VideoService.uploadChunk(id, formData);
-            parts.push({ ETag: ETag, PartNumber: partNumberfromBackend, });
+            parts.push({ ETag, PartNumber: partNumberfromBackend });
             setProgress(Math.round((partNumber / totalParts) * 100));
             partNumber++;
          }
@@ -56,6 +56,6 @@ export function useChunkedUpload(chunkSize = 5 * 1024 * 1024) {
    return {
       progress, isUploading, error, uploadId, key,
       startUpload,
-      abort: () => { abortRef.current = true; }
+      abort: () => { abortRef.current = true; },
    };
 }

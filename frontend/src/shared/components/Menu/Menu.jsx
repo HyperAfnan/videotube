@@ -1,8 +1,7 @@
 import { FloatingPortal } from "@floating-ui/react";
 import { useFloatingMenu } from "@Shared/hooks/useFloatingMenu.js";
 
-const MenuButton = ({ children, onClick, buttonClasses, textClasses }) => {
-  return (
+const MenuButton = ({ children, onClick, buttonClasses, textClasses }) => (
     <button
       className={`flex items-center justify-center flex-col space-x-2 cursor-pointer hover:bg-gray-100 p-4 ${buttonClasses}`}
       onClick={onClick}
@@ -11,7 +10,6 @@ const MenuButton = ({ children, onClick, buttonClasses, textClasses }) => {
       <span className={`text-sm text-black w-full flex items-center ${textClasses}`}>{children}</span>
     </button>
   );
-};
 
 export const Menu = ({ trigger, triggerClasses, children, menuClasses }) => {
   const {

@@ -106,4 +106,4 @@ export const useUpdatePlaylist = (options = {}) => {
     },
     ...options,
   });
-}
+};

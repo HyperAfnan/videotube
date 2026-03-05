@@ -1,0 +1,13 @@
+{
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.3.2"
+  },
+  "scripts": {
+    "prepare": "husky"
+  },
+  "lint-staged": {
+   "frontend/**/*.{js,jsx}": "npx --prefix frontend eslint --fix --config frontend/eslint.config.js --rule 'react-refresh/only-export-components: off' --no-warn-ignored",
+   "backend/**/*.{js,ts}": "npx --prefix backend eslint --fix --config backend/eslint.config.js --no-warn-ignored"
+   }
+}

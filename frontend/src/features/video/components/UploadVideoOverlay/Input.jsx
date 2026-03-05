@@ -73,8 +73,8 @@ export function TextInput({
       ref={divRef}
       onClick={divOnClick}
     >
-      <label className={`block font-medium text-gray-600 mb-2  `}>
-        <div className={`flex items-center space-x-2 `}>
+      <label className={"block font-medium text-gray-600 mb-2  "}>
+        <div className={"flex items-center space-x-2 "}>
           <span className="text-xs" ref={spanRef}>
             {name}
           </span>
@@ -84,7 +84,7 @@ export function TextInput({
           type="text"
           ref={inputRef}
           name={name}
-          className={`w-full px-4 text-sm py-3 rounded-lg focus:outline-none transition-colors `}
+          className={"w-full px-4 text-sm py-3 rounded-lg focus:outline-none transition-colors "}
           autoComplete="off"
           onKeyUp={handleChange}
           placeholder={placeholder}

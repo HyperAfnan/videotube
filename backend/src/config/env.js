@@ -49,7 +49,7 @@ const ENV = {
    AWS_ENDPOINT: process.env.AWS_ENDPOINT,
 
    KAFKA_BROKERS: process.env.KAFKA_BROKERS,
-   KAFKA_CLIENT_ID: process.env.KAFKA_CLIENT_ID
+   KAFKA_CLIENT_ID: process.env.KAFKA_CLIENT_ID,
 };
 
 const requiredKeys = [

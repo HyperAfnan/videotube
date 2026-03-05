@@ -1,9 +1,9 @@
 import { Router } from "express";
 import {
 	addToWatchLater,
-	removeFromWatchLater,
-	getWatchLaterVideos,
 	deleteAllWatchLaterVideos,
+	getWatchLaterVideos,
+	removeFromWatchLater,
 } from "./watchLater.controller.js";
 import {
 	addVideoToWatchLaterValidator,

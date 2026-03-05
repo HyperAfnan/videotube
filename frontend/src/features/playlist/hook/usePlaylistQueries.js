@@ -8,24 +8,22 @@ export const useUserPlaylist = ( options = {} ) => {
    return useQuery({
       queryKey: playlistKeys.list(),
       queryFn:  PlaylistService.getUserPlaylists(user._id),
-      enabled: !!user._id,
+      enabled: Boolean(user._id),
       staleTime: 5 * 60 * 1000, 
       cacheTime: 30 * 60 * 1000,
       refetchOnWindowFocus: false,
       retry: 2,
-      ...options
+      ...options,
    });
-}
+};
 
-export const usePlaylistById = ( playlistId , options = {} ) => {
-   return useQuery({
+export const usePlaylistById = ( playlistId , options = {} ) => useQuery({
       queryKey: playlistKeys.detail(playlistId),
       queryFn: () => PlaylistService.getPlaylistById(playlistId),
-      enabled: !!playlistId,
+      enabled: Boolean(playlistId),
       staleTime: 5 * 60 * 1000, 
       cacheTime: 30 * 60 * 1000,
       refetchOnWindowFocus: false,
       retry: 2,
-      ...options
+      ...options,
    });
-}

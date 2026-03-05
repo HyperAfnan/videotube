@@ -1,4 +1,4 @@
-import { useEffect, Suspense, lazy } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import SkeletonVideoCard from "@/features/video/components/SkeletonVideoCard.jsx";
 import Container from "@Shared/components/DarkModeContainer.jsx";
 import { useVideos } from "@Features/video/hook/useVideoQueries.js";

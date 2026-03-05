@@ -111,6 +111,6 @@ const RecommandedVideos = ({ recommendedVideos }) => (
          </TabsContent>
       </Tabs>
    </div>
-)
+);
 
 export default RecommandedVideos;

@@ -156,5 +156,5 @@ if (response.status !== 201) throw new Error(`Failed to add video: ${response.st
 
       const data = await response.json();
       return data?.data;
-   }
-}
+   },
+};

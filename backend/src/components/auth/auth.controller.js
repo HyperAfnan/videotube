@@ -3,7 +3,7 @@ import { ApiResponse } from "../../utils/apiResponse.js";
 import { asyncHandler } from "../../utils/handlers.js";
 import * as authService from "./auth.service.js";
 import { logger } from "../../utils/logger/index.js";
-import * as googleAuthService from './auth.googleAuth.service.js';
+import * as googleAuthService from "./auth.googleAuth.service.js";
 const authLogger = logger.child({ module: "auth.controllers" });
 import ENV from "../../config/env.js";
 

@@ -1,4 +1,4 @@
-import { ThumbsUp, ThumbsDown } from "lucide-react";
+import { ThumbsDown, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Avatar } from "@/components/ui/avatar";
@@ -8,9 +8,8 @@ const VideoComments = ({
    commentsData,
    user,
    onSubmit,
-   onLike
-}) => {
-   return (
+   onLike,
+}) => (
       <div className="space-y-4">
          <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
@@ -98,6 +97,5 @@ const VideoComments = ({
          </div>
       </div>
    );
-};
 
 export default VideoComments;

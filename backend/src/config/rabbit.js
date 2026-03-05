@@ -20,6 +20,7 @@ export const ConnectToRabbitMQ = async (retry = 10, delay = 5000) => {
     } catch (error) {
       rabbitMQConnectionLogger.error( `RabbitMQ connection failed. Retrying in ${delay / 1000} seconds...`, error);
       retry--;
+      // eslint-disable-next-line no-promise-executor-return
       await new Promise((res) => setTimeout(res, delay));
     }
   }

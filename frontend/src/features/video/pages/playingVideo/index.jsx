@@ -1,23 +1,23 @@
 import { useState } from "react";
 import {
-   ThumbsUp,
-   ThumbsDown,
-   Share2,
-   Download,
-   MoreHorizontal,
    Bell,
    ChevronDown,
    ChevronUp,
+   Download,
+   MoreHorizontal,
+   Share2,
+   ThumbsDown,
+   ThumbsUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Avatar } from "@/components/ui/avatar";
 import Container from "@/shared/components/DarkModeContainer";
-import { useParams } from "react-router-dom"
+import { useParams } from "react-router-dom";
 import { useVideoById, useVideoComments } from "../../hook/useVideoQueries.js";
 import { useAuth } from "@/features/auth/hook/useAuth.js";
-import { useAddComment, useLikeComment, useToggleVideoLike, useToggleSubscription } from "../../hook/useVideoMutations.js";
+import { useAddComment, useLikeComment, useToggleSubscription, useToggleVideoLike } from "../../hook/useVideoMutations.js";
 import VideoComments from "../../components/PlayingVideo/CommentsSection.jsx";
 import RecommandedVideos from "../../components/PlayingVideo/RecommandedVideos.jsx";
 
@@ -47,16 +47,16 @@ const PlayingVideoPage = () => {
    };
 
    const handleVideoLike = () => {
-      toggleVideoLike({ type: 'like' });
+      toggleVideoLike({ type: "like" });
    };
 
    const handleVideoDislike = () => {
-      toggleVideoLike({ type: 'dislike' });
+      toggleVideoLike({ type: "dislike" });
    };
 
    const onLike = (commentId) => {
       likeComment(commentId);
-   }
+   };
 
    const onSubmit = (e) => {
       e.preventDefault();
@@ -67,13 +67,13 @@ const PlayingVideoPage = () => {
 
       addComment({
          videoId,
-         content: content,
+         content,
          userId: user._id,
       });
       
       // Reset the form
       e.target.reset();
-   }
+   };
 
    const recommendedVideos = Array(12).fill(null).map((_, i) => ({
       id: i,

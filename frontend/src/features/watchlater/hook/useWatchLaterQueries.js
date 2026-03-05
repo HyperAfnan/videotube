@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import { watchLaterService } from '../services/waterlater.services.js';
-import { watchLaterKeys } from '../constants/queryKeys.js';
+import { useQuery } from "@tanstack/react-query";
+import { watchLaterService } from "../services/waterlater.services.js";
+import { watchLaterKeys } from "../constants/queryKeys.js";
 
 /**
  * Custom hook for fetching watch later videos
@@ -9,8 +9,7 @@ import { watchLaterKeys } from '../constants/queryKeys.js';
  * @param {Object} options - Additional query options
  * @returns {Object} Query result with data, loading, and error states
  */
-export const useWatchLaterVideos = (options = {}) => {
-  return useQuery({
+export const useWatchLaterVideos = (options = {}) => useQuery({
     queryKey: watchLaterKeys.list(),
     queryFn: watchLaterService.fetchAll,
     staleTime: 5 * 60 * 1000,
@@ -19,14 +18,11 @@ export const useWatchLaterVideos = (options = {}) => {
     retry: 2,
     ...options,
   });
-};
 
 export const useWatchLater = () => {
   const query = useWatchLaterVideos();
   
-  const isInWatchLater = (videoId) => {
-    return query.data?.some((watchlater) => watchlater.video._id === videoId) || false;
-  };
+  const isInWatchLater = (videoId) => query.data?.some((watchlater) => watchlater.video._id === videoId) || false;
 
   return {
     watchLater: query.data || [],

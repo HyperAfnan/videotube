@@ -1,13 +1,12 @@
 // import { setCredentials } from "@Features/auth/store/authSlice.js";
 import { useState } from "react";
-import { useDispatch , useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { PlaylistService } from "../services/playlist.services.js";
 import { useAuth } from "@Features/auth/hook/useAuth.js";
 
 export const usePlaylist = () => {
    const { user } = useAuth();
    const [error, setError] = useState(null);
-   const dispatch = useDispatch();
    const { playlists } = useSelector((state) => state.auth.userMeta);
    const [loading, setLoading] = useState(false);
 

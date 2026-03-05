@@ -2,8 +2,6 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
-import ENV from "./config/env.js";
-import { logger } from "./utils/logger/index.js";
 import { requestLogger } from "./middlewares/logger.middleware.js";
 import { errorHandler } from "./middlewares/errorHandler.middleware.js";
 import compression from "compression";

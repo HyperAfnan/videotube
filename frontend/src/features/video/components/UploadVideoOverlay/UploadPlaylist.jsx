@@ -19,6 +19,7 @@ const UploadPlaylist = () => {
       <Label className="text-base font-semibold text-foreground">Playlist</Label>
       <p className="text-sm text-muted-foreground">Add your video to a playlist...</p>
       <Select
+        // eslint-disable-next-line no-undefined
         value={playlist || undefined}
         onValueChange={(value) => setValue("playlist", value === "none" ? null : value)}
         disabled={isLoading}

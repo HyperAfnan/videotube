@@ -13,7 +13,7 @@ import {
 } from "../../utils/fileHandlers.js";
 import { logger } from "../../utils/logger/index.js";
 const videoServiceLogger = logger.child({ module: "video.services" });
-import { CreateMultipartUploadCommand, UploadPartCommand, CompleteMultipartUploadCommand } from "@aws-sdk/client-s3";
+import { CompleteMultipartUploadCommand, CreateMultipartUploadCommand, UploadPartCommand } from "@aws-sdk/client-s3";
 import { stat } from "fs/promises";
 import fs from "fs";
 import crypto from "crypto";
@@ -90,7 +90,7 @@ export const getFeed = serviceHandler(
 );
 
 export const getAllVideos = serviceHandler(
-   async (page, limit, q, sortBy, sortType, userId) => {
+   async (page, limit, q, sortBy, sortType) => {
       if (sortType === "asc") sortType = 1;
       else if (sortType === "desc") sortType = -1;
       else sortType = -1;
@@ -203,7 +203,7 @@ export const publishVideo = serviceHandler(
 );
 
 export const getUserVideoById = serviceHandler(
-   async (videoId, videoMeta, userId) => {
+   async (videoId, _, userId) => {
       const video = await Video.findByIdAndUpdate(
          videoId,
          { $inc: { views: 1 } },
@@ -262,6 +262,7 @@ export const getUserVideoById = serviceHandler(
          video: videoId,
          isWatched: false,
          watchDates: [{ date: new Date(), duration: 0 }],
+      // eslint-disable-next-line no-unused-vars
       }).catch(async (_) => {
          await WatchHistory.findOneAndUpdate(
             { user: userId, video: videoId },

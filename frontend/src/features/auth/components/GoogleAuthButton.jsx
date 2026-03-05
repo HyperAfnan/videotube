@@ -17,6 +17,7 @@ export default function GoogleLoginButton() {
       }
     } catch (error) {
       notificationService.error("Google login failed. Please try again.");
+      console.error("Google login error:", error);
     }
   };
 
